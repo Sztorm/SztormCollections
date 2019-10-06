@@ -1,5 +1,5 @@
 # SztormCollections
-Set of collections that lacks in the .Net Framework or are more specialized than .Net ones.
+Set of collections that .Net Framework lacks of or are more specialized than .Net ones.
 ### Currently this repository contains:
 **Array2D&lt;T&gt;**: A two-dimensional rectangular array allocated within single contiguous block of memory.
 ### Examples:
