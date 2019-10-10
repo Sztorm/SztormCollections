@@ -338,5 +338,49 @@ namespace Sztorm.Collections
         {
             return this.GetEnumerator();
         }
+
+        /// <summary>
+        /// Searches for the specified object and returns the index of its first occurrence
+        /// in a one-dimensional array if found; otherwise returns null (<see cref="int"></see>?
+        /// with HasValue property set to false).
+        /// </summary>
+        /// <typeparam name="U"></typeparam>
+        /// <param name="element">An element value to search.</param>
+        /// <returns></returns>
+        public int? IndexOf<U>(U element) where U : IEquatable<T>
+        {
+            for (int i = 0, length = Count; i < length; i++)
+            {
+                if (element.Equals(this.elements[i]))
+                {
+                    return i;
+                }
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Searches for the specified object and returns the indices in a form of row and column 
+        /// <see cref="ValueTuple{int, int}"></see> of its first occurrence in a two-dimensional
+        /// array if found; otherwise returns null
+        /// ((<see cref="int"></see>, <see cref="int"></see>)? with HasValue property set to 
+        /// false).
+        /// </summary>
+        /// <typeparam name="U"></typeparam>
+        /// <param name="element">An element value to search.</param>
+        /// <returns></returns>
+        public (int row, int column)? IndicesOf<U>(U element) where U : IEquatable<T>
+        {
+            int? possibleIndex = IndexOf(element);
+
+            if (!possibleIndex.HasValue)
+            {
+                return null;
+            }
+            int oneDimIndex = possibleIndex.Value;
+            int row = oneDimIndex * (Rows + 1) / (1 + Columns * Rows);
+            int column = -row * Columns + oneDimIndex;
+            return (row, column);
+        }
     }
 }
