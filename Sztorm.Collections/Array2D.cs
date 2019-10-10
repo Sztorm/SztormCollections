@@ -18,18 +18,18 @@ namespace Sztorm.Collections
         private int dim1;
 
         /// <summary>
-        /// Returns count of elements in X dimension;
+        /// Returns total amount of rows in this two-dimensional array instance.
         /// </summary>
-        public int X
+        public int Rows
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get => dim0;
         }
 
         /// <summary>
-        /// Returns count of elements in Y dimension;
+        /// Returns total amount of columns in this two-dimensional array instance.
         /// </summary>
-        public int Y
+        public int Columns
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get => dim1;
@@ -64,40 +64,38 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        /// Returns a subarray that represents elements from X dimension with specified index.
+        /// Returns a row at specified index.
         /// <para>Exceptions:</para>
         /// <para>
-        /// <see cref="ArgumentOutOfRangeException"></see>: Index is out of bounds of the X 
-        /// dimension.
+        /// <see cref="IndexOutOfRangeException"></see>: Index is out of bounds of the row count.
         /// </para>
         /// </summary>
-        /// <param name="index">A zero-based index that determines which subarray is to take.</param>
+        /// <param name="index">A zero-based index that determines which row is to take.</param>
         /// <returns></returns>
-        public ElementsOfX GetElementsOfX(int index)
+        public Row GetRow(int index)
         {
-            return new ElementsOfX(this, index);
+            return new Row(this, index);
         }
 
         /// <summary>
-        /// Returns a subarray that represents elements from Y dimension with specified index.
+        /// Returns a column at specified index.
         /// <para>Exceptions:</para>
         /// <para>
-        /// <see cref="ArgumentOutOfRangeException"></see>: Index is out of bounds of the X 
-        /// dimension.
+        /// <see cref="IndexOutOfRangeException"></see>: Index is out of bounds of the column count.
         /// </para>
         /// </summary>
-        /// <param name="index">A zero-based index that determines which subarray is to take.</param>
+        /// <param name="index">A zero-based index that determines which column is to take.</param>
         /// <returns></returns>
-        public ElementsOfY GetElementsOfY(int index)
+        public Column GetColumn(int index)
         {
-            return new ElementsOfY(this, index);
+            return new Column(this, index);
         }
 
         /// <summary>
-        /// One dimensional indexer can be used to iterate through all the stored elements without
-        /// specific order.
+        /// An one dimensional indexer that can be used to iterate through all the stored elements.
         /// <para>
-        /// Throws <see cref="IndexOutOfRangeException"></see> if index exceeds array bounds.
+        /// Throws <see cref="IndexOutOfRangeException"></see> if index exceeds
+        /// <see cref="Count"></see> property.
         /// </para>
         /// </summary>
         /// <param name="index"></param>
@@ -111,39 +109,40 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        /// Returns an element stored in two-dimensional array.
+        /// Returns an element stored at specified row and column.
         /// <para>
         /// Throws <see cref="IndexOutOfRangeException"></see> if any of indices is out of array
         /// bounds.
         /// </para>
         /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
+        /// <param name="row"></param>
+        /// <param name="column"></param>
         /// <returns></returns>
-        public ref T this[int x, int y]
+        public ref T this[int row, int column]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
-                if ((uint)x >= dim0 || (uint)y >= dim1)
+                if ((uint)row >= dim0 || (uint)column >= dim1)
                 {
                     throw new IndexOutOfRangeException("At least one of indices is out of array bounds.");
                 }
 
-                return ref elements[x * Y + y];
+                return ref elements[row * Columns + column];
             }
         }
 
         /// <summary>
-        /// Constructs a two-dimensional rectangular array with specified X and Y dimension sizes.
+        /// Constructs a two-dimensional rectangular array with specified quantity of rows and
+        /// columns.
         /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        public Array2D(int x, int y)
+        /// <param name="rows"></param>
+        /// <param name="columns"></param>
+        public Array2D(int rows, int columns)
         {
-            elements = new T[x * y];
-            dim0 = x;
-            dim1 = y;
+            elements = new T[rows * columns];
+            dim0 = rows;
+            dim1 = columns;
         }
 
         /// <summary>
@@ -151,7 +150,7 @@ namespace Sztorm.Collections
         /// two-dimensional array starting at the specified destination array index.
         /// <para>Exceptions:</para>
         /// <para>
-        /// <see cref="ArgumentNullException"></see>: Array is null.
+        /// <see cref="NullReferenceException"></see>: Array is null.
         /// </para>
         /// <para>
         /// <see cref="ArgumentOutOfRangeException"></see>: Index is less than the lower bound of
@@ -163,9 +162,57 @@ namespace Sztorm.Collections
         /// array.
         /// </para>
         /// <para>
+        /// <see cref="InvalidCastException"></see>: At least one element in the source array
+        /// cannot be cast to the type of destination array.
+        /// </para>
+        /// </summary>
+        /// <param name="destination"></param>
+        /// <param name="index">
+        /// A 32-bit integer that represents the index in array at which copying begins.
+        /// </param>
+        public void CopyTo(Array2D<T> destination, int index)
+        {
+            try
+            {
+                elements.CopyTo(destination.elements, index);
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                throw;
+            }
+            catch (ArgumentException)
+            {
+                throw;
+            }
+            catch (InvalidCastException)
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Copies all the elements of the current two-dimensional array to the specified
+        /// one-dimensional array starting at the specified destination array index.
+        /// <para>Exceptions:</para>
+        /// <para>
+        /// <see cref="ArgumentNullException"></see>: Array is null.
+        /// </para>
+        /// <para>
+        /// <see cref="ArgumentOutOfRangeException"></see>: Index is less than the lower bound of
+        /// array.
+        /// </para>
+        /// <para>
+        /// <see cref="ArgumentException"></see>: array is multidimensional. -or- The number of 
+        /// elements in the source array is greater than the available number of elements from
+        /// index to the end of the destination array.
+        /// </para>
+        /// <para>
         /// <see cref="ArrayTypeMismatchException"></see>: The type of the source array cannot be
         /// cast automatically to the type of the destination array.
         /// </para>
+        /// <para>
+        /// <see cref="RankException"></see>: The source array is multidimensional.
+        /// </para>   
         /// <para>
         /// <see cref="InvalidCastException"></see>: At least one element in the source array
         /// cannot be cast to the type of destination array.
@@ -175,41 +222,103 @@ namespace Sztorm.Collections
         /// <param name="index">
         /// A 32-bit integer that represents the index in array at which copying begins.
         /// </param>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void CopyTo(Array2D<T> destination, int index)
+        public void CopyTo(Array destination, int index)
         {
-            this.elements.CopyTo(destination.elements, index);
+            try
+            {
+                elements.CopyTo(destination, index);
+            }
+            catch (ArgumentNullException)
+            {
+                throw;
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                throw;
+            }
+            catch (ArgumentException)
+            {
+                throw;
+            }
+            catch (ArrayTypeMismatchException)
+            {
+                throw;
+            }
+            catch (RankException)
+            {
+                throw;
+            }
+            catch (InvalidCastException)
+            {
+                throw;
+            }
         }
 
         /// <summary>
-        /// Not implemented yet.
+        /// Copies all the elements of the current two-dimensional array to the specified
+        /// two-dimensional array starting at the specified destination array index.
+        /// <para>Exceptions:</para>
+        /// <para>
+        /// <see cref="ArgumentNullException"></see>: Array is null.
+        /// </para>
+        /// <para>
+        /// <see cref="ArgumentOutOfRangeException"></see>: Any of indices is less than the lower
+        /// bound of array.
+        /// </para>
+        /// <para>
+        /// <see cref="ArgumentException"></see>: The number of elements in the source array is
+        /// greater than the available number of elements from indices to the end of the 
+        /// destination array.
+        /// </para>
+        /// <para>
+        /// <see cref="InvalidCastException"></see>: At least one element in the source array
+        /// cannot be cast to the type of destination array.
+        /// </para>
         /// </summary>
         /// <param name="destination"></param>
-        /// <param name="index"></param>
-        public void CopyTo(Array destination, int index)
+        /// <param name="row">
+        /// An <see cref="int"></see> that represents the index of row in array at which copying 
+        /// begins.
+        /// </param>
+        /// <param name="column">
+        /// An <see cref="int"></see> that represents the index of column in array at which copying
+        /// begins.
+        /// </param>
+        public void CopyTo(T[,] destination, int row, int column)
         {
             if (destination == null)
             {
                 throw new ArgumentNullException(nameof(destination));
             }
-            int rank = destination.Rank;
+            if (row < 0 || column < 0)
+            {
+                throw new ArgumentOutOfRangeException(
+                    "Any of indices is less than the lower bound of array.");
+            }
+            int rows = destination.GetLength(0);
+            int columns = destination.GetLength(1);
 
-            if (rank == 1)
+            if (rows - row < this.Rows || columns - column < this.Columns)
             {
-                elements.CopyTo(destination, index);
-                return;
+
+                throw new ArgumentException(
+                    "The number of elements in the source array is greater than the available " +
+                    "number of elements from indices to the end of the destination array.",
+                    nameof(destination));
             }
-            else if (rank == 2)
+            try
             {
-                /*if (destination.Length - index < Count)
+                for (int i = 0; i < rows; i++)
                 {
-                    throw new ArgumentException("Not enough elements after index in the destination array.");
-                }*/
-                throw new NotImplementedException();
+                    for (int j = 0; j < columns; j++)
+                    {
+                        destination[i, j] = this[i, j];
+                    }
+                }
             }
-            else
+            catch (InvalidCastException)
             {
-                throw new ArgumentException("array has invalid number of dimensions.", nameof(destination));
+                throw;
             }
         }
 
@@ -228,6 +337,6 @@ namespace Sztorm.Collections
         IEnumerator IEnumerable.GetEnumerator()
         {
             return this.GetEnumerator();
-        }     
+        }
     }
 }

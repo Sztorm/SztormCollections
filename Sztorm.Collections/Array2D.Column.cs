@@ -8,31 +8,26 @@ namespace Sztorm.Collections
     partial class Array2D<T>
     {
         /// <summary>
-        /// Represents Y dimension subarray of two-dimensional array.
+        /// Represents specific column of two-dimensional array.
         /// </summary>
-        public readonly struct ElementsOfY : IEnumerable<T>
+        public readonly struct Column : IEnumerable<T>
         {
             private readonly Array2D<T> array;
 
             /// <summary>
-            /// Returns count of elements in this subarray.
-            /// </summary>
-            public int Length
-            {
-                [MethodImpl(MethodImplOptions.AggressiveInlining)]
-                get => array.Y;
-            }
-
-            /// <summary>
-            /// Returns index of subarray in provided two-dimensional array.
+            /// Returns index of column in provided two-dimensional array.
             /// </summary>
             public readonly int Index;
 
             /// <summary>
-            /// Returns an element stored in the Y dimension subarray.
+            /// Returns count of elements stored int this column.
+            /// </summary>
+            public int Count => array.Columns;
+
+            /// <summary>
+            /// Returns an element stored at given index.
             /// <para>
-            /// Throws <see cref="IndexOutOfRangeException"></see> if index is out of Y dimension
-            /// subarray bounds.
+            /// Throws <see cref="IndexOutOfRangeException"></see> if index is out of column bounds.
             /// </para>
             public ref T this[int index]
             {
@@ -46,36 +41,35 @@ namespace Sztorm.Collections
                     catch (IndexOutOfRangeException)
                     {
                         throw new IndexOutOfRangeException(
-                            "Index is out of Y dimension subarray bounds.");
+                            "Index is out of column bounds.");
                     }
                 }
             }
 
             /// <summary>
-            /// Constructs a reference to Y dimension subarray of two-dimensional array with
-            /// specified index. 
+            /// Constructs a reference to index-specified column of two-dimensional array.
             /// <para>
             /// Note: Changes done in provided array are reflected in this instance which may 
-            /// result in unexpected behaviour.<br/> In example array dimension change may cause
-            /// this object's index no longer valid, which results in exception during enumeration.
-            /// <br/> To avoid such situations it is best to reconstruct this object on array
-            /// dimension alteration.
+            /// result in unexpected behaviour.<br/> In example array size change may cause this
+            /// object's index no longer valid, which results in exception during enumeration.<br/>
+            /// To avoid such situations it is best to reconstruct this object on array dimension
+            /// alteration.
             /// </para>
             /// <para>Exceptions:</para>
             /// <para>
-            /// <see cref="ArgumentOutOfRangeException"></see>: Index is out of bounds of the Y 
-            /// dimension.
+            /// <see cref="ArgumentOutOfRangeException"></see>: Index is out of bounds of the 
+            /// column.
             /// </para>
             /// </summary>
             /// <param name="array">An array from which this instance uses reference.</param>
             /// <param name="index">
-            /// A zero-based index that determines which subarray is to take.
+            /// A zero-based index that determines which column is to take.
             /// </param>
-            public ElementsOfY(Array2D<T> array, int index)
+            internal Column(Array2D<T> array, int index)
             {
-                if ((uint)index >= array.Y)
+                if ((uint)index >= array.Columns)
                 {
-                    throw new ArgumentOutOfRangeException(nameof(index), "Index argument is out of bounds of Y dimension.");
+                    throw new ArgumentOutOfRangeException(nameof(index), "Index argument is out of bounds of the column.");
                 }
 
                 this.array = array;
@@ -83,12 +77,12 @@ namespace Sztorm.Collections
             }
 
             /// <summary>
-            /// Returns an enumerator for Y dimension elements of specified index;
+            /// Returns an <see cref="IEnumerator{T}"></see> for the <see cref="Column"></see>.
             /// </summary>
             /// <returns></returns>
             public IEnumerator<T> GetEnumerator()
             {
-                for (int i = 0, length = Length; i < length; i++)
+                for (int i = 0, length = Count; i < length; i++)
                 {
                     yield return this[i];
                 }
@@ -96,7 +90,7 @@ namespace Sztorm.Collections
 
             IEnumerator IEnumerable.GetEnumerator()
             {
-                return this.GetEnumerator();
+                return GetEnumerator();
             }
         }
     }
