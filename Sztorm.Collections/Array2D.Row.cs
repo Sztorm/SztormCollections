@@ -22,7 +22,7 @@ namespace Sztorm.Collections
             /// <summary>
             /// Returns count of elements stored int this row.
             /// </summary>
-            public int Count => array.Rows;
+            public int Count => array.Columns;
 
             /// <summary>
             /// Returns an element stored at given index.

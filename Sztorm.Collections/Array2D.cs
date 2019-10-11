@@ -378,8 +378,9 @@ namespace Sztorm.Collections
                 return null;
             }
             int oneDimIndex = possibleIndex.Value;
-            int row = oneDimIndex * (Rows + 1) / (1 + Columns * Rows);
-            int column = -row * Columns + oneDimIndex;
+            int row = oneDimIndex / Columns;
+            int column = oneDimIndex % Columns;
+
             return (row, column);
         }
     }
