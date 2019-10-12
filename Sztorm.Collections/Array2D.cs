@@ -137,11 +137,20 @@ namespace Sztorm.Collections
         /// <summary>
         /// Constructs a two-dimensional rectangular array with specified quantity of rows and
         /// columns.
+        /// <para>
+        /// Throws <see cref="ArgumentException"></see> if rows or columns quantity is less than
+        /// zero.
+        /// </para>
         /// </summary>
         /// <param name="rows"></param>
         /// <param name="columns"></param>
         public Array2D(int rows, int columns)
         {
+            if (rows < 0 || columns < 0)
+            {
+                throw new ArgumentException(
+                    "Rows and columns arguments must be greater or equal to zero.");
+            }
             elements = new T[rows * columns];
             dim0 = rows;
             dim1 = columns;
