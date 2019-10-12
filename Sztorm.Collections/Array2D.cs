@@ -72,6 +72,7 @@ namespace Sztorm.Collections
         /// </summary>
         /// <param name="index">A zero-based index that determines which row is to take.</param>
         /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Row GetRow(int index)
         {
             return new Row(this, index);
@@ -86,6 +87,7 @@ namespace Sztorm.Collections
         /// </summary>
         /// <param name="index">A zero-based index that determines which column is to take.</param>
         /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Column GetColumn(int index)
         {
             return new Column(this, index);
@@ -334,6 +336,7 @@ namespace Sztorm.Collections
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         IEnumerator IEnumerable.GetEnumerator()
         {
             return this.GetEnumerator();

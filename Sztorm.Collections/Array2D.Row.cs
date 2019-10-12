@@ -22,7 +22,11 @@ namespace Sztorm.Collections
             /// <summary>
             /// Returns count of elements stored int this row.
             /// </summary>
-            public int Count => array.Columns;
+            public int Count
+            {
+                [MethodImpl(MethodImplOptions.AggressiveInlining)]
+                get => array.Columns;
+            }
 
             /// <summary>
             /// Returns an element stored at given index.
@@ -87,6 +91,7 @@ namespace Sztorm.Collections
                 }
             }
 
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             IEnumerator IEnumerable.GetEnumerator()
             {
                 return GetEnumerator();
