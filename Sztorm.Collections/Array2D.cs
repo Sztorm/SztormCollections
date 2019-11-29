@@ -14,8 +14,8 @@ namespace Sztorm.Collections
     public partial class Array2D<T> : IEnumerable<T>, ICollection
     {
         private T[] elements;
-        private int dim0;
-        private int dim1;
+        private int len1;
+        private int len2;
 
         /// <summary>
         /// Returns total amount of rows in this two-dimensional array instance.
@@ -23,7 +23,7 @@ namespace Sztorm.Collections
         public int Rows
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => dim0;
+            get => len1;
         }
 
         /// <summary>
@@ -32,7 +32,27 @@ namespace Sztorm.Collections
         public int Columns
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => dim1;
+            get => len2;
+        }
+
+        /// <summary>
+        /// Returns length of the first dimension in this two-dimensional array instance. This
+        /// property is equal to Rows.
+        /// </summary>
+        public int Length1
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => len1;
+        }
+
+        /// <summary>
+        /// Returns length of the second dimension in this two-dimensional array instance. This
+        /// property is equal to Columns.
+        /// </summary>
+        public int Length2
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => len2;
         }
 
         /// <summary>
@@ -125,7 +145,7 @@ namespace Sztorm.Collections
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
-                if ((uint)row >= dim0 || (uint)column >= dim1)
+                if (IsValidIndex(row, column))
                 {
                     throw new IndexOutOfRangeException("At least one of indices is out of array bounds.");
                 }
@@ -133,6 +153,50 @@ namespace Sztorm.Collections
                 return ref elements[row * Columns + column];
             }
         }
+
+        /// <summary>
+        /// Returns an element stored at specified row and column.
+        /// <para>
+        /// Throws <see cref="IndexOutOfRangeException"></see> if any of indices is out of array
+        /// bounds.
+        /// </para>
+        /// </summary>
+        /// <param name="row"></param>
+        /// <param name="column"></param>
+        /// <returns></returns>
+        public ref T this[Index2D index]
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get
+            {
+                if (IsValidIndex(index))
+                {
+                    throw new IndexOutOfRangeException("At least one of indices is out of array bounds.");
+                }
+
+                return ref elements[index.PositionIn1stDimension * Columns + index.PositionIn2ndDimention];
+            }
+        }
+
+        /// <summary>
+        /// Returns true if specified index exists in this <see cref="Array2D{T}"/> instance,
+        /// false otherwise.
+        /// </summary>
+        /// <param name="row"></param>
+        /// <param name="column"></param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool IsValidIndex(int row, int column) => (uint)row >= len1 || (uint)column >= len2;
+
+        /// <summary>
+        /// Returns true if specified index exists in this <see cref="Array2D{T}"/> instance,
+        /// false otherwise.
+        /// </summary>
+        /// <param name="row"></param>
+        /// <param name="column"></param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool IsValidIndex(Index2D index) => IsValidIndex(index.PositionIn1stDimension, index.PositionIn2ndDimention);
 
         /// <summary>
         /// Constructs a two-dimensional rectangular array with specified quantity of rows and
@@ -152,8 +216,8 @@ namespace Sztorm.Collections
                     "Rows and columns arguments must be greater or equal to zero.");
             }
             elements = new T[rows * columns];
-            dim0 = rows;
-            dim1 = columns;
+            len1 = rows;
+            len2 = columns;
         }
 
         /// <summary>
@@ -381,7 +445,7 @@ namespace Sztorm.Collections
         /// <typeparam name="U"></typeparam>
         /// <param name="element">An element value to search.</param>
         /// <returns></returns>
-        public (int row, int column)? IndicesOf<U>(U element) where U : IEquatable<T>
+        public Index2D? IndicesOf<U>(U element) where U : IEquatable<T>
         {
             int? possibleIndex = IndexOf(element);
 
@@ -393,7 +457,7 @@ namespace Sztorm.Collections
             int row = oneDimIndex / Columns;
             int column = oneDimIndex % Columns;
 
-            return (row, column);
+            return new Index2D(row, column);
         }
     }
 }
