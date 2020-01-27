@@ -11,19 +11,34 @@ namespace Sztorm.Collections
     /// </summary>
     public readonly struct Index2D
     {
-        public readonly int PositionIn1stDimension;
-        public readonly int PositionIn2ndDimention;
+        /// <summary>
+        /// Returns first index of an item. Indexing start from zero. This property is equal to
+        /// Row.
+        /// </summary>
+        public readonly int Dimension1Index;
 
+        /// <summary>
+        /// Returns second index of an item. Indexing start from zero. This property is equal to
+        /// Columns.
+        /// </summary>
+        public readonly int Dimension2Index;
+
+        /// <summary>
+        /// Returns row position of an item. Indexing start from zero.
+        /// </summary>
         public int Row
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => PositionIn1stDimension;
+            get => Dimension1Index;
         }
 
+        /// <summary>
+        /// Returns column position of an item. Indexing start from zero.
+        /// </summary>
         public int Column
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => PositionIn2ndDimention;
+            get => Dimension2Index;
         }
 
         /// <summary>
@@ -33,8 +48,8 @@ namespace Sztorm.Collections
         /// <param name="column"></param>
         public Index2D(int row, int column)
         {
-            PositionIn1stDimension = row;
-            PositionIn2ndDimention = column;
+            Dimension1Index = row;
+            Dimension2Index = column;
         }
 
         /// <summary>
@@ -125,7 +140,7 @@ namespace Sztorm.Collections
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override int GetHashCode()
         {
-            return PositionIn1stDimension.GetHashCode() ^ (PositionIn2ndDimention.GetHashCode() << 2);
+            return Dimension1Index.GetHashCode() ^ (Dimension2Index.GetHashCode() << 2);
         }
 
         /// <summary>
@@ -137,9 +152,9 @@ namespace Sztorm.Collections
             const int MaxPossibleLength = 1 + 11 + 2 + 11 + 1;
             var sb = new StringBuilder(MaxPossibleLength);
             sb.Append('(');
-            sb.Append(PositionIn1stDimension);
+            sb.Append(Dimension1Index);
             sb.Append(", ");
-            sb.Append(PositionIn2ndDimention);
+            sb.Append(Dimension2Index);
             sb.Append(')');
             return sb.ToString();
         }
@@ -149,14 +164,14 @@ namespace Sztorm.Collections
         /// </summary>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public (int Row, int Column) ToValueTuple() => new ValueTuple<int, int>(PositionIn1stDimension, PositionIn2ndDimention);
+        public (int Row, int Column) ToValueTuple() => new ValueTuple<int, int>(Dimension1Index, Dimension2Index);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool operator== (Index2D left, Index2D right)
-            => left.PositionIn1stDimension == right.PositionIn1stDimension && left.PositionIn2ndDimention == right.PositionIn2ndDimention;
+            => left.Dimension1Index == right.Dimension1Index && left.Dimension2Index == right.Dimension2Index;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool operator!= (Index2D left, Index2D right)
-            => left.PositionIn1stDimension != right.PositionIn1stDimension || left.PositionIn2ndDimention != right.PositionIn2ndDimention;
+            => left.Dimension1Index != right.Dimension1Index || left.Dimension2Index != right.Dimension2Index;
     }
 }

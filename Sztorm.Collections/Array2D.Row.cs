@@ -33,6 +33,9 @@ namespace Sztorm.Collections
             /// <para>
             /// Throws <see cref="IndexOutOfRangeException"></see> if index is out of row bounds.
             /// </para>
+            /// </summary>
+            /// <param name="index"></param>
+            /// <returns></returns>
             public ref T this[int index]
             {
                 [MethodImpl(MethodImplOptions.AggressiveInlining)]

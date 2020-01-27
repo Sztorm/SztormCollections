@@ -174,7 +174,7 @@ namespace Sztorm.Collections
                     throw new IndexOutOfRangeException("At least one of indices is out of array bounds.");
                 }
 
-                return ref elements[index.PositionIn1stDimension * Columns + index.PositionIn2ndDimention];
+                return ref elements[index.Dimension1Index * Columns + index.Dimension2Index];
             }
         }
 
@@ -196,7 +196,7 @@ namespace Sztorm.Collections
         /// <param name="column"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool IsValidIndex(Index2D index) => IsValidIndex(index.PositionIn1stDimension, index.PositionIn2ndDimention);
+        public bool IsValidIndex(Index2D index) => IsValidIndex(index.Dimension1Index, index.Dimension2Index);
 
         /// <summary>
         /// Constructs a two-dimensional rectangular array with specified quantity of rows and
