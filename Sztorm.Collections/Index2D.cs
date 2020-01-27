@@ -75,7 +75,7 @@ namespace Sztorm.Collections
 
         /// <summary>
         /// Tries to get value from an array.
-        /// If operation fails, this returns null (<see cref="T"></see>?
+        /// If operation fails, this returns null (<typeparamref name="T"/>?
         /// with HasValue property set to false).
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -160,7 +160,7 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        /// Converts the value of this instance to <see cref="ValueTuple{int}{int}"/>.
+        /// Converts the value of this instance to <see cref="ValueTuple"/>&lt;<see cref="int"/>,<see cref="int"/>&gt;.
         /// </summary>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
