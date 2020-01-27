@@ -161,7 +161,8 @@ namespace Sztorm.Collections
         /// bounds.
         /// </para>
         /// </summary>
-        /// <param name="index"></param>
+        /// <param name="row"></param>
+        /// <param name="column"></param>
         /// <returns></returns>
         public ref T this[Index2D index]
         {
@@ -191,7 +192,8 @@ namespace Sztorm.Collections
         /// Returns true if specified index exists in this <see cref="Array2D{T}"/> instance,
         /// false otherwise.
         /// </summary>
-        /// <param name="index"></param>
+        /// <param name="row"></param>
+        /// <param name="column"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool IsValidIndex(Index2D index) => IsValidIndex(index.Dimension1Index, index.Dimension2Index);
@@ -435,7 +437,7 @@ namespace Sztorm.Collections
 
         /// <summary>
         /// Searches for the specified object and returns the indices in a form of row and column 
-        /// <see cref="ValueTuple{U, U}"></see> of its first occurrence in a two-dimensional
+        /// <see cref="ValueTuple{int, int}"></see> of its first occurrence in a two-dimensional
         /// array if found; otherwise returns null
         /// ((<see cref="int"></see>, <see cref="int"></see>)? with HasValue property set to 
         /// false).
