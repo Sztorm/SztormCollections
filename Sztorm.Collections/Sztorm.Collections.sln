@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29009.5
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sztorm.Collections", "Sztorm.Collections.csproj", "{BB0ED73F-140C-44BE-B148-AB869CD004BA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sztorm.Collections", "Sztorm.Collections.csproj", "{BB0ED73F-140C-44BE-B148-AB869CD004BA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sztorm.Collections.Tests", "..\Sztorm.Collections.Tests\Sztorm.Collections.Tests.csproj", "{8524E218-657D-4310-8BDC-15B90DBBB1CE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{BB0ED73F-140C-44BE-B148-AB869CD004BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BB0ED73F-140C-44BE-B148-AB869CD004BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BB0ED73F-140C-44BE-B148-AB869CD004BA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8524E218-657D-4310-8BDC-15B90DBBB1CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8524E218-657D-4310-8BDC-15B90DBBB1CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8524E218-657D-4310-8BDC-15B90DBBB1CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8524E218-657D-4310-8BDC-15B90DBBB1CE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
