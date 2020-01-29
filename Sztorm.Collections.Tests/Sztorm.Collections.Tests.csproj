@@ -12,4 +12,10 @@
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.9.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="Sztorm.Collections">
+      <HintPath>..\Sztorm.Collections\bin\Release\netstandard2.0\Sztorm.Collections.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>
