@@ -59,15 +59,17 @@ namespace Sztorm.Collections.Tests
             Assert.IsTrue(array.GetColumn(columnIndex).All(expected.Contains));
         }
 
+        [TestCase(0, 0)]
         [TestCase(3, 2)]
+        [TestCase(9, 9)]
         public void CopyToTest(int rows, int columns)
         {
-            var before = Incremented2DArray(rows, columns);
+            var before = IncrementedRectArray(rows, columns);
             var array = new Array2D<int>(rows, columns);
             var after = new int[rows, columns];
 
             before.CopyTo(array);
-            array.CopyTo(after, 0, 0);
+            array.CopyTo(after);
 
             for (int i = 0; i < rows; i++)
             {
@@ -80,9 +82,39 @@ namespace Sztorm.Collections.Tests
             }
         }
 
-        private static int[,] Incremented2DArray(int rows, int columns)
+        [TestCase(3, 2)]
+        public void CopyToTestNull<T>(int rows, int columns)
+        {
+            var array = new Array2D<T>(rows, columns);
+            T[,] dest = null;
+
+            try
+            {
+                array.CopyTo(dest);
+            }
+            catch(NullReferenceException)
+            {
+                Assert.Pass("NullReferenceException should be thrown.");
+            }
+        }
+
+        private static int[,] IncrementedRectArray(int rows, int columns)
         {
             var result = new int[rows, columns];
+
+            for (int i = 0; i < rows; i++)
+            {
+                for (int j = 0; j < columns; j++)
+                {
+                    result[i, j] = i * columns + j;
+                }
+            }
+            return result;
+        }
+
+        private static Array2D<int> IncrementedArray2D(int rows, int columns)
+        {
+            var result = new Array2D<int>(rows, columns);
 
             for (int i = 0; i < rows; i++)
             {
