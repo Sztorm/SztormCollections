@@ -17,7 +17,8 @@ namespace Sztorm.Collections
         private Array2DBounds bounds;
 
         /// <summary>
-        /// Returns total amount of rows in this two-dimensional array instance.
+        ///     Returns total amount of rows in this two-dimensional array instance. This
+        ///     property is equal to <see cref="Length1"/>
         /// </summary>
         public int Rows
         {
@@ -26,7 +27,8 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        /// Returns total amount of columns in this two-dimensional array instance.
+        ///     Returns total amount of columns in this two-dimensional array instance. This
+        ///     property is equal to <see cref="Length2"/>
         /// </summary>
         public int Columns
         {
@@ -35,8 +37,8 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        /// Returns length of the first dimension in this two-dimensional array instance. This
-        /// property is equal to Rows.
+        ///     Returns length of the first dimension in this two-dimensional array instance. This
+        ///     property is equal to <see cref="Rows"/>.
         /// </summary>
         public int Length1
         {
@@ -45,8 +47,8 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        /// Returns length of the second dimension in this two-dimensional array instance. This
-        /// property is equal to Columns.
+        ///     Returns length of the second dimension in this two-dimensional array instance. This
+        ///     property is equal to <see cref="Columns"/>
         /// </summary>
         public int Length2
         {
@@ -55,7 +57,7 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        /// Returns total count of elements in all the dimensions.
+        ///     Returns total count of elements in all the dimensions.
         /// </summary>
         public int Count
         {
@@ -64,8 +66,8 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        /// This collection is not synchronized internally.
-        /// To synchronize access use lock statement with <see cref="SyncRoot"></see> property.
+        ///     This collection is not synchronized internally. To synchronize access use lock
+        ///     statement with <see cref="SyncRoot"/> property.
         /// </summary>
         public bool IsSynchronized
         {
@@ -74,7 +76,8 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        /// Gets an object that can be used to synchronize access to the System.Array.
+        ///     Gets an object that can be used to synchronize access to the
+        ///     <see cref="Array2D{T}"/>
         /// </summary>
         public object SyncRoot
         {
@@ -83,58 +86,83 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        /// Returns a row at specified index.
-        /// <para>Exceptions:</para>
-        /// <para>
-        /// <see cref="IndexOutOfRangeException"></see>: Index is out of bounds of the row count.
-        /// </para>
+        ///     Returns a row at specified index. Indexing start at zero.
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="IndexOutOfRangeException"/>: Index is out of boundaries of the row
+        ///         count.
+        ///     </para>
         /// </summary>
         /// <param name="index">A zero-based index that determines which row is to take.</param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Row GetRow(int index)
         {
-            return new Row(this, index);
+            try
+            {
+                return new Row(this, index);
+            }
+            catch (IndexOutOfRangeException)
+            {
+                throw;
+            }
         }
 
         /// <summary>
-        /// Returns a column at specified index.
-        /// <para>Exceptions:</para>
-        /// <para>
-        /// <see cref="IndexOutOfRangeException"></see>: Index is out of bounds of the column count.
-        /// </para>
+        ///     Returns a column at specified index. Indexing start at zero.
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="IndexOutOfRangeException"/>: Index is out of boundaries of the
+        ///         column count.
+        ///     </para>
         /// </summary>
-        /// <param name="index">A zero-based index that determines which column is to take.</param>
+        /// <param name="index">A zero-based index that determines which column is to take.</param> 
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Column GetColumn(int index)
         {
-            return new Column(this, index);
+            try
+            {
+                return new Column(this, index);
+            }
+            catch (IndexOutOfRangeException)
+            {
+                throw;
+            }
         }
 
         /// <summary>
-        /// An one dimensional indexer that can be used to iterate through all the stored elements.
-        /// <para>
-        /// Throws <see cref="IndexOutOfRangeException"></see> if index exceeds
-        /// <see cref="Count"></see> property.
-        /// </para>
+        ///     An one dimensional indexer that can be used to iterate through all the stored
+        ///     elements. Indexing start at zero.
+        ///     <para>
+        ///         Throws <see cref="IndexOutOfRangeException"/> if index exceeds
+        ///         <see cref="Count"/> property.
+        ///     </para>
         /// </summary>
         /// <param name="index"></param>
         /// <returns></returns>
         public ref T this[int index]
         {
-            // In fact bounds check is omitted here because it already exists in array indexer
-            // and has proper exception.
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => ref elements[index];
+            get
+            {
+                try
+                {
+                    return ref elements[index];
+                }
+                catch(IndexOutOfRangeException)
+                {
+                    throw;
+                }
+            }
         }
 
         /// <summary>
-        /// Returns an element stored at specified row and column.
-        /// <para>
-        /// Throws <see cref="IndexOutOfRangeException"></see> if any of indices is out of array
-        /// bounds.
-        /// </para>
+        ///     Returns an element stored at specified row and column.
+        ///     <para>
+        ///         Throws <see cref="IndexOutOfRangeException"/> if any of indices is out of array
+        ///         bounds.
+        ///     </para>
         /// </summary>
         /// <param name="row"></param>
         /// <param name="column"></param>
@@ -146,7 +174,8 @@ namespace Sztorm.Collections
             {
                 if (IsValidIndex(row, column))
                 {
-                    throw new IndexOutOfRangeException("At least one of indices is out of array bounds.");
+                    throw new IndexOutOfRangeException(
+                        "At least one of indices is out of array bounds.");
                 }
 
                 return ref elements[row * Columns + column];
@@ -154,11 +183,12 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        /// Returns an element stored at specified row and column.
-        /// <para>
-        /// Throws <see cref="IndexOutOfRangeException"></see> if any of indices is out of array
-        /// bounds.
-        /// </para>
+        ///     Returns an element stored at specified row and column.
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="IndexOutOfRangeException"/>: At least one of indices is out of array
+        ///         bounds.
+        ///     </para>
         /// </summary>
         /// <param name="index"></param>
         /// <returns></returns>
@@ -169,16 +199,16 @@ namespace Sztorm.Collections
             {
                 if (IsValidIndex(index))
                 {
-                    throw new IndexOutOfRangeException("At least one of indices is out of array bounds.");
+                    throw new IndexOutOfRangeException(
+                        "At least one of indices is out of array bounds.");
                 }
-
                 return ref elements[index.Dimension1Index * Columns + index.Dimension2Index];
             }
         }
 
         /// <summary>
-        /// Returns true if specified index exists in this <see cref="Array2D{T}"/> instance,
-        /// false otherwise.
+        ///     Returns true if specified index exists in this <see cref="Array2D{T}"/> instance,
+        ///     false otherwise.
         /// </summary>
         /// <param name="row"></param>
         /// <param name="column"></param>
@@ -188,8 +218,8 @@ namespace Sztorm.Collections
             => (uint)row >= bounds.len1 || (uint)column >= bounds.len2;
 
         /// <summary>
-        /// Returns true if specified index exists in this <see cref="Array2D{T}"/> instance,
-        /// false otherwise.
+        ///     Returns true if specified index exists in this <see cref="Array2D{T}"/> instance,
+        ///     false otherwise.
         /// </summary>
         /// <param name="index"></param>
         /// <returns></returns>
@@ -202,7 +232,7 @@ namespace Sztorm.Collections
         ///     columns.
         ///     <para>
         ///         Exceptions:<br/>
-        ///         <see cref="ArgumentOutOfRangeException"></see>: All the arguments must be
+        ///         <see cref="ArgumentOutOfRangeException"/>: All the arguments must be
         ///         greater than zero.
         ///     </para>
         /// </summary>
@@ -232,25 +262,19 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        /// Copies all the elements of the current two-dimensional array to the specified
-        /// two-dimensional array starting at the specified destination array index.
-        /// <para>Exceptions:</para>
-        /// <para>
-        /// <see cref="NullReferenceException"></see>: Array is null.
-        /// </para>
-        /// <para>
-        /// <see cref="ArgumentOutOfRangeException"></see>: Index is less than the lower bound of
-        /// array.
-        /// </para>
-        /// <para>
-        /// <see cref="ArgumentException"></see>: The number of elements in the source array is
-        /// greater than the available number of elements from index to the end of the destination
-        /// array.
-        /// </para>
-        /// <para>
-        /// <see cref="InvalidCastException"></see>: At least one element in the source array
-        /// cannot be cast to the type of destination array.
-        /// </para>
+        ///     Copies all the elements of the current two-dimensional array to the specified
+        ///     two-dimensional array starting at the specified destination array index.
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="NullReferenceException"/>: Array is null.<br/>
+        ///         <see cref="ArgumentOutOfRangeException"/>: Index is less than the lower bound
+        ///         of array.<br/>
+        ///         <see cref="ArgumentException"/>: The number of elements in the source array is
+        ///         greater than the available number of elements from index to the end of the 
+        ///         destination array.<br/>
+        ///         <see cref="InvalidCastException"/>: At least one element in the source array
+        ///         cannot be cast to the type of destination array.<br/>
+        ///     </para>
         /// </summary>
         /// <param name="destination"></param>
         /// <param name="index">
@@ -277,37 +301,25 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        /// Copies all the elements of the current two-dimensional array to the specified
-        /// one-dimensional array starting at the specified destination array index.
-        /// <para>Exceptions:</para>
-        /// <para>
-        /// <see cref="ArgumentNullException"></see>: Array is null.
-        /// </para>
-        /// <para>
-        /// <see cref="ArgumentOutOfRangeException"></see>: Index is less than the lower bound of
-        /// array.
-        /// </para>
-        /// <para>
-        /// <see cref="ArgumentException"></see>: array is multidimensional. -or- The number of 
-        /// elements in the source array is greater than the available number of elements from
-        /// index to the end of the destination array.
-        /// </para>
-        /// <para>
-        /// <see cref="ArrayTypeMismatchException"></see>: The type of the source array cannot be
-        /// cast automatically to the type of the destination array.
-        /// </para>
-        /// <para>
-        /// <see cref="RankException"></see>: The source array is multidimensional.
-        /// </para>   
-        /// <para>
-        /// <see cref="InvalidCastException"></see>: At least one element in the source array
-        /// cannot be cast to the type of destination array.
-        /// </para>
+        ///     Copies all the elements of the current two-dimensional array to the specified
+        ///     one-dimensional array starting at the specified destination array index.
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentNullException"/>: Array is null.<br/>
+        ///         <see cref="ArgumentOutOfRangeException"/>: Index is less than the lower
+        ///         bound of array.<br/>
+        ///         <see cref="ArgumentException"/>: array is multidimensional. -or- The number of
+        ///         elements in the source array is greater than the available number of elements
+        ///         from index to the end of the destination array.<br/>
+        ///         <see cref="ArrayTypeMismatchException"/>: The type of the source array cannot
+        ///         be cast automatically to the type of the destination array.<br/>
+        ///         <see cref="RankException"/>: The source array is multidimensional.<br/>
+        ///         <see cref="InvalidCastException"/>: At least one element in the source array
+        ///         cannot be cast to the type of destination array.<br/>
+        ///     </para>
         /// </summary>
         /// <param name="destination"></param>
-        /// <param name="index">
-        /// A 32-bit integer that represents the index in array at which copying begins.
-        /// </param>
+        /// <param name="index">Represents the index in array at which copying begins.</param>
         public void CopyTo(Array destination, int index)
         {
             try
@@ -415,19 +427,19 @@ namespace Sztorm.Collections
         /// two-dimensional array starting at the specified destination array index.
         /// <para>Exceptions:</para>
         /// <para>
-        /// <see cref="ArgumentNullException"></see>: Array is null.
+        /// <see cref="ArgumentNullException"/>: Array is null.
         /// </para>
         /// <para>
-        /// <see cref="ArgumentOutOfRangeException"></see>: Any of indices is less than the lower
+        /// <see cref="ArgumentOutOfRangeException"/>: Any of indices is less than the lower
         /// bound of array.
         /// </para>
         /// <para>
-        /// <see cref="ArgumentException"></see>: The number of elements in the source array is
+        /// <see cref="ArgumentException"/>: The number of elements in the source array is
         /// greater than the available number of elements from indices to the end of the 
         /// destination array.
         /// </para>
         /// <para>
-        /// <see cref="InvalidCastException"></see>: At least one element in the source array
+        /// <see cref="InvalidCastException"/>: At least one element in the source array
         /// cannot be cast to the type of destination array.
         /// </para>
         /// </summary>
@@ -475,15 +487,15 @@ namespace Sztorm.Collections
         ///     two-dimensional array.
         ///     <para>Exceptions:</para>
         /// <para>
-        ///     <see cref="ArgumentNullException"></see>: Destination array is null.
+        ///     <see cref="ArgumentNullException"/>: Destination array is null.
         /// </para>
         /// <para>
-        ///     <see cref="ArgumentOutOfRangeException"></see>: Destination array does not have 
-        ///     equal bounds.
+        ///     <see cref="ArgumentOutOfRangeException"/>: Destination array does not have equal
+        ///     bounds.
         /// </para>
         /// <para>
-        ///     <see cref="InvalidCastException"></see>: At least one element in the source array
-        ///     cannot be cast to the type of destination array.
+        ///     <see cref="InvalidCastException"/>: At least one element in the source array cannot
+        ///     be cast to the type of destination array.
         /// </para>
         /// </summary>
         /// <param name="destination"></param>
@@ -512,7 +524,7 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        /// Returns an enumerator for all elements of two-dimensional array.
+        ///     Returns an enumerator for all elements of two-dimensional array.
         /// </summary>
         /// <returns></returns>
         public IEnumerator<T> GetEnumerator()
@@ -530,9 +542,9 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        /// Searches for the specified object and returns the index of its first occurrence
-        /// in a one-dimensional array if found; otherwise returns null (<see cref="int"></see>?
-        /// with HasValue property set to false).
+        ///     Searches for the specified object and returns the index of its first occurrence
+        ///     in a one-dimensional array if found; otherwise returns null (<see cref="int"/>?
+        ///     with HasValue property set to false).
         /// </summary>
         /// <typeparam name="U"></typeparam>
         /// <param name="element">An element value to search.</param>
@@ -550,10 +562,9 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        /// Searches for the specified object and returns the 2D index of its first occurrence 
-        /// in a two-dimensional array if found; otherwise returns null
-        /// ((<see cref="int"></see>, <see cref="int"></see>)? with HasValue property set to 
-        /// false).
+        ///     Searches for the specified object and returns the 2D index of its first occurrence
+        ///     in a two-dimensional array if found; otherwise returns null
+        ///     ((<see cref="int"/>, <see cref="int"/>)? with HasValue property set to false).
         /// </summary>
         /// <typeparam name="U"></typeparam>
         /// <param name="element">An element value to search.</param>

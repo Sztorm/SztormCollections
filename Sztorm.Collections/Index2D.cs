@@ -1,30 +1,27 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 using System.Text;
 
 namespace Sztorm.Collections
 {
     /// <summary>
-    /// Represents index of two-dimensional collection.
+    ///     Represents index of two-dimensional collection.
     /// </summary>
     public readonly struct Index2D
     {
         /// <summary>
-        /// Returns first index of an item. Indexing start from zero. This property is equal to
-        /// Row.
+        ///     Returns first index of an item. This property is equal to <see cref="Row"/>.
         /// </summary>
         public readonly int Dimension1Index;
 
         /// <summary>
-        /// Returns second index of an item. Indexing start from zero. This property is equal to
-        /// Columns.
+        ///     Returns second index of an item. This property is equal to <see cref="Column"/>.
         /// </summary>
         public readonly int Dimension2Index;
 
         /// <summary>
-        /// Returns row position of an item. Indexing start from zero.
+        ///     Returns row position of an item. This property is equal to
+        ///     <see cref="Dimension1Index"/>.
         /// </summary>
         public int Row
         {
@@ -33,7 +30,8 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        /// Returns column position of an item. Indexing start from zero.
+        ///     Returns column position of an item. This property is equal to
+        ///     <see cref="Dimension2Index"/>.
         /// </summary>
         public int Column
         {
@@ -42,7 +40,7 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        /// Constructs a two-dimensional index that consist of a row and a column.
+        ///     Constructs a two-dimensional index that consist of a row and a column.
         /// </summary>
         /// <param name="row"></param>
         /// <param name="column"></param>
@@ -53,10 +51,12 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        /// Gets value from an array. 
-        /// <para>
-        /// Throws <see cref="IndexOutOfRangeException"></see> if specified index does not exist in an array.
-        /// </para>
+        ///     Gets value from an array. 
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="IndexOutOfRangeException"/>: Specified index does not exist in
+        ///         an array.
+        ///     </para>
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="array"></param>
@@ -74,9 +74,9 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        /// Tries to get value from an array.
-        /// If operation fails, this returns null (<typeparamref name="T"/>?
-        /// with HasValue property set to false).
+        ///     Tries to get value from an array.
+        ///     If operation fails, this returns null (<typeparamref name="T"/>?
+        ///     with HasValue property set to false).
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="array"></param>
@@ -91,8 +91,8 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        /// Tries to get reference from an array.
-        /// If operation fails, this function returns null.
+        ///     Tries to get reference from an array.
+        ///     If operation fails, this function returns null.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="array"></param>
@@ -107,8 +107,8 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        /// Returns a value indicating whether this instance is equal to a specified
-        /// <see cref="Index2D"></see> value.
+        ///     Returns a value indicating whether this instance is equal to a specified
+        ///     <see cref="Index2D"></see> value.
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
@@ -119,8 +119,8 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        /// Returns a value indicating whether this instance is equal to a specified
-        /// <see cref="Index2D"/> value.
+        ///     Returns a value indicating whether this instance is equal to a specified
+        ///     <see cref="Index2D"/> value.
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
@@ -134,17 +134,15 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        /// Returns the hashcode for this instance.
+        ///     Returns the hashcode for this instance.
         /// </summary>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override int GetHashCode()
-        {
-            return Dimension1Index.GetHashCode() ^ (Dimension2Index.GetHashCode() << 2);
-        }
+            => Dimension1Index.GetHashCode() ^ (Dimension2Index.GetHashCode() << 2);
 
         /// <summary>
-        /// Returns <see cref="string"/> representation of this instance.
+        ///     Returns a <see cref="string"/> representation of this instance.
         /// </summary>
         /// <returns></returns>
         public override string ToString()
@@ -160,11 +158,17 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        /// Converts the value of this instance to <see cref="ValueTuple"/>&lt;<see cref="int"/>,<see cref="int"/>&gt;.
+        ///     Converts the value of this instance to 
+        ///     <see cref="ValueTuple"/>&lt;<see cref="int"/>,<see cref="int"/>&gt;.
         /// </summary>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public (int Row, int Column) ToValueTuple() => new ValueTuple<int, int>(Dimension1Index, Dimension2Index);
+        public (int Row, int Column) ToValueTuple() 
+            => new ValueTuple<int, int>(Dimension1Index, Dimension2Index);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static implicit operator Index2D(ValueTuple<int, int> value)
+            => new Index2D(value.Item1, value.Item2);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool operator== (Index2D left, Index2D right)
