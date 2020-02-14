@@ -5,7 +5,7 @@ using System.Text;
 namespace Sztorm.Collections
 {
     /// <summary>
-    ///     Represents index of two-dimensional collection.
+    ///     Represents index of a two-dimensional collection.
     /// </summary>
     public readonly struct Index2D
     {
