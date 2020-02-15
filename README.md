@@ -47,7 +47,6 @@ foreach (int element in exampleArray.GetRow(4))
 {
     Console.Write($"{element:00}, ");
 }
-Console.WriteLine();
 ```
 *Output:* 
 ```
@@ -60,7 +59,7 @@ Console.WriteLine();
 *Code:*
 ```csharp
 int valueToSearch = 42;
-(int row, int column)? indicesFound = exampleArray.IndicesOf(valueToSearch);
+Index2D? indicesFound = exampleArray.IndicesOf(valueToSearch);
 
 if(indicesFound.HasValue)
 {
