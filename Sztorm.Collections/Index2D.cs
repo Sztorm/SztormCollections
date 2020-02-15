@@ -7,6 +7,7 @@ namespace Sztorm.Collections
     /// <summary>
     ///     Represents index of a two-dimensional collection.
     /// </summary>
+    [Serializable]
     public readonly struct Index2D
     {
         /// <summary>
