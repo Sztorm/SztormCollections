@@ -11,10 +11,10 @@ namespace Sztorm.Collections
     /// </summary>
     /// <typeparam name="T"></typeparam>
     [Serializable]
-    public partial class Array2D<T> : IEnumerable<T>, ICollection
+    public sealed partial class Array2D<T> : IEnumerable<T>, ICollection
     {
-        private T[] elements;
-        private Array2DBounds bounds;
+        private readonly T[] elements;
+        private readonly Array2DBounds bounds;
 
         /// <summary>
         ///     Returns total amount of rows in this two-dimensional array instance. This
@@ -98,7 +98,7 @@ namespace Sztorm.Collections
         ///     Returns a row at specified index. Indexing start at zero.
         ///     <para>
         ///         Exceptions:<br/>
-        ///         <see cref="IndexOutOfRangeException"/>: Index is out of boundaries of the row
+        ///         <see cref="ArgumentOutOfRangeException"/>: Index is out of boundaries of the row
         ///         count.
         ///     </para>
         /// </summary>
@@ -111,7 +111,7 @@ namespace Sztorm.Collections
             {
                 return new Row(this, index);
             }
-            catch (IndexOutOfRangeException)
+            catch (ArgumentOutOfRangeException)
             {
                 throw;
             }
@@ -121,7 +121,7 @@ namespace Sztorm.Collections
         ///     Returns a column at specified index. Indexing start at zero.
         ///     <para>
         ///         Exceptions:<br/>
-        ///         <see cref="IndexOutOfRangeException"/>: Index is out of boundaries of the
+        ///         <see cref="ArgumentOutOfRangeException"/>: Index is out of boundaries of the
         ///         column count.
         ///     </para>
         /// </summary>
@@ -134,7 +134,7 @@ namespace Sztorm.Collections
             {
                 return new Column(this, index);
             }
-            catch (IndexOutOfRangeException)
+            catch (ArgumentOutOfRangeException)
             {
                 throw;
             }
@@ -191,7 +191,7 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        ///     Returns an element stored at specified row and column.
+        ///     Returns an element stored at specified index.
         ///     <para>
         ///         Exceptions:<br/>
         ///         <see cref="IndexOutOfRangeException"/>: At least one of indices is out of array
@@ -212,6 +212,37 @@ namespace Sztorm.Collections
                 }
                 return ref elements[index.Dimension1Index * Columns + index.Dimension2Index];
             }
+        }
+
+        /// <summary>
+        ///     Returns an element stored at specified row and column.<br/>
+        ///     Arguments are not checked. For internal purposes only.
+        /// </summary>
+        /// <param name="row">
+        ///     Range: ([0, <see cref="Rows"/>).
+        /// </param>
+        /// <param name="column">
+        ///     Range: ([0, <see cref="Columns"/>).
+        /// </param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal ref T NotCheckedGetItem(int row, int column)
+        {
+            return ref elements[row * Columns + column];
+        }
+
+        /// <summary>
+        ///     Returns an element stored at specified index.<br/>
+        ///     Argument is not checked. For internal purposes only.
+        /// </summary>
+        /// <param name="index">
+        ///     Range: ([0, <see cref="Rows"/>), [0, <see cref="Columns"/>)).
+        /// </param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal ref T NotCheckedGetItem(Index2D index)
+        {
+            return ref elements[index.Dimension1Index * Columns + index.Dimension2Index];
         }
 
         /// <summary>
@@ -678,7 +709,9 @@ namespace Sztorm.Collections
         ///     in a one-dimensional array if found; otherwise returns null (<see cref="int"/>?
         ///     with HasValue property set to false).
         /// </summary>
-        /// <typeparam name="U"></typeparam>
+        /// <typeparam name="U">
+        ///     <typeparamref name = "U"/> is <see cref="IEquatable{T}"/>
+        /// </typeparam>
         /// <param name="element">An element value to search.</param>
         /// <returns></returns>
         public int? IndexOf<U>(U element) where U : IEquatable<T>
@@ -698,7 +731,9 @@ namespace Sztorm.Collections
         ///     in a two-dimensional array if found; otherwise returns null
         ///     (<see cref="Index2D"/>? with HasValue property set to false).
         /// </summary>
-        /// <typeparam name="U"></typeparam>
+        /// <typeparam name="U">
+        ///     <typeparamref name = "U"/> is <see cref="IEquatable{T}"/>
+        /// </typeparam>
         /// <param name="element">An element value to search.</param>
         /// <returns></returns>
         public Index2D? IndicesOf<U>(U element) where U : IEquatable<T>
@@ -716,6 +751,10 @@ namespace Sztorm.Collections
             return new Index2D(row, column);
         }
 
+        /// <summary>
+        ///     Creates a <typeparamref name = "T"/>[,] from this <see cref="Array2D{T}"/> intance.
+        /// </summary>
+        /// <returns></returns>
         public T[,] ToSystem2DArray()
         {
             var result = new T[Rows, Columns];
@@ -725,11 +764,20 @@ namespace Sztorm.Collections
             return result;
         }
 
+        /// <summary>
+        /// Creates a <see cref="Array2D{T}"/> from <typeparamref name = "T"/>[,] intance.
+        /// <para>
+        ///     Exceptions:<br/>
+        ///     <see cref="ArgumentNullException"/>: Array argument cannot be null.
+        /// </para>
+        /// </summary>
+        /// <param name="array"></param>
+        /// <returns></returns>
         public static Array2D<T> FromSystem2DArray(T[,] array)
         {
             if (array == null)
             {
-                throw new ArgumentNullException(nameof(array));
+                throw new ArgumentNullException(nameof(array), "Array argument cannot be null.");
             }
             Array2DBounds bounds = 
                 Array2DBounds.NotCheckedConstructor(array.GetLength(0), array.GetLength(1));
