@@ -5,7 +5,10 @@ VisualStudioVersion = 16.0.29009.5
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sztorm.Collections", "Sztorm.Collections.csproj", "{BB0ED73F-140C-44BE-B148-AB869CD004BA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sztorm.Collections.Tests", "..\Sztorm.Collections.Tests\Sztorm.Collections.Tests.csproj", "{8524E218-657D-4310-8BDC-15B90DBBB1CE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sztorm.Collections.Tests", "..\Sztorm.Collections.Tests\Sztorm.Collections.Tests.csproj", "{8524E218-657D-4310-8BDC-15B90DBBB1CE}"
+	ProjectSection(ProjectDependencies) = postProject
+		{BB0ED73F-140C-44BE-B148-AB869CD004BA} = {BB0ED73F-140C-44BE-B148-AB869CD004BA}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
