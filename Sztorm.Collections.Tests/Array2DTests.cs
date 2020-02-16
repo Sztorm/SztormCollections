@@ -53,7 +53,7 @@ namespace Sztorm.Collections.Tests
         {
             Array2D<int> array = new Array2D<int>(rows, columns);
 
-            Assert.AreEqual(array.Boundaries, new Array2DBounds(rows, columns));
+            Assert.AreEqual(array.Boundaries, new Bounds2D(rows, columns));
         }
 
         [TestCaseSource(nameof(IndexerTestCases))]
