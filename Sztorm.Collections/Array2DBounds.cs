@@ -4,18 +4,17 @@ using System.Runtime.CompilerServices;
 namespace Sztorm.Collections
 {
     /// <summary>
-    ///     Represents boundaries of a fixed-size 2D collection. Boundaries are guaranteed to be
-    ///     greater or equal to zero and not change.
+    ///     Represents boundaries of <see cref="Array2D{T}"/>. Boundaries are guaranteed to be
+    ///     greater or equal to zero.
     /// </summary>
-    [Serializable]
-    public struct FixedBounds2D : IEquatable<FixedBounds2D>
+    public struct Array2DBounds : IEquatable<Array2DBounds>
     {
         private int len1;
         private int len2;
 
         /// <summary>
-        ///     Returns total amount of rows in this <see cref="FixedBounds2D"/> instance. This
-        ///     property is equal to <see cref="Length1"/>.
+        ///     Returns total amount of rows in this array boundary. This property is equal to
+        ///     <see cref="Length1"/>.
         /// </summary>
         public int Rows
         {
@@ -24,8 +23,8 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        ///     Returns total amount of columns in this <see cref="FixedBounds2D"/> instance. This
-        ///     property is equal to <see cref="Length2"/>.
+        ///     Returns total amount of columns in this array boundary. This property is equal to
+        ///     <see cref="Length2"/>.
         /// </summary>
         public int Columns
         {
@@ -34,8 +33,8 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        ///     Returns length of the first dimension in this <see cref="FixedBounds2D"/> instance
-        ///     This property is equal to <see cref="Rows"/>.
+        ///     Returns length of the first dimension in this array boundary. This property is
+        ///     equal to <see cref="Rows"/>.
         /// </summary>
         public int Length1
         {
@@ -44,8 +43,8 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        ///     Returns length of the second dimension in this <see cref="FixedBounds2D"/> instance
-        ///     This property is equal to <see cref="Columns"/>.
+        ///     Returns length of the second dimension in this array boundary. This property is
+        ///     equal to <see cref="Columns"/>.
         /// </summary>
         public int Length2
         {
@@ -54,8 +53,8 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        ///     Constructs a two-dimensional boundary of a fixed-size collection with specified
-        ///     quantity of rows and columns.
+        ///     Constructs a two-dimensional array boundary with specified quantity of rows and
+        ///     columns.
         ///     <para>
         ///         Exceptions:<br/>
         ///         <see cref="ArgumentOutOfRangeException"></see>: All the arguments must be
@@ -68,7 +67,7 @@ namespace Sztorm.Collections
         /// <param name="columns">
         ///     A number of columns in an array. Value must be greater or equal to zero.
         /// </param>
-        public FixedBounds2D(int rows, int columns)
+        public Array2DBounds(int rows, int columns)
         {
             if (rows < 0 || columns < 0)
             {
@@ -100,30 +99,30 @@ namespace Sztorm.Collections
 
         /// <summary>
         ///     Returns a value indicating whether this instance is equal to a specified
-        ///     <see cref="FixedBounds2D"></see> value.
+        ///     <see cref="Array2DBounds"></see> value.
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool Equals(FixedBounds2D other)
+        public bool Equals(Array2DBounds other)
         {
             return this == other;
         }
 
         /// <summary>
         ///     Returns a value indicating whether this instance is equal to a specified
-        ///     <see cref="FixedBounds2D"></see> value.
+        ///     <see cref="Array2DBounds"></see> value.
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override bool Equals(object other)
         {
-            if (!(other is FixedBounds2D))
+            if (!(other is Array2DBounds))
             {
                 return false;
             }
-            return this == (FixedBounds2D)other;    
+            return this == (Array2DBounds)other;    
         }
 
         /// <summary>
@@ -142,7 +141,7 @@ namespace Sztorm.Collections
         public (int Rows, int Columns) ToValueTuple() => new ValueTuple<int, int>(len1, len2);
 
         /// <summary>
-        ///     Returns an <see cref="FixedBounds2D"></see> instance made from specified value.
+        ///     Returns an <see cref="Array2DBounds"></see> instance made from specified value.
         ///     <para>
         ///         Exceptions:<br/>
         ///         <see cref="ArgumentOutOfRangeException"></see>: All the arguments must be
@@ -152,11 +151,11 @@ namespace Sztorm.Collections
         /// <param name="value"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static FixedBounds2D FromValueTuple(ValueTuple<int, int> value)
+        public static Array2DBounds FromValueTuple(ValueTuple<int, int> value)
         {
             try
             {
-               return new FixedBounds2D(value.Item1, value.Item2);
+               return new Array2DBounds(value.Item1, value.Item2);
             }
             catch(ArgumentOutOfRangeException)
             {
@@ -165,16 +164,16 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        ///     Constructs an <see cref="FixedBounds2D"/> instance without argument validation.
+        ///     Constructs an <see cref="Array2DBounds"/> instance without argument validation.
         ///     For internal purposes only.
         /// </summary>
         /// <param name="rows">Range: [0, <see cref="int.MaxValue"/>]</param>
         /// <param name="columns">Range: [0, <see cref="int.MaxValue"/>]</param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static FixedBounds2D NotCheckedConstructor(int rows, int columns)
+        internal static Array2DBounds NotCheckedConstructor(int rows, int columns)
         {
-            FixedBounds2D bounds;
+            Array2DBounds bounds;
             bounds.len1 = rows;
             bounds.len2 = columns;
 
@@ -182,11 +181,11 @@ namespace Sztorm.Collections
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator ==(FixedBounds2D left, FixedBounds2D right)
+        public static bool operator ==(Array2DBounds left, Array2DBounds right)
             => left.len1 == right.len1 && left.len2 == right.len2;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator !=(FixedBounds2D left, FixedBounds2D right)
+        public static bool operator !=(Array2DBounds left, Array2DBounds right)
             => left.len1 != right.len1 || left.len2 != right.len2;
     }
 }

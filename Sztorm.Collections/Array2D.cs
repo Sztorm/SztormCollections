@@ -14,7 +14,7 @@ namespace Sztorm.Collections
     public sealed partial class Array2D<T> : IEnumerable<T>, ICollection
     {
         private readonly T[] elements;
-        private readonly FixedBounds2D bounds;
+        private readonly Array2DBounds bounds;
 
         /// <summary>
         ///     Returns total amount of rows in this two-dimensional array instance. This
@@ -59,7 +59,7 @@ namespace Sztorm.Collections
         /// <summary>
         ///     Returns boundaries of current <see cref="Array2D{T}"/> instance.
         /// </summary>
-        public FixedBounds2D Boundaries
+        public Array2DBounds Boundaries
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get => bounds;
@@ -281,7 +281,7 @@ namespace Sztorm.Collections
         {
             try
             {
-                bounds = new FixedBounds2D(rows, columns);
+                bounds = new Array2DBounds(rows, columns);
             }
             catch(ArgumentOutOfRangeException)
             {
@@ -294,7 +294,7 @@ namespace Sztorm.Collections
         ///     Constructs a two-dimensional rectangular array with specified boundaries.
         /// </summary>
         /// <param name="boundaries"></param>
-        public Array2D(FixedBounds2D boundaries)
+        public Array2D(Array2DBounds boundaries)
         {
             bounds = boundaries;
             elements = new T[boundaries.Length1 * boundaries.Length2];
@@ -422,7 +422,7 @@ namespace Sztorm.Collections
         ///     zero-based.
         /// </param>
         public void CopyTo(
-            Index2D sourceIndex, T[,] destination, FixedBounds2D quantity, Index2D destIndex)
+            Index2D sourceIndex, T[,] destination, Array2DBounds quantity, Index2D destIndex)
         {
             if (destination == null)
             {
@@ -438,7 +438,7 @@ namespace Sztorm.Collections
             }
             int destRows = destination.GetLength(0);
             int destCols = destination.GetLength(1);
-            var destBounds = FixedBounds2D.NotCheckedConstructor(destRows, destCols);
+            var destBounds = Array2DBounds.NotCheckedConstructor(destRows, destCols);
 
             if (!destBounds.IsValidIndex(destIndex))
             {
@@ -488,7 +488,7 @@ namespace Sztorm.Collections
         ///     Index of destination array into which the elements begin to be copied. Indexing is
         ///     zero-based.
         /// </param>
-        public void CopyTo(T[,] destination, FixedBounds2D quantity, Index2D index)
+        public void CopyTo(T[,] destination, Array2DBounds quantity, Index2D index)
         {
             if (destination == null)
             {
@@ -497,7 +497,7 @@ namespace Sztorm.Collections
             }
             int destRows = destination.GetLength(0);
             int destCols = destination.GetLength(1);
-            var destBounds = FixedBounds2D.NotCheckedConstructor(destRows, destCols);
+            var destBounds = Array2DBounds.NotCheckedConstructor(destRows, destCols);
 
             if (!destBounds.IsValidIndex(index))
             {
@@ -541,7 +541,7 @@ namespace Sztorm.Collections
         /// </summary>
         /// <param name="destination">The array to which elements are copied.</param>
         /// <param name="quantity">Total amount of elements copied.</param>
-        public void CopyTo(T[,] destination, FixedBounds2D quantity)
+        public void CopyTo(T[,] destination, Array2DBounds quantity)
         {
             if (destination == null)
             {
@@ -599,7 +599,7 @@ namespace Sztorm.Collections
             }
             int destRows = destination.GetLength(0);
             int destCols = destination.GetLength(1);
-            var destBounds = FixedBounds2D.NotCheckedConstructor(destRows, destCols);
+            var destBounds = Array2DBounds.NotCheckedConstructor(destRows, destCols);
 
             if (!destBounds.IsValidIndex(index))
             {
@@ -667,7 +667,7 @@ namespace Sztorm.Collections
         }
 
         internal void CopyToInternal(
-            Index2D sourceIndex, T[,] destination, FixedBounds2D quantity, Index2D destIndex)
+            Index2D sourceIndex, T[,] destination, Array2DBounds quantity, Index2D destIndex)
         {
             int dr = destIndex.Row;
             int sr = sourceIndex.Row;
@@ -779,8 +779,8 @@ namespace Sztorm.Collections
             {
                 throw new ArgumentNullException(nameof(array), "Array argument cannot be null.");
             }
-            FixedBounds2D bounds = 
-                FixedBounds2D.NotCheckedConstructor(array.GetLength(0), array.GetLength(1));
+            Array2DBounds bounds = 
+                Array2DBounds.NotCheckedConstructor(array.GetLength(0), array.GetLength(1));
             var result = new Array2D<T>(bounds);
 
             for (int i = 0; i < bounds.Rows; i++)
