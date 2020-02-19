@@ -8,15 +8,15 @@ namespace Sztorm.Collections
     ///     Represents index of a two-dimensional collection.
     /// </summary>
     [Serializable]
-    public readonly struct Index2D
+    public readonly struct Index2D : IEquatable<Index2D>
     {
         /// <summary>
-        ///     Returns first index of an item. This property is equal to <see cref="Row"/>.
+        ///     Returns first index of an item. This field is equal to <see cref="Row"/>.
         /// </summary>
         public readonly int Dimension1Index;
 
         /// <summary>
-        ///     Returns second index of an item. This property is equal to <see cref="Column"/>.
+        ///     Returns second index of an item. This field is equal to <see cref="Column"/>.
         /// </summary>
         public readonly int Dimension2Index;
 
@@ -52,7 +52,7 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        ///     Gets value from an array. 
+        ///     Gets item stored at this instance index from an array. 
         ///     <para>
         ///         Exceptions:<br/>
         ///         <see cref="IndexOutOfRangeException"/>: Specified index does not exist in
@@ -62,7 +62,7 @@ namespace Sztorm.Collections
         /// <typeparam name="T"></typeparam>
         /// <param name="array"></param>
         /// <returns></returns>
-        public T GetValueFrom<T>(Array2D<T> array)
+        public T GetItemFrom<T>(Array2D<T> array)
         {
             try
             {
@@ -75,11 +75,11 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        ///     Tries to get value from an array.
+        ///     Tries to get value stored at this instance index from an array.
         ///     If operation fails, this returns null (<typeparamref name="T"/>?
         ///     with HasValue property set to false).
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T"><typeparamref name="T"/> is struct.</typeparam>
         /// <param name="array"></param>
         /// <returns></returns>
         public T? TryGetValueFrom<T>(Array2D<T> array) where T : struct
@@ -92,10 +92,10 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        ///     Tries to get reference from an array.
+        ///     Tries to get reference stored at this instance index from an array.
         ///     If operation fails, this function returns null.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T"><typeparamref name="T"/> is class.</typeparam>
         /// <param name="array"></param>
         /// <returns></returns>
         public T TryGetRefFrom<T>(Array2D<T> array) where T : class
