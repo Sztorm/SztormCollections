@@ -89,10 +89,16 @@ namespace Sztorm.Collections.Tests
             Assert.Throws<ArgumentOutOfRangeException>(testMethod);
         }
 
-        [TestCaseSource(nameof(IndicesOfTestCases))]
-        public static void IndicesOfTest(Array2D<int> array, int valueToFind, Index2D? expected)
+        [TestCaseSource(nameof(Index2DOfTestCases))]
+        public static void TestIndex2DOf(Array2D<int> array, int valueToFind, Index2D? expected)
         {
-            Assert.AreEqual(expected, array.IndicesOf(valueToFind));
+            Assert.AreEqual(expected, array.Index2DOf(valueToFind));
+        }
+
+        [TestCaseSource(nameof(ContainsTestCases))]
+        public static void TestContains(Array2D<int> array, int value, bool expected)
+        {
+            Assert.AreEqual(expected, array.Contains(value));
         }
 
         private static IEnumerable<TestCaseData> IndexerTestCases()
@@ -178,7 +184,7 @@ namespace Sztorm.Collections.Tests
                 0);
         }
 
-        private static IEnumerable<TestCaseData> IndicesOfTestCases()
+        private static IEnumerable<TestCaseData> Index2DOfTestCases()
         {
             yield return new TestCaseData(
                 Array2D<int>.FromSystem2DArray(new int[,] { { 2, 3, 5 },
@@ -203,6 +209,33 @@ namespace Sztorm.Collections.Tests
                                                             { 3, 6 } }),
                                                7,
                                                new Index2D?());
+        }
+
+        private static IEnumerable<TestCaseData> ContainsTestCases()
+        {
+            yield return new TestCaseData(
+                Array2D<int>.FromSystem2DArray(new int[,] { { 2, 3, 5 },
+                                                            { 4, 9, 1 } }),
+                                               9,
+                                               true);
+            yield return new TestCaseData(
+                Array2D<int>.FromSystem2DArray(new int[,] { { 2, 3 },
+                                                            { 4, 9 },
+                                                            { 3, 6 } }),
+                                               3,
+                                               true);
+            yield return new TestCaseData(
+                Array2D<int>.FromSystem2DArray(new int[,] { { 2, 3 },
+                                                            { 4, 9 },
+                                                            { 3, 6 } }),
+                                               8,
+                                               false);
+            yield return new TestCaseData(
+                Array2D<int>.FromSystem2DArray(new int[,] { { 2, 3 },
+                                                            { 4, 9 },
+                                                            { 3, 6 } }),
+                                               7,
+                                               false);
         }
     }
 }

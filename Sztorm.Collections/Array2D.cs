@@ -6,8 +6,8 @@ using System.Runtime.CompilerServices;
 namespace Sztorm.Collections
 {
     /// <summary>
-    /// Represents two-dimensional rectangular array of single type allocated within single
-    /// contiguous block of memory.
+    ///     Represents two-dimensional rectangular array of single type allocated within single
+    ///     contiguous block of memory.
     /// </summary>
     /// <typeparam name="T"></typeparam>
     [Serializable]
@@ -705,12 +705,30 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
+        /// Determines whether and elements is in the <see cref="Array2D{U}"/>.
+        /// </summary>
+        /// <typeparam name="U">is <see cref="IEquatable{T}"/></typeparam>
+        /// <param name="element"></param>
+        /// <returns></returns>
+        public bool Contains<U>(U element) where U : IEquatable<T>
+        {
+            for (int i = 0, length = Count; i < length; i++)
+            {
+                if (element.Equals(this.elements[i]))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        /// <summary>
         ///     Searches for the specified object and returns the index of its first occurrence
-        ///     in a one-dimensional array if found; otherwise returns null (<see cref="int"/>?
+        ///     in a one-dimensional array if found; returns null otherwise (<see cref="int"/>?
         ///     with HasValue property set to false).
         /// </summary>
         /// <typeparam name="U">
-        ///     <typeparamref name = "U"/> is <see cref="IEquatable{T}"/>
+        ///     <typeparamref name = "U"/>is <see cref="IEquatable{T}"/>
         /// </typeparam>
         /// <param name="element">An element value to search.</param>
         /// <returns></returns>
@@ -728,15 +746,15 @@ namespace Sztorm.Collections
 
         /// <summary>
         ///     Searches for the specified object and returns the 2D index of its first occurrence
-        ///     in a two-dimensional array if found; otherwise returns null
+        ///     in a two-dimensional array if found; returns null otherwise
         ///     (<see cref="Index2D"/>? with HasValue property set to false).
         /// </summary>
         /// <typeparam name="U">
-        ///     <typeparamref name = "U"/> is <see cref="IEquatable{T}"/>
+        ///     <typeparamref name = "U"/>is <see cref="IEquatable{T}"/>
         /// </typeparam>
         /// <param name="element">An element value to search.</param>
         /// <returns></returns>
-        public Index2D? IndicesOf<U>(U element) where U : IEquatable<T>
+        public Index2D? Index2DOf<U>(U element) where U : IEquatable<T>
         {
             int? possibleIndex = IndexOf(element);
 
