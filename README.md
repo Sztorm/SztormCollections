@@ -1,12 +1,19 @@
 # SztormCollections
 Set of collections that .Net Framework lacks of or are more specialized than .Net ones.
 ### Currently this repository contains:
-**Array2D&lt;T&gt;**: A two-dimensional rectangular array that is allocated within single contiguous block of memory.
+**Array2D&lt;T&gt;**: A two-dimensional rectangular array that is allocated within single contiguous block of memory.<br/>
+**List2D&lt;T&gt;**: A two-dimensional rectangular list of specific type allocated within single contiguous block of memory. (currently has only few basic features).<br/>
+
+### Planned classes:
+**ChunkedList2D&lt;T&gt;**:A two-dimensional rectangular list of specific type allocated in chunks of memory.<br/>
+**Array3D&lt;T&gt;**: A three-dimensional rectangular array that is allocated within single contiguous block of memory.<br/>
+**List3D&lt;T&gt;**: A three-dimensional rectangular array that is allocated within single contiguous block of memory.<br/>
+
 ### Examples:
 <details>
 <summary>Array2D&lt;T&gt;</summary>
     
-<br>
+<br/>
 
 **Set every item in the array by for loops and write it to console.**<br>
 
@@ -59,11 +66,11 @@ foreach (int element in exampleArray.GetRow(4))
 *Code:*
 ```csharp
 int valueToSearch = 42;
-Index2D? indicesFound = exampleArray.IndicesOf(valueToSearch);
+Index2D? indicesFound = exampleArray.Index2DOF(valueToSearch);
 
 if(indicesFound.HasValue)
 {
-    Console.WriteLine($"Indices of value {valueToSearch} are {indicesFound.Value}.");
+    Console.WriteLine($"Index of value {valueToSearch} is {indicesFound.Value}.");
 }
 ```
 *Output:*
@@ -71,4 +78,25 @@ if(indicesFound.HasValue)
 Indices of value 42 are (4, 6).
 ```
 
+</details>
+<details>
+<summary>List2D&lt;T&gt;</summary>
+    
+<br/>
+
+**Create List2D and extend its boundaries.**<br>
+
+*Code:*
+```csharp
+var list = new List2D<int> ();
+list.AddRows(4);
+list.AddColumns(2);
+
+Console.WriteLine($"Current list boundaries are {list.Boundaries.ToValuetuple()}.");
+
+```
+*Output:*
+```
+Current list boundaries are (4, 2).
+```
 </details>
