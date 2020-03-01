@@ -78,7 +78,7 @@ namespace Sztorm.Collections.Tests
         [TestCaseSource(nameof(IndexerTestCases))]
         public static void TestIndexer(List2D<int> list, Index2D index, int expected)
         {
-            Assert.AreEqual(list[index], expected);
+            Assert.AreEqual(expected, list[index]);
         }
 
         [TestCaseSource(nameof(IndexerInvalidTestCases))]
@@ -98,7 +98,7 @@ namespace Sztorm.Collections.Tests
             Assert.AreEqual(list.Boundaries, expected.Boundaries);
             Assert.That(list.Capacity.Rows, Is.GreaterThanOrEqualTo(list.Rows));
             Assert.That(list.Capacity.Columns, Is.GreaterThanOrEqualTo(list.Columns));
-            CollectionAssert.AreEqual(list, expected);
+            CollectionAssert.AreEqual(expected, list);
         }
 
         [TestCaseSource(nameof(AddColumnsTestCases))]
@@ -109,7 +109,7 @@ namespace Sztorm.Collections.Tests
             Assert.AreEqual(list.Boundaries, expected.Boundaries);
             Assert.That(list.Capacity.Rows, Is.GreaterThanOrEqualTo(list.Rows));
             Assert.That(list.Capacity.Columns, Is.GreaterThanOrEqualTo(list.Columns));
-            CollectionAssert.AreEqual(list, expected);
+            CollectionAssert.AreEqual(expected, list);
         }
 
         [TestCaseSource(nameof(ClearTestCases))]
