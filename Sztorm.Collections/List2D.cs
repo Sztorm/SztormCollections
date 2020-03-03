@@ -121,6 +121,14 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
+        ///     Determines whether current <see cref="List2D{T}"/> instance has any items in it.
+        /// </summary>
+        public bool IsEmpty
+        {
+            get => bounds.Rows == 0 || bounds.Columns == 0;
+        }
+
+        /// <summary>
         ///     Gets an object that can be used to synchronize access to the
         ///     <see cref="List2D{T}"/>.
         /// </summary>
@@ -369,18 +377,16 @@ namespace Sztorm.Collections
         /// <summary>
         ///     Reallocates internal buffer for items.
         /// </summary>
-        /// <param name="newRows"></param>
-        /// <param name="newCols"></param>
-        private void Reallocate(int newRows, int newCols)
+        /// <param name="newCapacity"></param>
+        private void Reallocate(Bounds2D newCapacity)
         {
             int oldRows = Rows;
             int oldCols = Columns;
-            Bounds2D newCap = EnsuredCapacity(newRows, newCols);
             T[] newItems;
 
             try
             {
-                newItems = new T[Math.BigMul(newCap.Rows, newCap.Columns)];
+                newItems = new T[Math.BigMul(newCapacity.Rows, newCapacity.Columns)];
             }
             catch(OutOfMemoryException)
             {
@@ -390,10 +396,10 @@ namespace Sztorm.Collections
             {
                 for (int j = 0; j < oldCols; j++)
                 {
-                    newItems[i * newCap.Columns + j] = GetItemInternal(i, j);
+                    newItems[i * newCapacity.Columns + j] = GetItemInternal(i, j);
                 }
             }
-            capacity = newCap;
+            capacity = newCapacity;
             items = newItems;
         }
 
@@ -440,7 +446,7 @@ namespace Sztorm.Collections
             {
                 try
                 {
-                    Reallocate(newRows, newCols);
+                    Reallocate(newCapacity: EnsuredCapacity(newRows, newCols));
                 }
                 catch(OutOfMemoryException)
                 {
@@ -488,7 +494,7 @@ namespace Sztorm.Collections
             {
                 try
                 {
-                    Reallocate(newRows, newCols);
+                    Reallocate(newCapacity: EnsuredCapacity(newRows, newCols));
                 }
                 catch (OutOfMemoryException)
                 {
