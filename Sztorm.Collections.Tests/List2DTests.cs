@@ -75,6 +75,35 @@ namespace Sztorm.Collections.Tests
             Assert.AreEqual(list.Boundaries, new Bounds2D(rows, columns));
         }
 
+        [TestCase(0, 0)]
+        [TestCase(0, 1)]
+        [TestCase(1, 0)]
+        [TestCase(4, 2)]
+        [TestCase(1, 6)]
+        public static void IsEmptyReturnsTrueWhenInitialCapacityIsPassedIn(
+            int rowsCap, int colsCap)
+        {
+            var list = new List2D<int>(rowsCap, colsCap);
+
+            Assert.True(list.IsEmpty);
+        }
+
+        [Test]
+        public static void IsEmptyReturnsTrueWhenListIsInitializedWithParameterlessConstructor()
+        {
+            var list = new List2D<int>();
+
+            Assert.True(list.IsEmpty);
+        }
+
+        [TestCaseSource(nameof(NonEmptyLists))]
+        public static void IsEmptyReturnsTrueWhenListIsCleared<T>(List2D<T> nonEmptyList)
+        {
+            nonEmptyList.Clear();
+
+            Assert.True(nonEmptyList.IsEmpty);
+        }
+
         [TestCaseSource(nameof(IndexerTestCases))]
         public static void TestIndexer(List2D<int> list, Index2D index, int expected)
         {
@@ -112,7 +141,7 @@ namespace Sztorm.Collections.Tests
             CollectionAssert.AreEqual(expected, list);
         }
 
-        [TestCaseSource(nameof(ClearTestCases))]
+        [TestCaseSource(nameof(NonEmptyLists))]
         public static void TestClear(List2D<int> list)
         {
             list.Clear();
@@ -201,12 +230,13 @@ namespace Sztorm.Collections.Tests
                                                                             { 8 } })));
         }
 
-        private static IEnumerable<TestCaseData> ClearTestCases()
+        private static IEnumerable<TestCaseData> NonEmptyLists()
         {
             yield return new TestCaseData(
-                new List2D<int>(Array2D<int>.FromSystem2DArray(new int[,] { { 2, 3, 5 },
-                                                                            { 4, 9, 1 },
-                                                                            { 8, 2, 3 } })));
+                new List2D<int>(
+                    Array2D<int>.FromSystem2DArray(new int[,] { { 2, 3, 5 },
+                                                                { 4, 9, 1 },
+                                                                { 8, 2, 3 } })));
             yield return new TestCaseData(
                 new List2D<int>(TestsUtils.IncrementedIntArray2D(2, 5)));
         }
