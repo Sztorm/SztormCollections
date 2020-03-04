@@ -34,7 +34,7 @@ namespace Sztorm.Collections
     /// contiguous block of memory.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public sealed class List2D<T> : IEnumerable<T>, ICollection
+    public sealed partial class List2D<T> : IEnumerable<T>, ICollection
     {
         private static readonly Bounds2D DefaultInitialCapacity = new Bounds2D(16, 16);
 
@@ -118,6 +118,15 @@ namespace Sztorm.Collections
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get => false;
+        }
+
+        /// <summary>
+        ///     Determines whether current <see cref="List2D{T}"/> instance has any items in it.
+        /// </summary>
+        public bool IsEmpty
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => bounds.Rows == 0 || bounds.Columns == 0;
         }
 
         /// <summary>
@@ -232,6 +241,52 @@ namespace Sztorm.Collections
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal ref T GetItemInternal(Index2D index)
             => ref items[index.Dimension1Index * capacity.Columns + index.Dimension2Index];
+
+        /// <summary>
+        ///     Returns a row at specified index. Indexing start at zero.
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentOutOfRangeException"/>: Index is out of boundaries of the row
+        ///         count.
+        ///     </para>
+        /// </summary>
+        /// <param name="index">A zero-based index that determines which row is to take.</param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public Row GetRow(int index)
+        {
+            try
+            {
+                return new Row(this, index);
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        ///     Returns a column at specified index. Indexing start at zero.
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentOutOfRangeException"/>: Index is out of boundaries of the
+        ///         column count.
+        ///     </para>
+        /// </summary>
+        /// <param name="index">A zero-based index that determines which column is to take.</param> 
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public Column GetColumn(int index)
+        {
+            try
+            {
+                return new Column(this, index);
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                throw;
+            }
+        }
 
         /// <summary>
         ///     Returns true if specified index exists in this <see cref="List2D{T}"/> instance,
@@ -369,18 +424,16 @@ namespace Sztorm.Collections
         /// <summary>
         ///     Reallocates internal buffer for items.
         /// </summary>
-        /// <param name="newRows"></param>
-        /// <param name="newCols"></param>
-        private void Reallocate(int newRows, int newCols)
+        /// <param name="newCapacity"></param>
+        private void Reallocate(Bounds2D newCapacity)
         {
             int oldRows = Rows;
             int oldCols = Columns;
-            Bounds2D newCap = EnsuredCapacity(newRows, newCols);
             T[] newItems;
 
             try
             {
-                newItems = new T[Math.BigMul(newCap.Rows, newCap.Columns)];
+                newItems = new T[Math.BigMul(newCapacity.Rows, newCapacity.Columns)];
             }
             catch(OutOfMemoryException)
             {
@@ -390,10 +443,10 @@ namespace Sztorm.Collections
             {
                 for (int j = 0; j < oldCols; j++)
                 {
-                    newItems[i * newCap.Columns + j] = GetItemInternal(i, j);
+                    newItems[i * newCapacity.Columns + j] = GetItemInternal(i, j);
                 }
             }
-            capacity = newCap;
+            capacity = newCapacity;
             items = newItems;
         }
 
@@ -402,20 +455,14 @@ namespace Sztorm.Collections
         ///     as <see cref="AddLength1(int)"/> with argument of 1.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void AddRow()
-        {
-            AddRows(1);
-        }
+        public void AddRow() => AddRows(1);
 
         /// <summary>
         ///     Adds one column to the end of the <see cref="List2D{T}"/>. This method does the
         ///     same as <see cref="AddLength2(int)"/> with argument of 1.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void AddColumn()
-        {
-            AddColumns(1);
-        }
+        public void AddColumn() => AddColumns(1);
 
         /// <summary>
         ///     Adds specified amount of rows to the end of the <see cref="List2D{T}"/>. This
@@ -440,7 +487,7 @@ namespace Sztorm.Collections
             {
                 try
                 {
-                    Reallocate(newRows, newCols);
+                    Reallocate(newCapacity: EnsuredCapacity(newRows, newCols));
                 }
                 catch(OutOfMemoryException)
                 {
@@ -460,10 +507,7 @@ namespace Sztorm.Collections
         ///     </para>
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void AddLength1(int value)
-        {
-            AddRows(value);
-        }
+        public void AddLength1(int value) => AddRows(value);
 
         /// <summary>
         ///     Adds specified amount of columns to the end of the <see cref="List2D{T}"/>. This
@@ -488,7 +532,7 @@ namespace Sztorm.Collections
             {
                 try
                 {
-                    Reallocate(newRows, newCols);
+                    Reallocate(newCapacity: EnsuredCapacity(newRows, newCols));
                 }
                 catch (OutOfMemoryException)
                 {
@@ -508,10 +552,7 @@ namespace Sztorm.Collections
         ///     </para>
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void AddLength2(int value)
-        {
-            AddColumns(value);
-        }
+        public void AddLength2(int value) => AddColumns(value);
 
         /// <summary>
         ///     Removes all elements from the <see cref="List2D{T}"/>.
@@ -565,10 +606,7 @@ namespace Sztorm.Collections
             }
         }
 
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
         /// <summary>
         ///     Creates an <see cref="Array2D{T}"/> from this <see cref="List2D{T}"/> intance.
