@@ -85,10 +85,7 @@ namespace Sztorm.Collections
             /// <param name="index">Range: ([0, <see cref="Count"/>).</param>
             /// <returns></returns>
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            internal ref T NotCheckedGetItem(int index)
-            {
-                return ref array.NotCheckedGetItem(index, Index);
-            }
+            internal ref T GetItemInternal(int index) => ref array.GetItemInternal(index, Index);
 
             /// <summary>
             ///     Constructs a reference to index-specified column of two-dimensional array.<br/>
@@ -124,7 +121,7 @@ namespace Sztorm.Collections
             {
                 for (int i = 0, length = Count; i < length; i++)
                 {
-                    NotCheckedGetItem(i) = value;
+                    GetItemInternal(i) = value;
                 }
             }
 
@@ -139,9 +136,9 @@ namespace Sztorm.Collections
 
                 for (int i = 0; i < halfLength; i++)
                 {
-                    T item = NotCheckedGetItem(i);
-                    NotCheckedGetItem(i) = NotCheckedGetItem(lastIndex - i);
-                    NotCheckedGetItem(lastIndex - i) = item;
+                    T item = GetItemInternal(i);
+                    GetItemInternal(i) = GetItemInternal(lastIndex - i);
+                    GetItemInternal(lastIndex - i) = item;
                 }
             }
 
@@ -158,13 +155,10 @@ namespace Sztorm.Collections
             }
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            IEnumerator IEnumerable.GetEnumerator()
-            {
-                return GetEnumerator();
-            }
+            IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
             /// <summary>
-            ///     Creates a <typeparamref name = "T"/>[] from this <see cref="Column"/> intance.
+            ///     Creates a <typeparamref name = "T"/>[] from this <see cref="Column"/> instance.
             /// </summary>
             /// <returns></returns>
             public T[] ToArray()
@@ -174,7 +168,7 @@ namespace Sztorm.Collections
 
                 for (int i = 0; i < length; i++)
                 {
-                    result[i] = NotCheckedGetItem(i);
+                    result[i] = GetItemInternal(i);
                 }
                 return result;
             }

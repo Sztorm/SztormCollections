@@ -42,7 +42,7 @@ namespace Sztorm.Collections
 
         /// <summary>
         ///     Returns total amount of rows in this two-dimensional array instance. This
-        ///     property is equal to <see cref="Length1"/>
+        ///     property is equal to <see cref="Length1"/>.
         /// </summary>
         public int Rows
         {
@@ -52,7 +52,7 @@ namespace Sztorm.Collections
 
         /// <summary>
         ///     Returns total amount of columns in this two-dimensional array instance. This
-        ///     property is equal to <see cref="Length2"/>
+        ///     property is equal to <see cref="Length2"/>.
         /// </summary>
         public int Columns
         {
@@ -72,7 +72,7 @@ namespace Sztorm.Collections
 
         /// <summary>
         ///     Returns length of the second dimension in this two-dimensional array instance. This
-        ///     property is equal to <see cref="Columns"/>
+        ///     property is equal to <see cref="Columns"/>.
         /// </summary>
         public int Length2
         {
@@ -110,7 +110,7 @@ namespace Sztorm.Collections
 
         /// <summary>
         ///     Gets an object that can be used to synchronize access to the
-        ///     <see cref="Array2D{T}"/>
+        ///     <see cref="Array2D{T}"/>.
         /// </summary>
         public object SyncRoot
         {
@@ -250,10 +250,8 @@ namespace Sztorm.Collections
         /// </param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal ref T NotCheckedGetItem(int row, int column)
-        {
-            return ref elements[row * Columns + column];
-        }
+        internal ref T GetItemInternal(int row, int column)
+            => ref elements[row * Columns + column];
 
         /// <summary>
         ///     Returns an element stored at specified index.<br/>
@@ -264,10 +262,8 @@ namespace Sztorm.Collections
         /// </param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal ref T NotCheckedGetItem(Index2D index)
-        {
-            return ref elements[index.Dimension1Index * Columns + index.Dimension2Index];
-        }
+        internal ref T GetItemInternal(Index2D index) 
+            => ref elements[index.Dimension1Index * Columns + index.Dimension2Index];
 
         /// <summary>
         ///     Returns true if specified index exists in this <see cref="Array2D{T}"/> instance,
@@ -723,15 +719,14 @@ namespace Sztorm.Collections
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return this.GetEnumerator();
-        }
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
         /// <summary>
         /// Determines whether and elements is in the <see cref="Array2D{U}"/>.
         /// </summary>
-        /// <typeparam name="U">is <see cref="IEquatable{T}"/></typeparam>
+        /// <typeparam name="U">
+        ///     <typeparamref name = "U"/> is <see cref="IEquatable{T}"/>
+        /// </typeparam>
         /// <param name="element"></param>
         /// <returns></returns>
         public bool Contains<U>(U element) where U : IEquatable<T>
@@ -752,7 +747,7 @@ namespace Sztorm.Collections
         ///     with HasValue property set to false).
         /// </summary>
         /// <typeparam name="U">
-        ///     <typeparamref name = "U"/>is <see cref="IEquatable{T}"/>
+        ///     <typeparamref name = "U"/> is <see cref="IEquatable{T}"/>
         /// </typeparam>
         /// <param name="element">An element value to search.</param>
         /// <returns></returns>
@@ -774,7 +769,7 @@ namespace Sztorm.Collections
         ///     (<see cref="Index2D"/>? with HasValue property set to false).
         /// </summary>
         /// <typeparam name="U">
-        ///     <typeparamref name = "U"/>is <see cref="IEquatable{T}"/>
+        ///     <typeparamref name = "U"/> is <see cref="IEquatable{T}"/>
         /// </typeparam>
         /// <param name="element">An element value to search.</param>
         /// <returns></returns>
@@ -794,7 +789,8 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        ///     Creates a <typeparamref name = "T"/>[,] from this <see cref="Array2D{T}"/> intance.
+        ///     Creates a <typeparamref name = "T"/>[,] from this <see cref="Array2D{T}"/>
+        ///     instance.
         /// </summary>
         /// <returns></returns>
         public T[,] ToSystem2DArray()
