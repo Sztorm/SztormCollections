@@ -27,8 +27,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
-[assembly: InternalsVisibleTo("Sztorm.Collections.Tests")]
-
 namespace Sztorm.Collections
 {
     /// <summary>
