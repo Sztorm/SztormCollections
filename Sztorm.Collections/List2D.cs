@@ -27,6 +27,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
+[assembly: InternalsVisibleTo("Sztorm.Collections.Tests")]
+
 namespace Sztorm.Collections
 {
     /// <summary>
@@ -34,7 +36,7 @@ namespace Sztorm.Collections
     /// contiguous block of memory.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public sealed partial class List2D<T> : IEnumerable<T>, ICollection
+    public sealed partial class List2D<T>: IEnumerable<T>, ICollection
     {
         private static readonly Bounds2D DefaultInitialCapacity = new Bounds2D(16, 16);
 
@@ -137,33 +139,6 @@ namespace Sztorm.Collections
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get => items.SyncRoot;
-        }
-
-        /// <summary>
-        ///     An one dimensional indexer that can be used to iterate through all the stored
-        ///     elements. Indexing start at zero.
-        ///     <para>
-        ///         Exceptions:<br/>
-        ///         <see cref="IndexOutOfRangeException"/>: Index cannot exceed <see cref="Count"/>
-        ///         property.
-        ///     </para>
-        /// </summary>
-        /// <param name="index"></param>
-        /// <returns></returns>
-        public ref T this[int index]
-        {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get
-            {
-                try
-                {
-                    return ref items[index];
-                }
-                catch (IndexOutOfRangeException)
-                {
-                    throw new IndexOutOfRangeException("Index cannot exceed Count property.");
-                }
-            }
         }
 
         /// <summary>
@@ -398,10 +373,8 @@ namespace Sztorm.Collections
 
             if (newRows > oldRows)
             {
-                unchecked
-                {
-                    newCapRows = newRows * 2;
-                }
+                newCapRows = unchecked (newRows * 2);
+
                 if (newCapRows < newRows)
                 {
                     newCapRows = int.MaxValue;
@@ -409,10 +382,8 @@ namespace Sztorm.Collections
             }
             if (newCols > oldCols)
             {
-                unchecked
-                {
-                    newCapCols = newCols * 2;
-                }
+                newCapCols = unchecked (newCols * 2);
+
                 if (newCapCols < newCols)
                 {
                     newCapCols = int.MaxValue;
@@ -422,13 +393,23 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        ///     Reallocates internal buffer for items.
+        /// Maps two-dimensional index into one-dimensional with row-major order.
+        /// </summary>
+        /// <param name="row"></param>
+        /// <param name="column"></param>
+        /// <param name="columns"></param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal static int Index1DMappedToIndex2D(int row, int column, int columns)
+            => row * columns + column;
+
+        /// <summary>
+        ///     Reallocates internal buffer for items. Contents of newCapacity must be greater or 
+        ///     equal to current bounds as all current items are copied to a new array.
         /// </summary>
         /// <param name="newCapacity"></param>
         private void Reallocate(Bounds2D newCapacity)
         {
-            int oldRows = Rows;
-            int oldCols = Columns;
             T[] newItems;
 
             try
@@ -439,11 +420,15 @@ namespace Sztorm.Collections
             {
                 throw;
             }
-            for (int i = 0; i < oldRows; i++)
+            int rows = Rows;
+            int cols = Columns;
+
+            for (int i = 0; i < rows; i++)
             {
-                for (int j = 0; j < oldCols; j++)
+                for (int j = 0; j < cols; j++)
                 {
-                    newItems[i * newCapacity.Columns + j] = GetItemInternal(i, j);
+                    newItems[Index1DMappedToIndex2D(i, j, newCapacity.Columns)] =
+                        GetItemInternal(i, j);
                 }
             }
             capacity = newCapacity;
@@ -555,12 +540,188 @@ namespace Sztorm.Collections
         public void AddLength2(int value) => AddColumns(value);
 
         /// <summary>
-        ///     Removes all elements from the <see cref="List2D{T}"/>.
+        /// Sets items of specified amount of rows at given starting index to default values.
+        /// Arguments are not checked. For internal purposes only.
+        /// </summary>
+        /// <param name="startIndex">Range: [0, <see cref="Rows"/>).</param>
+        /// <param name="count">Range: [0, <see cref="Rows"/> - startIndex).</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal void ClearRows(int startIndex, int count)
+        {
+            int cols = bounds.Columns;
+
+            Array.Clear(items, startIndex * cols, count * cols);
+        }
+
+        /// <summary>
+        /// Sets items of specified amount of columns at given starting index to default values.
+        /// Arguments are not checked. For internal purposes only.
+        /// </summary>
+        /// <param name="startIndex">Range: [0, <see cref="Rows"/>).</param>
+        /// <param name="count">Range: [0, <see cref="Rows"/> - startIndex).</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal void ClearColumns(int startIndex, int count)
+        {
+            int rows = bounds.Rows;
+            int cols = bounds.Columns;
+
+            for (int i = 0; i < rows; i++)
+            {
+                Array.Clear(items, Index1DMappedToIndex2D(i, startIndex, cols), count); 
+            }
+        }
+
+        /// <summary>
+        ///     Removes specified amount of rows from this instance starting at the given index.
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentOutOfRangeException"/>: 
+        ///             StartIndex must be a number in the range of (<see cref="Rows"/> - 1);<br/>
+        ///             Count must be a number in the range of (<see cref="Rows"/> - startIndex).
+        ///     </para>
+        /// </summary>
+        /// <param name="startIndex">
+        ///     Index from which removing starts. Indexing is zero-based.
+        /// </param>
+        /// <param name="count">Number of rows to remove.</param>
+        public void RemoveRows(int startIndex, int count)
+        {
+            bool isInvalidRowIndex = unchecked ((uint)startIndex >= (uint)Rows);
+            bool isInvalidCount = unchecked ((uint)count > (uint)(Rows - startIndex));
+
+            if (isInvalidRowIndex)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(startIndex), "StartIndex must be a number in the range of (Rows - 1).");
+            }
+            if (isInvalidCount)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(count), "Count must be a number in the range of (Rows - startIndex).");
+            }
+            int rows = bounds.Rows;
+            int cols = bounds.Columns;
+            int newRows = rows - count;
+
+            for (int i0 = startIndex, i1 = startIndex + count; i0 < newRows; i0++, i1++)
+            {
+                for (int j = 0; j < cols; j++)
+                {
+                    GetItemInternal(i0, j) = GetItemInternal(i1, j);
+                }
+            }
+            ClearRows(newRows, count);
+
+            bounds = Bounds2D.NotCheckedConstructor(newRows, cols);
+        }
+
+        /// <summary>
+        ///     Removes specified row from this instance.
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentOutOfRangeException"/>:
+        ///         Index must be a number in the range of (<see cref="Rows"/> - 1).
+        ///     </para>
+        /// </summary>
+        /// <param name="index">
+        ///     Index indicating which row to remove. Indexing is zero-based.
+        /// </param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void RemoveRow(int index)
+        {
+            try
+            {
+                RemoveRows(index, 1);
+            }
+            catch(ArgumentOutOfRangeException)
+            {
+                throw new ArgumentOutOfRangeException(
+                    "Index must be a number in the range of (Rows - 1)");
+            }
+        }
+
+        /// <summary>
+        ///     Removes specified amount of columns from this instance starting at the given index.
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentOutOfRangeException"/>: 
+        ///             StartIndex must be a number in the range of (<see cref="Columns"/> - 1);<br/>
+        ///             Count must be a number in the range of (<see cref="Columns"/> - startIndex).
+        ///     </para>
+        /// </summary>
+        /// <param name="startIndex">
+        ///     Index from which removing starts. Indexing is zero-based.
+        /// </param>
+        /// <param name="count">Number of columns to remove.</param>
+        public void RemoveColumns(int startIndex, int count)
+        {
+            bool isInvalidColumnIndex = unchecked((uint)startIndex >= (uint)Columns);
+            bool isInvalidCount = unchecked((uint)count > (uint)(Columns - startIndex));
+
+            if (isInvalidColumnIndex)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(startIndex),
+                    "StartIndex must be a number in the range of (Columns - 1).");
+            }
+            if (isInvalidCount)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(count),
+                    "Count must be a number in the range of (Columns - startIndex).");
+            }
+            int rows = bounds.Rows;
+            int cols = bounds.Columns;
+            int newCols = cols - count;
+
+            for (int i = 0; i < rows; i++)
+            {
+                for (int j0 = startIndex, j1 = startIndex + count; j0 < newCols; j0++, j1++)
+                {
+                    GetItemInternal(i, j0) = GetItemInternal(i, j1);
+                }
+            }
+            ClearColumns(newCols, count);
+
+            bounds = Bounds2D.NotCheckedConstructor(rows, newCols);
+        }
+
+        /// <summary>
+        ///     Removes specified column from this instance.
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentOutOfRangeException"/>:
+        ///         Index must be a number in the range of (<see cref="Columns"/> - 1).
+        ///     </para>
+        /// </summary>
+        /// <param name="index">
+        ///     Index indicating which column to remove. Indexing is zero-based.
+        /// </param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void RemoveColumn(int index)
+        {
+            try
+            {
+                RemoveColumns(index, 1);
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                throw new ArgumentOutOfRangeException(
+                   "Index must be a number in the range of (Columns - 1)");
+            }
+        }
+
+        /// <summary>
+        ///     Removes all elements from the <see cref="List2D{T}"/>. Any stored references are
+        ///     released.
         /// </summary>
         public void Clear()
         {
-            Array.Clear(items, 0, items.Length);
-            bounds = new Bounds2D();
+            if (Count > 0)
+            {
+                Array.Clear(items, 0, items.Length);
+                bounds = new Bounds2D();
+            }
         }
 
         public void CopyTo(Array array, int index)
@@ -609,7 +770,7 @@ namespace Sztorm.Collections
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
         /// <summary>
-        ///     Creates an <see cref="Array2D{T}"/> from this <see cref="List2D{T}"/> intance.
+        ///     Creates an <see cref="Array2D{T}"/> from this <see cref="List2D{T}"/> instance.
         /// </summary>
         /// <returns></returns>
         public Array2D<T> ToArray2D()

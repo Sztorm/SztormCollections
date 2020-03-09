@@ -31,27 +31,27 @@ namespace Sztorm.Collections.Tests
 
                 Assert.Throws<ArgumentNullException>(
                     copyToSys2DArrMethod,
-                    "\n In method " + TestsUtils.CreateShortMethodSignature(
+                    "\n In method " + TestUtils.CreateShortMethodSignature(
                         nameof(Array2D<int>.CopyTo),
                         typeof(int[,])));
 
                 Assert.Throws<ArgumentNullException>(
                     copyToSys2DArrIndexMethod,
-                    "\n In method " + TestsUtils.CreateShortMethodSignature(
+                    "\n In method " + TestUtils.CreateShortMethodSignature(
                         nameof(Array2D<int>.CopyTo),
                         typeof(int[,]),
                         typeof(Index2D)));
 
                 Assert.Throws<ArgumentNullException>(
                     copyToSys2DArrBoundsMethod,
-                    "\n In method " + TestsUtils.CreateShortMethodSignature(
+                    "\n In method " + TestUtils.CreateShortMethodSignature(
                         nameof(Array2D<int>.CopyTo),
                         typeof(int[,]),
                         typeof(Bounds2D)));
 
                 Assert.Throws<ArgumentNullException>(
                     copyToSys2DArrBoundsIndexMethod,
-                    "\n In method " + TestsUtils.CreateShortMethodSignature(
+                    "\n In method " + TestUtils.CreateShortMethodSignature(
                         nameof(Array2D<int>.CopyTo),
                         typeof(int[,]),
                         typeof(Bounds2D),
@@ -59,7 +59,7 @@ namespace Sztorm.Collections.Tests
 
                 Assert.Throws<ArgumentNullException>(
                     copyToIndexSys2DArrBoundsIndexMethod,
-                    "\n In method " + TestsUtils.CreateShortMethodSignature(
+                    "\n In method " + TestUtils.CreateShortMethodSignature(
                         nameof(Array2D<int>.CopyTo),
                         typeof(Index2D),
                         typeof(int[,]),
@@ -81,7 +81,7 @@ namespace Sztorm.Collections.Tests
 
                 Assert.Throws<ArgumentOutOfRangeException>(
                     copyToIndexSys2DArrBoundsIndexMethod,
-                    "\n In method " + TestsUtils.CreateShortMethodSignature(
+                    "\n In method " + TestUtils.CreateShortMethodSignature(
                         nameof(Array2D<int>.CopyTo),
                         typeof(Index2D),
                         typeof(int[,]),
@@ -108,7 +108,7 @@ namespace Sztorm.Collections.Tests
 
                 Assert.Throws<ArgumentOutOfRangeException>(
                     copyToIndexSys2DArrBoundsIndexMethod,
-                    "\n In method " + TestsUtils.CreateShortMethodSignature(
+                    "\n In method " + TestUtils.CreateShortMethodSignature(
                         nameof(Array2D<int>.CopyTo),
                         typeof(Index2D),
                         typeof(int[,]),
@@ -117,7 +117,7 @@ namespace Sztorm.Collections.Tests
 
                 Assert.Throws<ArgumentOutOfRangeException>(
                     copyToSys2DArrBoundsIndexMethod,
-                    "\n In method " + TestsUtils.CreateShortMethodSignature(
+                    "\n In method " + TestUtils.CreateShortMethodSignature(
                         nameof(Array2D<int>.CopyTo),
                         typeof(int[,]),
                         typeof(Bounds2D),
@@ -125,7 +125,7 @@ namespace Sztorm.Collections.Tests
 
                 Assert.Throws<ArgumentOutOfRangeException>(
                     copyToSys2DArrBoundsMethod,
-                    "\n In method " + TestsUtils.CreateShortMethodSignature(
+                    "\n In method " + TestUtils.CreateShortMethodSignature(
                         nameof(Array2D<int>.CopyTo),
                         typeof(int[,]),
                         typeof(Bounds2D)));
@@ -151,7 +151,7 @@ namespace Sztorm.Collections.Tests
 
                 Assert.Throws<ArgumentOutOfRangeException>(
                     copyToIndexSys2DArrBoundsIndexMethod,
-                    "\n In method " + TestsUtils.CreateShortMethodSignature(
+                    "\n In method " + TestUtils.CreateShortMethodSignature(
                         nameof(Array2D<int>.CopyTo),
                         typeof(Index2D),
                         typeof(int[,]),
@@ -160,7 +160,7 @@ namespace Sztorm.Collections.Tests
 
                 Assert.Throws<ArgumentOutOfRangeException>(
                     copyToSys2DArrBoundsIndexMethod,
-                    "\n In method " + TestsUtils.CreateShortMethodSignature(
+                    "\n In method " + TestUtils.CreateShortMethodSignature(
                         nameof(Array2D<int>.CopyTo),
                         typeof(int[,]),
                         typeof(Bounds2D),
@@ -168,7 +168,7 @@ namespace Sztorm.Collections.Tests
 
                 Assert.Throws<ArgumentOutOfRangeException>(
                     copyToSys2DArrIndexMethod,
-                    "\n In method " + TestsUtils.CreateShortMethodSignature(
+                    "\n In method " + TestUtils.CreateShortMethodSignature(
                         nameof(Array2D<int>.CopyTo),
                         typeof(int[,]),
                         typeof(Index2D)));
@@ -198,7 +198,7 @@ namespace Sztorm.Collections.Tests
                     => source.CopyTo(destination, destIndex);
 
                 Assert.Throws<ArgumentException>(testMethod,
-                    "\n In method " + TestsUtils.CreateShortMethodSignature(
+                    "\n In method " + TestUtils.CreateShortMethodSignature(
                         nameof(Array2D<int>.CopyTo),
                         typeof(int[,])),
                         typeof(Index2D));
@@ -213,7 +213,7 @@ namespace Sztorm.Collections.Tests
                     => source.CopyTo(destination);
 
                 Assert.Throws<ArgumentException>(testMethod,
-                    "\n In method " + TestsUtils.CreateShortMethodSignature(
+                    "\n In method " + TestUtils.CreateShortMethodSignature(
                         nameof(Array2D<int>.CopyTo),
                         typeof(int[,])));
             }
@@ -251,7 +251,7 @@ namespace Sztorm.Collections.Tests
             {
                 // SourceIndex with negative row component.
                 yield return new TestCaseData(
-                    TestsUtils.IncrementedIntArray2D(4, 5),
+                    TestUtils.IncrementedIntArray2D(4, 5),
                     new int[4, 5],
                     new Index2D(0, -1),
                     new Bounds2D(4, 5),
@@ -259,7 +259,7 @@ namespace Sztorm.Collections.Tests
 
                 // SourceIndex with negative column component.
                 yield return new TestCaseData(
-                    TestsUtils.IncrementedIntArray2D(4, 5),
+                    TestUtils.IncrementedIntArray2D(4, 5),
                     new int[4, 5],
                     new Index2D(-1, 0),
                     new Bounds2D(4, 5),
@@ -267,7 +267,7 @@ namespace Sztorm.Collections.Tests
 
                 // SourceIndex exceeding row count in source array.
                 yield return new TestCaseData(
-                    TestsUtils.IncrementedIntArray2D(4, 5),
+                    TestUtils.IncrementedIntArray2D(4, 5),
                     new int[4, 5],
                     new Index2D(4, 0),
                     new Bounds2D(4, 5),
@@ -275,7 +275,7 @@ namespace Sztorm.Collections.Tests
 
                 // SourceIndex exceeding column count in source array.
                 yield return new TestCaseData(
-                    TestsUtils.IncrementedIntArray2D(4, 5),
+                    TestUtils.IncrementedIntArray2D(4, 5),
                     new int[4, 5],
                     new Index2D(0, 5),
                     new Bounds2D(4, 5),
@@ -287,32 +287,32 @@ namespace Sztorm.Collections.Tests
             {
                 // Quantity exceeding row count in source array.
                 yield return new TestCaseData(
-                    TestsUtils.IncrementedIntArray2D(4, 5),
-                    TestsUtils.IncrementedSystemInt2DArray(5, 5),
+                    TestUtils.IncrementedIntArray2D(4, 5),
+                    TestUtils.IncrementedSystemInt2DArray(5, 5),
                     new Index2D(0, 0),
                     new Bounds2D(5, 5),
                     new Index2D(0, 0));
 
                 // Quantity exceeding column count in source array.
                 yield return new TestCaseData(
-                    TestsUtils.IncrementedIntArray2D(4, 5),
-                    TestsUtils.IncrementedSystemInt2DArray(4, 6),
+                    TestUtils.IncrementedIntArray2D(4, 5),
+                    TestUtils.IncrementedSystemInt2DArray(4, 6),
                     new Index2D(0, 0),
                     new Bounds2D(4, 6),
                     new Index2D(0, 0));
 
                 // Quantity exceeding row count in destination array.
                 yield return new TestCaseData(
-                    TestsUtils.IncrementedIntArray2D(5, 5),
-                    TestsUtils.IncrementedSystemInt2DArray(4, 5),
+                    TestUtils.IncrementedIntArray2D(5, 5),
+                    TestUtils.IncrementedSystemInt2DArray(4, 5),
                     new Index2D(0, 0),
                     new Bounds2D(5, 5),
                     new Index2D(0, 0));
 
                 // Quantity exceeding column count in destination array.
                 yield return new TestCaseData(
-                    TestsUtils.IncrementedIntArray2D(4, 6),
-                    TestsUtils.IncrementedSystemInt2DArray(4, 5),
+                    TestUtils.IncrementedIntArray2D(4, 6),
+                    TestUtils.IncrementedSystemInt2DArray(4, 5),
                     new Index2D(0, 0),
                     new Bounds2D(4, 6), 
                     new Index2D(0, 0));
@@ -323,7 +323,7 @@ namespace Sztorm.Collections.Tests
             {
                 // Destination index with negative row component.
                 yield return new TestCaseData(
-                    TestsUtils.IncrementedIntArray2D(4, 5),
+                    TestUtils.IncrementedIntArray2D(4, 5),
                     new int[4, 5],
                     new Index2D(0, 0),
                     new Bounds2D(4, 5),
@@ -331,7 +331,7 @@ namespace Sztorm.Collections.Tests
 
                 // Destination index with negative column component.
                 yield return new TestCaseData(
-                    TestsUtils.IncrementedIntArray2D(4, 5),
+                    TestUtils.IncrementedIntArray2D(4, 5),
                     new int[4, 5],
                     new Index2D(0, 0),
                     new Bounds2D(4, 5),
@@ -339,7 +339,7 @@ namespace Sztorm.Collections.Tests
 
                 // Destination index exceeding row count in destination array.
                 yield return new TestCaseData(
-                    TestsUtils.IncrementedIntArray2D(4, 5),
+                    TestUtils.IncrementedIntArray2D(4, 5),
                     new int[3, 5],
                     new Index2D(0, 0),
                     new Bounds2D(3, 5),
@@ -347,7 +347,7 @@ namespace Sztorm.Collections.Tests
 
                 // Destination index exceeding column count in destination array.
                 yield return new TestCaseData(
-                    TestsUtils.IncrementedIntArray2D(4, 5),
+                    TestUtils.IncrementedIntArray2D(4, 5),
                     new int[4, 4],
                     new Index2D(0, 0),
                     new Bounds2D(4, 4),
@@ -358,26 +358,26 @@ namespace Sztorm.Collections.Tests
             {
                 // Destination array with starting index exceeding its row boundary.
                 yield return new TestCaseData(
-                    TestsUtils.IncrementedIntArray2D(4, 5),
+                    TestUtils.IncrementedIntArray2D(4, 5),
                     new int[4, 5],
                     new Index2D(1, 0));
 
                 // Destination array with starting index exceeding its column boundary.
                 yield return new TestCaseData(
-                    TestsUtils.IncrementedIntArray2D(4, 5),
+                    TestUtils.IncrementedIntArray2D(4, 5),
                     new int[4, 5],
                     new Index2D(0, 1));
 
                 // Destination array with column boundary that is lesser than source column
                 // boundary.
                 yield return new TestCaseData(
-                    TestsUtils.IncrementedIntArray2D(4, 5),
+                    TestUtils.IncrementedIntArray2D(4, 5),
                     new int[3, 5],
                     new Index2D(0, 0));
 
                 // Destination array with row boundary that is lesser than source row boundary.
                 yield return new TestCaseData(
-                    TestsUtils.IncrementedIntArray2D(4, 5),
+                    TestUtils.IncrementedIntArray2D(4, 5),
                     new int[4, 4],
                     new Index2D(0, 0));
             }
@@ -387,12 +387,12 @@ namespace Sztorm.Collections.Tests
                 // Destination array with column boundary that is lesser than source column
                 // boundary.
                 yield return new TestCaseData(
-                    TestsUtils.IncrementedIntArray2D(3, 5),
+                    TestUtils.IncrementedIntArray2D(3, 5),
                     new int[2, 5]);
 
                 // Destination array with row boundary that is lesser than source row boundary.
                 yield return new TestCaseData(
-                    TestsUtils.IncrementedIntArray2D(4, 3),
+                    TestUtils.IncrementedIntArray2D(4, 3),
                     new int[4, 2]);
             }
         }
