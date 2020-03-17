@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Sztorm.Collections.Tests
 {
-    public static class TestsUtils
+    public static class TestUtils
     {
         public static string CreateShortMethodSignature(
             string methodName, params Type[] parameterTypes)
@@ -54,6 +54,25 @@ namespace Sztorm.Collections.Tests
                     Console.Write("{0:" + format + "}, ", array[i, j]);
                 }
                 Console.WriteLine("{0:" + format + "}", array[i, lastColIndex]);
+            }
+        }
+
+        public static void WriteTable<T>(List2D<T> list, string format = "")
+        {
+            if (list.IsEmpty || list == null)
+            {
+                return;
+            }
+            int len1 = list.Length1;
+            int lastColIndex = list.Columns - 1;
+
+            for (int i = 0; i < len1; i++)
+            {
+                for (int j = 0; j < lastColIndex; j++)
+                {
+                    Console.Write("{0:" + format + "}, ", list[i, j]);
+                }
+                Console.WriteLine("{0:" + format + "}", list[i, lastColIndex]);
             }
         }
 
