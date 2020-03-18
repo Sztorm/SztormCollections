@@ -35,9 +35,9 @@ namespace Sztorm.Collections
     /// </summary>
     /// <typeparam name="T"></typeparam>
     [Serializable]
-    public sealed partial class Array2D<T> : IEnumerable<T>, ICollection
+    public sealed partial class Array2D<T> : IRectangularCollection<T>, IIndexableRef2D<T>, ICollection
     {
-        private readonly T[] elements;
+        private readonly T[] items;
         private readonly Bounds2D bounds;
 
         /// <summary>
@@ -95,7 +95,7 @@ namespace Sztorm.Collections
         public int Count
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => elements.Length;
+            get => items.Length;
         }
 
         /// <summary>
@@ -115,7 +115,7 @@ namespace Sztorm.Collections
         public object SyncRoot
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => elements.SyncRoot;
+            get => items.SyncRoot;
         }
 
         /// <summary>
@@ -181,7 +181,7 @@ namespace Sztorm.Collections
             {
                 try
                 {
-                    return ref elements[index];
+                    return ref items[index];
                 }
                 catch(IndexOutOfRangeException)
                 {
@@ -210,7 +210,7 @@ namespace Sztorm.Collections
                     throw new IndexOutOfRangeException(
                         "At least one of indices is out of array bounds.");
                 }
-                return ref elements[row * Columns + column];
+                return ref items[row * Columns + column];
             }
         }
 
@@ -234,7 +234,7 @@ namespace Sztorm.Collections
                     throw new IndexOutOfRangeException(
                         "At least one of indices is out of array bounds.");
                 }
-                return ref elements[index.Dimension1Index * Columns + index.Dimension2Index];
+                return ref items[index.Dimension1Index * Columns + index.Dimension2Index];
             }
         }
 
@@ -251,7 +251,7 @@ namespace Sztorm.Collections
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal ref T GetItemInternal(int row, int column)
-            => ref elements[row * Columns + column];
+            => ref items[row * Columns + column];
 
         /// <summary>
         ///     Returns an element stored at specified index.<br/>
@@ -263,7 +263,7 @@ namespace Sztorm.Collections
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal ref T GetItemInternal(Index2D index) 
-            => ref elements[index.Dimension1Index * Columns + index.Dimension2Index];
+            => ref items[index.Dimension1Index * Columns + index.Dimension2Index];
 
         /// <summary>
         ///     Returns true if specified index exists in this <see cref="Array2D{T}"/> instance,
@@ -307,7 +307,7 @@ namespace Sztorm.Collections
             {
                 throw;
             }
-            elements = new T[rows * columns];      
+            items = new T[rows * columns];      
         }
 
         /// <summary>
@@ -317,7 +317,7 @@ namespace Sztorm.Collections
         public Array2D(Bounds2D boundaries)
         {
             bounds = boundaries;
-            elements = new T[boundaries.Length1 * boundaries.Length2];
+            items = new T[boundaries.Length1 * boundaries.Length2];
         }
 
         /// <summary>
@@ -343,7 +343,7 @@ namespace Sztorm.Collections
         {
             try
             {
-                elements.CopyTo(destination.elements, index);
+                items.CopyTo(destination.items, index);
             }
             catch (ArgumentNullException)
             {
@@ -387,7 +387,7 @@ namespace Sztorm.Collections
         {
             try
             {
-                elements.CopyTo(destination, index);
+                items.CopyTo(destination, index);
             }
             catch (ArgumentNullException)
             {
@@ -712,9 +712,9 @@ namespace Sztorm.Collections
         /// <returns></returns>
         public IEnumerator<T> GetEnumerator()
         {
-            for (int i = 0; i < elements.Length; i++)
+            for (int i = 0; i < items.Length; i++)
             {
-                yield return elements[i];
+                yield return items[i];
             }
         }
 
@@ -722,24 +722,31 @@ namespace Sztorm.Collections
         IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
         /// <summary>
-        /// Determines whether and elements is in the <see cref="Array2D{U}"/>.
+        /// Determines whether and elements is in the <see cref="Array2D{T}"/>.
         /// </summary>
-        /// <typeparam name="U">
-        ///     <typeparamref name = "U"/> is <see cref="IEquatable{T}"/>
-        /// </typeparam>
-        /// <param name="element"></param>
+        /// <param name="item"></param>
         /// <returns></returns>
-        public bool Contains<U>(U element) where U : IEquatable<T>
+        public bool Contains(T item)
         {
             for (int i = 0, length = Count; i < length; i++)
             {
-                if (element.Equals(this.elements[i]))
+                if (item.Equals(this.items[i]))
                 {
                     return true;
                 }
             }
             return false;
         }
+
+        /// <summary>
+        /// Determines whether and elements is in the <see cref="Array2D{U}"/>.
+        /// </summary>
+        /// <typeparam name="U">
+        ///     <typeparamref name = "U"/> is <see cref="IEquatable{T}"/>
+        /// </typeparam>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        public bool Contains<U>(U item) where U : IEquatable<T> => IndexOf(item).HasValue;
 
         /// <summary>
         ///     Searches for the specified object and returns the index of its first occurrence
@@ -749,13 +756,13 @@ namespace Sztorm.Collections
         /// <typeparam name="U">
         ///     <typeparamref name = "U"/> is <see cref="IEquatable{T}"/>
         /// </typeparam>
-        /// <param name="element">An element value to search.</param>
+        /// <param name="item">An element value to search.</param>
         /// <returns></returns>
-        public int? IndexOf<U>(U element) where U : IEquatable<T>
+        public int? IndexOf<U>(U item) where U : IEquatable<T>
         {
             for (int i = 0, length = Count; i < length; i++)
             {
-                if (element.Equals(this.elements[i]))
+                if (item.Equals(this.items[i]))
                 {
                     return i;
                 }
@@ -771,11 +778,11 @@ namespace Sztorm.Collections
         /// <typeparam name="U">
         ///     <typeparamref name = "U"/> is <see cref="IEquatable{T}"/>
         /// </typeparam>
-        /// <param name="element">An element value to search.</param>
+        /// <param name="item">An element value to search.</param>
         /// <returns></returns>
-        public Index2D? Index2DOf<U>(U element) where U : IEquatable<T>
+        public Index2D? Index2DOf<U>(U item) where U : IEquatable<T>
         {
-            int? possibleIndex = IndexOf(element);
+            int? possibleIndex = IndexOf(item);
 
             if (!possibleIndex.HasValue)
             {

@@ -101,6 +101,12 @@ namespace Sztorm.Collections.Tests
             Assert.AreEqual(expected, array.Contains(value));
         }
 
+        [TestCaseSource(nameof(ContainsTestCases))]
+        public static void TestContainsEquatable(Array2D<int> array, int value, bool expected)
+        {
+            Assert.AreEqual(expected, array.Contains<IEquatable<int>>(value));
+        }
+
         private static IEnumerable<TestCaseData> IndexerTestCases()
         {
             yield return new TestCaseData(
