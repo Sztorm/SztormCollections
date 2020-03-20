@@ -30,8 +30,8 @@ using System.Runtime.CompilerServices;
 namespace Sztorm.Collections
 {
     /// <summary>
-    ///     Represents two-dimensional rectangular array of single type allocated within single
-    ///     contiguous block of memory.
+    ///     Represents two-dimensional row-major ordered rectangular array of single type allocated
+    ///     within single contiguous block of memory.
     /// </summary>
     /// <typeparam name="T"></typeparam>
     [Serializable]
@@ -746,7 +746,7 @@ namespace Sztorm.Collections
         /// </typeparam>
         /// <param name="item"></param>
         /// <returns></returns>
-        public bool Contains<U>(U item) where U : IEquatable<T> => IndexOf(item).HasValue;
+        public bool Contains<U>(U item) where U : T, IEquatable<T> => IndexOf(item).HasValue;
 
         /// <summary>
         ///     Searches for the specified object and returns the index of its first occurrence
@@ -758,7 +758,7 @@ namespace Sztorm.Collections
         /// </typeparam>
         /// <param name="item">An element value to search.</param>
         /// <returns></returns>
-        public int? IndexOf<U>(U item) where U : IEquatable<T>
+        public int? IndexOf<U>(U item) where U : T, IEquatable<T>
         {
             for (int i = 0, length = Count; i < length; i++)
             {
@@ -780,7 +780,7 @@ namespace Sztorm.Collections
         /// </typeparam>
         /// <param name="item">An element value to search.</param>
         /// <returns></returns>
-        public Index2D? Index2DOf<U>(U item) where U : IEquatable<T>
+        public Index2D? Index2DOf<U>(U item) where U : IEquatable<T>, T
         {
             int? possibleIndex = IndexOf(item);
 
