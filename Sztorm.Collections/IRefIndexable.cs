@@ -22,19 +22,16 @@
  * SOFTWARE.
  */
 
-using System.Collections.Generic;
-
 namespace Sztorm.Collections
 {
     /// <summary>
-    ///     Defines size, enumerators and methods which operate on rectangular collections.
+    /// Exposes an indexer with <see langword="ref"/> specifier and a method checking it.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public interface IRectangularCollection<T> : IEnumerable<T>, IIndexable2D<T>
+    public interface IRefIndexable<T>
     {
-        int Length1 { get; }
-        int Length2 { get; }
+        ref T this[int index] { get; }
 
-        bool Contains(T item);
+        bool IsValidIndex(int index);
     }
 }

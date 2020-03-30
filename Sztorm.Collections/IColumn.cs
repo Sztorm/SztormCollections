@@ -22,19 +22,14 @@
  * SOFTWARE.
  */
 
+using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace Sztorm.Collections
 {
-    /// <summary>
-    ///     Defines size, enumerators and methods which operate on rectangular collections.
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    public interface IRectangularCollection<T> : IEnumerable<T>, IIndexable2D<T>
+    public interface IColumn<T, TIndexable> : IEnumerable<T>
     {
-        int Length1 { get; }
-        int Length2 { get; }
 
-        bool Contains(T item);
     }
 }

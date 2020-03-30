@@ -22,14 +22,20 @@
  * SOFTWARE.
  */
 
+using System.Collections.Generic;
+
 namespace Sztorm.Collections
 {
     /// <summary>
-    /// Exposes an two-dimensional indexer with <see langword="ref"/> specifier.
+    ///     Defines size, enumerators and methods which operate on rectangular collections with
+    ///     ref-returning indexer.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public interface IIndexableRef2D<T>
+    public interface IRefRectangularCollection<T> : IEnumerable<T>, IRefIndexable2D<T>
     {
-        ref T this[Index2D index] { get; }
+        int Length1 { get; }
+        int Length2 { get; }
+
+        bool Contains(T item);
     }
 }
