@@ -26,22 +26,25 @@ namespace Sztorm.Collections.Tests
             Assert.Throws<IndexOutOfRangeException>(testMethod);
         }
 
-        public static void TestEquality<T, TRefRectangularCollection>(
-            RefColumn<T, TRefRectangularCollection> actual, T[] expected)
+        public static void TestEquality<T, TRefRectangularCollection, TEnumerable>(
+            RefColumn<T, TRefRectangularCollection> actual, TEnumerable expected)
             where TRefRectangularCollection : IRefRectangularCollection<T>
+            where TEnumerable : IEnumerable<T>
             => CollectionAssert.AreEqual(expected, actual);
 
-        public static void TestReverse<T, TRefRectangularCollection>(
-            RefColumn<T, TRefRectangularCollection> actual, T[] expected)
+        public static void TestReverse<T, TRefRectangularCollection, TEnumerable>(
+            RefColumn<T, TRefRectangularCollection> actual, TEnumerable expected)
             where TRefRectangularCollection : IRefRectangularCollection<T>
+            where TEnumerable : IEnumerable<T>
         {
             actual.Reverse();
             CollectionAssert.AreEqual(expected, actual);
         }
 
-        public static void TestFillWith<T, TRefRectangularCollection>(
-            RefColumn<T, TRefRectangularCollection> actual, T value, T[] expected)
+        public static void TestFillWith<T, TRefRectangularCollection, TEnumerable>(
+            RefColumn<T, TRefRectangularCollection> actual, T value, TEnumerable expected)
             where TRefRectangularCollection : IRefRectangularCollection<T>
+            where TEnumerable : IEnumerable<T>
         {
             actual.FillWith(value);
             CollectionAssert.AreEqual(expected, actual);
