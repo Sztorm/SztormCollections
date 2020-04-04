@@ -35,7 +35,5 @@ namespace Sztorm.Collections
     {
         int Length1 { get; }
         int Length2 { get; }
-
-        bool Contains(T item);
     }
 }
