@@ -35,7 +35,7 @@ namespace Sztorm.Collections
     /// </summary>
     /// <typeparam name="T"></typeparam>
     [Serializable]
-    public sealed partial class Array2D<T> : IRectangularCollection<T>, IIndexableRef2D<T>, ICollection
+    public sealed partial class Array2D<T> : IRefRectangularCollection<T>, ICollection
     {
         private readonly T[] items;
         private readonly Bounds2D bounds;
@@ -129,11 +129,11 @@ namespace Sztorm.Collections
         /// <param name="index">A zero-based index that determines which row is to take.</param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public Row GetRow(int index)
+        public RefRow<T, Array2D<T>> GetRow(int index)
         {
             try
             {
-                return new Row(this, index);
+                return new RefRow<T, Array2D<T>>(this, index);
             }
             catch (ArgumentOutOfRangeException)
             {
@@ -152,11 +152,11 @@ namespace Sztorm.Collections
         /// <param name="index">A zero-based index that determines which column is to take.</param> 
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public Column GetColumn(int index)
+        public RefColumn<T, Array2D<T>> GetColumn(int index)
         {
             try
             {
-                return new Column(this, index);
+                return new RefColumn<T, Array2D<T>>(this, index);
             }
             catch (ArgumentOutOfRangeException)
             {
@@ -183,7 +183,7 @@ namespace Sztorm.Collections
                 {
                     return ref items[index];
                 }
-                catch(IndexOutOfRangeException)
+                catch (IndexOutOfRangeException)
                 {
                     throw;
                 }
@@ -262,7 +262,7 @@ namespace Sztorm.Collections
         /// </param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal ref T GetItemInternal(Index2D index) 
+        internal ref T GetItemInternal(Index2D index)
             => ref items[index.Dimension1Index * Columns + index.Dimension2Index];
 
         /// <summary>
@@ -283,7 +283,7 @@ namespace Sztorm.Collections
         /// <param name="index"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool IsValidIndex(Index2D index) 
+        public bool IsValidIndex(Index2D index)
             => bounds.IsValidIndex(index);
 
         /// <summary>
@@ -303,11 +303,11 @@ namespace Sztorm.Collections
             {
                 bounds = new Bounds2D(rows, columns);
             }
-            catch(ArgumentOutOfRangeException)
+            catch (ArgumentOutOfRangeException)
             {
                 throw;
             }
-            items = new T[rows * columns];      
+            items = new T[rows * columns];
         }
 
         /// <summary>
@@ -481,7 +481,7 @@ namespace Sztorm.Collections
             {
                 CopyToInternal(sourceIndex, destination, quantity, destIndex);
             }
-            catch(InvalidCastException)
+            catch (InvalidCastException)
             {
                 throw;
             }
@@ -611,7 +611,7 @@ namespace Sztorm.Collections
         ///     zero-based.
         /// </param>
         public void CopyTo(T[,] destination, Index2D index)
-        {     
+        {
             if (destination == null)
             {
                 throw new ArgumentNullException(
@@ -675,7 +675,7 @@ namespace Sztorm.Collections
                     "Destination array boundaries components must be greater or equal to ones " +
                     "in the source array.",
                     nameof(destination));
-            }                  
+            }
             try
             {
                 CopyToInternal(new Index2D(0, 0), destination, this.bounds, new Index2D(0, 0));
@@ -722,47 +722,56 @@ namespace Sztorm.Collections
         IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
         /// <summary>
-        /// Determines whether and elements is in the <see cref="Array2D{T}"/>.
+        ///     Determines whether specified item exists in the current instance.<br/>
+        ///     Use <see cref="ContainsEquatable{U}(U)"/> or <see cref="ContainsComparable{U}(U)"/>
+        ///     to avoid unnecessary boxing if stored type is <see cref="IEquatable{T}"/> or
+        ///     <see cref="IComparable{T}"/>.
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
-        public bool Contains(T item)
-        {
-            for (int i = 0, length = Count; i < length; i++)
-            {
-                if (item.Equals(this.items[i]))
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool Contains(T item) => IndexOf(item).HasValue;
 
         /// <summary>
-        /// Determines whether and elements is in the <see cref="Array2D{U}"/>.
+        ///     Determines whether specified item exists in the current instance.
         /// </summary>
         /// <typeparam name="U">
-        ///     <typeparamref name = "U"/> is <see cref="IEquatable{T}"/>
+        ///     <typeparamref name = "U"/> is <see cref="IEquatable{T}"/> and
+        ///     <typeparamref name = "T"/>
         /// </typeparam>
         /// <param name="item"></param>
         /// <returns></returns>
-        public bool Contains<U>(U item) where U : T, IEquatable<T> => IndexOf(item).HasValue;
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool ContainsEquatable<U>(U item) where U : T, IEquatable<T>
+            => IndexOfEquatable(item).HasValue;
 
         /// <summary>
-        ///     Searches for the specified object and returns the index of its first occurrence
-        ///     in a one-dimensional array if found; returns null otherwise (<see cref="int"/>?
-        ///     with HasValue property set to false).
+        ///     Determines whether specified item exists in the current instance.
         /// </summary>
         /// <typeparam name="U">
-        ///     <typeparamref name = "U"/> is <see cref="IEquatable{T}"/>
+        ///     <typeparamref name = "U"/> is <see cref="IComparable{T}"/> and
+        ///     <typeparamref name = "T"/>
         /// </typeparam>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool ContainsComparable<U>(U item) where U : T, IComparable<T>
+            => IndexOfComparable(item).HasValue;
+
+        /// <summary>
+        ///     Searches for the specified item and returns the one-dimensional index of its first
+        ///     occurrence in this intance if found; returns <see langword="null"/> otherwise.<br/>
+        ///     Use <see cref="IndexOfEquatable{U}(U)"/> or <see cref="IndexOfComparable{U}(U)"/>
+        ///     to avoid unnecessary boxing if stored type is <see cref="IEquatable{T}"/> or
+        ///     <see cref="IComparable{T}"/>.
+        /// </summary>
         /// <param name="item">An element value to search.</param>
         /// <returns></returns>
-        public int? IndexOf<U>(U item) where U : T, IEquatable<T>
+        public int? IndexOf(T item)
         {
             for (int i = 0, length = Count; i < length; i++)
             {
-                if (item.Equals(this.items[i]))
+                if (item.Equals(items[i]))
                 {
                     return i;
                 }
@@ -771,19 +780,51 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        ///     Searches for the specified object and returns the 2D index of its first occurrence
-        ///     in a two-dimensional array if found; returns null otherwise
-        ///     (<see cref="Index2D"/>? with HasValue property set to false).
+        ///     Searches for the specified item and returns the one-dimensional index of its first
+        ///     occurrence in this intance if found; returns <see langword="null"/> otherwise.
         /// </summary>
         /// <typeparam name="U">
-        ///     <typeparamref name = "U"/> is <see cref="IEquatable{T}"/>
+        ///     <typeparamref name = "U"/> is <see cref="IEquatable{T}"/> and
+        ///     <typeparamref name = "T"/>
         /// </typeparam>
         /// <param name="item">An element value to search.</param>
         /// <returns></returns>
-        public Index2D? Index2DOf<U>(U item) where U : IEquatable<T>, T
+        public int? IndexOfEquatable<U>(U item) where U : T, IEquatable<T>
         {
-            int? possibleIndex = IndexOf(item);
+            for (int i = 0, length = Count; i < length; i++)
+            {
+                if (item.Equals(items[i]))
+                {
+                    return i;
+                }
+            }
+            return null;
+        }
 
+        /// <summary>
+        ///     Searches for the specified item and returns the one-dimensional index of its first
+        ///     occurrence in this intance if found; returns <see langword="null"/> otherwise.
+        /// </summary>
+        /// <typeparam name="U">
+        ///     <typeparamref name = "U"/> is <see cref="IComparable{T}"/> and
+        ///     <typeparamref name = "T"/>
+        /// </typeparam>
+        /// <param name="item">An element value to search.</param>
+        /// <returns></returns>
+        public int? IndexOfComparable<U>(U item) where U : T, IComparable<T>
+        {
+            for (int i = 0, length = Count; i < length; i++)
+            {
+                if (item.CompareTo(items[i]) == 0)
+                {
+                    return i;
+                }
+            }
+            return null;
+        }
+
+        private Index2D? Index2DOfHelper(int? possibleIndex)
+        {
             if (!possibleIndex.HasValue)
             {
                 return null;
@@ -794,6 +835,46 @@ namespace Sztorm.Collections
 
             return new Index2D(row, column);
         }
+
+        /// <summary>
+        ///     Searches for the specified item and returns the 2D index of its first occurrence
+        ///     in this instance if found; returns <see langword="null"/> otherwise.<br/>
+        ///     Use <see cref="Index2DOfEquatable{U}(U)"/> or
+        ///     <see cref="Index2DOfComparable{U}(U)"/> to avoid unnecessary boxing if stored type
+        ///     is <see cref="IEquatable{T}"/> or <see cref="IComparable{T}"/>.
+        /// </summary>
+        /// <param name="item">An element value to search.</param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public Index2D? Index2DOf(T item) => Index2DOfHelper(IndexOf(item));
+
+        /// <summary>
+        ///     Searches for the specified item and returns the 2D index of its first occurrence
+        ///     in this instance if found; returns <see langword="null"/> otherwise.
+        /// </summary>
+        /// <typeparam name="U">
+        ///     <typeparamref name = "U"/> is <see cref="IEquatable{T}"/> and
+        ///     <typeparamref name = "T"/>
+        /// </typeparam>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public Index2D? Index2DOfEquatable<U>(U item) where U : IEquatable<T>, T
+            => Index2DOfHelper(IndexOfEquatable(item));
+
+        /// <summary>
+        ///     Searches for the specified item and returns the 2D index of its first occurrence
+        ///     in this instance if found; returns <see langword="null"/> otherwise.
+        /// </summary>
+        /// <typeparam name="U">
+        ///     <typeparamref name = "U"/> is <see cref="IComparable{T}"/> and
+        ///     <typeparamref name = "T"/>
+        /// </typeparam>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public Index2D? Index2DOfComparable<U>(U item) where U : IComparable<T>, T
+            => Index2DOfHelper(IndexOfComparable(item));
 
         /// <summary>
         ///     Creates a <typeparamref name = "T"/>[,] from this <see cref="Array2D{T}"/>
@@ -824,7 +905,7 @@ namespace Sztorm.Collections
             {
                 throw new ArgumentNullException(nameof(array), "Array argument cannot be null.");
             }
-            Bounds2D bounds = 
+            Bounds2D bounds =
                 Bounds2D.NotCheckedConstructor(array.GetLength(0), array.GetLength(1));
             var result = new Array2D<T>(bounds);
 

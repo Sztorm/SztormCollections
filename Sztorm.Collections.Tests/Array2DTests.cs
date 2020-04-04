@@ -15,7 +15,7 @@ namespace Sztorm.Collections.Tests
         [TestCase(5)]
         public static void TestRows(int rows)
         {
-            Array2D<int> array = new Array2D<int>(rows, 1);
+            var array = new Array2D<int>(rows, 1);
 
             Assert.AreEqual(array.Rows, rows);
             Assert.AreEqual(array.Length1, rows);
@@ -26,7 +26,7 @@ namespace Sztorm.Collections.Tests
         [TestCase(5)]
         public static void TestColumns(int columns)
         {
-            Array2D<int> array = new Array2D<int>(1, columns);
+            var array = new Array2D<int>(1, columns);
 
             Assert.AreEqual(array.Columns, columns);
             Assert.AreEqual(array.Length2, columns);
@@ -39,7 +39,7 @@ namespace Sztorm.Collections.Tests
         [TestCase(1, 6)]
         public static void TestCount(int rows, int columns)
         {
-            Array2D<int> array = new Array2D<int>(rows, columns);
+            var array = new Array2D<int>(rows, columns);
 
             Assert.AreEqual(array.Count, rows * columns);
         }
@@ -51,60 +51,39 @@ namespace Sztorm.Collections.Tests
         [TestCase(1, 6)]
         public static void TestBoundaries(int rows, int columns)
         {
-            Array2D<int> array = new Array2D<int>(rows, columns);
+            var array = new Array2D<int>(rows, columns);
 
             Assert.AreEqual(array.Boundaries, new Bounds2D(rows, columns));
         }
 
-        [TestCaseSource(nameof(IndexerTestCases))]
-        public static void TestIndexer(Array2D<int> array, Index2D index, int expected)
-        {
-            Assert.AreEqual(array[index], expected);
-        }
+        [TestCaseSource(typeof(Array2DTests), nameof(IndexerTestCases))]
+        public static void TestIndexer<T>(Array2D<T> array, Index2D index, T expected)
+            => Assert.AreEqual(array[index], expected);
 
-        [TestCaseSource(nameof(IndexerInvalidTestCases))]
-        public static void IndexerThrowsExceptionIfIndexIsOutOfBounds(
-            Array2D<int> array, Index2D index)
+        [TestCaseSource(typeof(Array2DTests), nameof(IndexerInvalidTestCases))]
+        public static void IndexerThrowsExceptionIfIndexIsOutOfBounds<T>(
+            Array2D<T> array, Index2D index)
         {
-            TestDelegate testMethod = () => { int value = array[index]; };
+            TestDelegate testMethod = () => { T value = array[index]; };
 
             Assert.Throws<IndexOutOfRangeException>(testMethod);
         }
 
-        [TestCaseSource(nameof(GetRowInvalidTestCases))]
-        public static void GetRowThrowExceptionIfIndexExceedsRows(
-            Array2D<int> array, int index)
+        [TestCaseSource(typeof(Array2DTests), nameof(GetRowInvalidTestCases))]
+        public static void GetRowThrowExceptionIfIndexExceedsRows<T>(Array2D<T> array, int index)
         {
             TestDelegate testMethod = () => array.GetRow(index);
 
             Assert.Throws<ArgumentOutOfRangeException>(testMethod);
         }
 
-        [TestCaseSource(nameof(GetColumnInvalidTestCases))]
-        public static void GetColumnThrowExceptionIfIndexExceedsColumns(
-            Array2D<int> array, int index)
+        [TestCaseSource(typeof(Array2DTests), nameof(GetColumnInvalidTestCases))]
+        public static void GetColumnThrowExceptionIfIndexExceedsColumns<T>(
+            Array2D<T> array, int index)
         {
             TestDelegate testMethod = () => array.GetColumn(index);
 
             Assert.Throws<ArgumentOutOfRangeException>(testMethod);
-        }
-
-        [TestCaseSource(nameof(Index2DOfTestCases))]
-        public static void TestIndex2DOf(Array2D<int> array, int valueToFind, Index2D? expected)
-        {
-            Assert.AreEqual(expected, array.Index2DOf(valueToFind));
-        }
-
-        [TestCaseSource(nameof(ContainsTestCases))]
-        public static void TestContains(Array2D<int> array, int value, bool expected)
-        {
-            Assert.AreEqual(expected, array.Contains(value));
-        }
-
-        [TestCaseSource(nameof(ContainsTestCases))]
-        public static void TestContainsEquatable(Array2D<int> array, int value, bool expected)
-        {
-            Assert.AreEqual(expected, array.Contains<int>(value));
         }
 
         private static IEnumerable<TestCaseData> IndexerTestCases()
@@ -188,60 +167,6 @@ namespace Sztorm.Collections.Tests
             yield return new TestCaseData(
                 new Array2D<int>(1, 0),
                 0);
-        }
-
-        private static IEnumerable<TestCaseData> Index2DOfTestCases()
-        {
-            yield return new TestCaseData(
-                Array2D<int>.FromSystem2DArray(new int[,] { { 2, 3, 5 },
-                                                            { 4, 9, 1 } }),
-                                               9,
-                                               new Nullable<Index2D>(new Index2D(1, 1)));
-            yield return new TestCaseData(
-                Array2D<int>.FromSystem2DArray(new int[,] { { 2, 3 },
-                                                            { 4, 9 },
-                                                            { 3, 6 } }),
-                                               3,
-                                               new Nullable<Index2D>(new Index2D(0, 1)));
-            yield return new TestCaseData(
-                Array2D<int>.FromSystem2DArray(new int[,] { { 2, 3 },
-                                                            { 4, 9 },
-                                                            { 3, 6 } }),
-                                               8,
-                                               new Index2D?());
-            yield return new TestCaseData(
-                Array2D<int>.FromSystem2DArray(new int[,] { { 2, 3 },
-                                                            { 4, 9 },
-                                                            { 3, 6 } }),
-                                               7,
-                                               new Index2D?());
-        }
-
-        private static IEnumerable<TestCaseData> ContainsTestCases()
-        {
-            yield return new TestCaseData(
-                Array2D<int>.FromSystem2DArray(new int[,] { { 2, 3, 5 },
-                                                            { 4, 9, 1 } }),
-                                               9,
-                                               true);
-            yield return new TestCaseData(
-                Array2D<int>.FromSystem2DArray(new int[,] { { 2, 3 },
-                                                            { 4, 9 },
-                                                            { 3, 6 } }),
-                                               3,
-                                               true);
-            yield return new TestCaseData(
-                Array2D<int>.FromSystem2DArray(new int[,] { { 2, 3 },
-                                                            { 4, 9 },
-                                                            { 3, 6 } }),
-                                               8,
-                                               false);
-            yield return new TestCaseData(
-                Array2D<int>.FromSystem2DArray(new int[,] { { 2, 3 },
-                                                            { 4, 9 },
-                                                            { 3, 6 } }),
-                                               7,
-                                               false);
         }
     }
 }

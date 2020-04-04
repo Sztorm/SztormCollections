@@ -9,10 +9,8 @@ namespace Sztorm.Collections.Tests
 {
     public partial class Array2DTests
     {
-        class CopyToTests
-        {
-            [Test]
-            public static void CopyToThrowsExceptionIfDestinationIsNull()
+        [Test]
+        public static void CopyToThrowsExceptionIfDestinationIsNull()
             {
                 var array = new Array2D<int>(0, 0);
                 TestDelegate copyToSys2DArrMethod = () => array.CopyTo(destination: null);
@@ -68,13 +66,15 @@ namespace Sztorm.Collections.Tests
 
             }
 
-            [TestCaseSource(nameof(CopyToIndexSys2DArrBoundsIndexInvalidSourceIndexTestCases))]
-            public static void CopyToThrowsExceptionIfSourceIndexIsOutOfBounds(
-                Array2D<int> source,
-                int[,] destination,
-                Index2D sourceIndex,
-                Bounds2D quantity,
-                Index2D destIndex)
+        [TestCaseSource(
+            typeof(Array2DTests),
+            nameof(CopyToIndexSys2DArrBoundsIndexInvalidSourceIndexTestCases))]
+        public static void CopyToThrowsExceptionIfSourceIndexIsOutOfBounds(
+            Array2D<int> source,
+            int[,] destination,
+            Index2D sourceIndex,
+            Bounds2D quantity,
+            Index2D destIndex)
             {
                 TestDelegate copyToIndexSys2DArrBoundsIndexMethod = ()
                     => source.CopyTo(sourceIndex, destination, quantity, destIndex);
@@ -89,13 +89,14 @@ namespace Sztorm.Collections.Tests
                         typeof(Index2D)));
             }
 
-            [TestCaseSource(nameof(CopyToIndexSys2DArrBoundsIndexInvalidQuantityTestCases))]
-            public static void CopyToThrowsExceptionIfQuantityExceedsBounds(
-                Array2D<int> source,
-                int[,] destination,
-                Index2D sourceIndex,
-                Bounds2D quantity,
-                Index2D destIndex)
+        [TestCaseSource(
+            typeof(Array2DTests), nameof(CopyToIndexSys2DArrBoundsIndexInvalidQuantityTestCases))]
+        public static void CopyToThrowsExceptionIfQuantityExceedsBounds(
+            Array2D<int> source,
+            int[,] destination,
+            Index2D sourceIndex,
+            Bounds2D quantity,
+            Index2D destIndex)
             {
                 TestDelegate copyToIndexSys2DArrBoundsIndexMethod = ()
                     => source.CopyTo(sourceIndex, destination, quantity, destIndex);
@@ -132,13 +133,14 @@ namespace Sztorm.Collections.Tests
             }
 
 
-            [TestCaseSource(nameof(CopyToIndexSys2DArrBoundsIndexInvalidDestIndexTestCases))]
-            public static void CopyToThrowsExceptionIfDestIndexExceedsBounds(
-                Array2D<int> source,
-                int[,] destination,
-                Index2D sourceIndex,
-                Bounds2D quantity,
-                Index2D destIndex)
+        [TestCaseSource(
+            typeof(Array2DTests), nameof(CopyToIndexSys2DArrBoundsIndexInvalidDestIndexTestCases))]
+        public static void CopyToThrowsExceptionIfDestIndexExceedsBounds(
+            Array2D<int> source,
+            int[,] destination,
+            Index2D sourceIndex,
+            Bounds2D quantity,
+            Index2D destIndex)
             {
                 TestDelegate copyToIndexSys2DArrBoundsIndexMethod = ()
                     => source.CopyTo(sourceIndex, destination, quantity, destIndex);
@@ -174,13 +176,14 @@ namespace Sztorm.Collections.Tests
                         typeof(Index2D)));
             }
 
-            [TestCaseSource(nameof(CopyToIndexSys2DArrBoundsIndexValidTestCases))]
-            public static void TestCopyToIndexSys2DArrBoundsIndex(
-                Array2D<int> sourceArray,
-                Index2D sourceIndex,
-                Bounds2D quantity,
-                Index2D destIndex,
-                int[,] expected)
+        [TestCaseSource(
+            typeof(Array2DTests), nameof(CopyToIndexSys2DArrBoundsIndexValidTestCases))]
+        public static void TestCopyToIndexSys2DArrBoundsIndex(
+            Array2D<int> sourceArray,
+            Index2D sourceIndex,
+            Bounds2D quantity,
+            Index2D destIndex,
+            int[,] expected)
             {
                 var dest = new int[sourceArray.Rows, sourceArray.Columns];
 
@@ -188,11 +191,12 @@ namespace Sztorm.Collections.Tests
                 Assert.AreEqual(expected, dest);
             }
 
-            [TestCaseSource(nameof(CopyToSys2DArrIndexInvalidDestArrayTestCases))]
-            public static void CopyToThrowsExceptionIfDestArrayHasInvalidBoundaries(
-                Array2D<int> source,
-                int[,] destination,
-                Index2D destIndex)
+        [TestCaseSource(
+            typeof(Array2DTests), nameof(CopyToSys2DArrIndexInvalidDestArrayTestCases))]
+        public static void CopyToThrowsExceptionIfDestArrayHasInvalidBoundaries(
+            Array2D<int> source,
+            int[,] destination,
+            Index2D destIndex)
             {
                 TestDelegate testMethod = ()
                     => source.CopyTo(destination, destIndex);
@@ -204,10 +208,10 @@ namespace Sztorm.Collections.Tests
                         typeof(Index2D));
             }
 
-            [TestCaseSource(nameof(CopyToSys2DArrInvalidDestArrayTestCases))]
-            public static void CopyToThrowsExceptionIfDestArrayHasInvalidBoundaries(
-                Array2D<int> source,
-                int[,] destination)
+        [TestCaseSource(typeof(Array2DTests), nameof(CopyToSys2DArrInvalidDestArrayTestCases))]
+        public static void CopyToThrowsExceptionIfDestArrayHasInvalidBoundaries(
+            Array2D<int> source,
+            int[,] destination)
             {
                 TestDelegate testMethod = ()
                     => source.CopyTo(destination);
@@ -218,7 +222,7 @@ namespace Sztorm.Collections.Tests
                         typeof(int[,])));
             }
 
-            private static IEnumerable<TestCaseData> CopyToIndexSys2DArrBoundsIndexValidTestCases()
+        private static IEnumerable<TestCaseData> CopyToIndexSys2DArrBoundsIndexValidTestCases()
             {
                 yield return new TestCaseData(
                     Array2D<int>.FromSystem2DArray(
@@ -246,8 +250,8 @@ namespace Sztorm.Collections.Tests
                                  { 4,  0,  0, }, });
             }
 
-            private static IEnumerable<TestCaseData> 
-                CopyToIndexSys2DArrBoundsIndexInvalidSourceIndexTestCases()
+        private static IEnumerable<TestCaseData> 
+            CopyToIndexSys2DArrBoundsIndexInvalidSourceIndexTestCases()
             {
                 // SourceIndex with negative row component.
                 yield return new TestCaseData(
@@ -282,8 +286,8 @@ namespace Sztorm.Collections.Tests
                     new Index2D(0, 0));
             }
 
-            private static IEnumerable<TestCaseData>
-                CopyToIndexSys2DArrBoundsIndexInvalidQuantityTestCases()
+        private static IEnumerable<TestCaseData>
+            CopyToIndexSys2DArrBoundsIndexInvalidQuantityTestCases()
             {
                 // Quantity exceeding row count in source array.
                 yield return new TestCaseData(
@@ -318,8 +322,8 @@ namespace Sztorm.Collections.Tests
                     new Index2D(0, 0));
             }
 
-            private static IEnumerable<TestCaseData>
-                CopyToIndexSys2DArrBoundsIndexInvalidDestIndexTestCases()
+        private static IEnumerable<TestCaseData>
+            CopyToIndexSys2DArrBoundsIndexInvalidDestIndexTestCases()
             {
                 // Destination index with negative row component.
                 yield return new TestCaseData(
@@ -354,7 +358,7 @@ namespace Sztorm.Collections.Tests
                     new Index2D(0, 5));
             }
 
-            private static IEnumerable<TestCaseData> CopyToSys2DArrIndexInvalidDestArrayTestCases()
+        private static IEnumerable<TestCaseData> CopyToSys2DArrIndexInvalidDestArrayTestCases()
             {
                 // Destination array with starting index exceeding its row boundary.
                 yield return new TestCaseData(
@@ -382,7 +386,7 @@ namespace Sztorm.Collections.Tests
                     new Index2D(0, 0));
             }
 
-            private static IEnumerable<TestCaseData> CopyToSys2DArrInvalidDestArrayTestCases()
+        private static IEnumerable<TestCaseData> CopyToSys2DArrInvalidDestArrayTestCases()
             {
                 // Destination array with column boundary that is lesser than source column
                 // boundary.
@@ -395,6 +399,5 @@ namespace Sztorm.Collections.Tests
                     TestUtils.IncrementedIntArray2D(4, 3),
                     new int[4, 2]);
             }
-        }
     }
 }
