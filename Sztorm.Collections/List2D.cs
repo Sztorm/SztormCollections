@@ -35,7 +35,7 @@ namespace Sztorm.Collections
     /// within single contiguous block of memory.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public sealed partial class List2D<T> : IEnumerable<T>, ICollection
+    public sealed partial class List2D<T> : IRefRectangularCollection<T>, ICollection
     {
         private static readonly Bounds2D DefaultInitialCapacity = new Bounds2D(16, 16);
 
@@ -231,7 +231,7 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        ///     Returns a row at specified index. Indexing start at zero.
+        ///     Returns a row at specified index. Indexing starts at zero.
         ///     <para>
         ///         Exceptions:<br/>
         ///         <see cref="ArgumentOutOfRangeException"/>: Index is out of boundaries of the row
@@ -241,11 +241,11 @@ namespace Sztorm.Collections
         /// <param name="index">A zero-based index that determines which row is to take.</param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public Row GetRow(int index)
+        public RefRow<T, List2D<T>> GetRow(int index)
         {
             try
             {
-                return new Row(this, index);
+                return new RefRow<T, List2D<T>>(this, index);
             }
             catch (ArgumentOutOfRangeException)
             {
@@ -254,7 +254,7 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        ///     Returns a column at specified index. Indexing start at zero.
+        ///     Returns a column at specified index. Indexing starts at zero.
         ///     <para>
         ///         Exceptions:<br/>
         ///         <see cref="ArgumentOutOfRangeException"/>: Index is out of boundaries of the
@@ -264,11 +264,11 @@ namespace Sztorm.Collections
         /// <param name="index">A zero-based index that determines which column is to take.</param> 
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public Column GetColumn(int index)
+        public RefColumn<T, List2D<T>> GetColumn(int index)
         {
             try
             {
-                return new Column(this, index);
+                return new RefColumn<T, List2D<T>>(this, index);
             }
             catch (ArgumentOutOfRangeException)
             {
@@ -1121,6 +1121,29 @@ namespace Sztorm.Collections
             }
         }
 
+        /// <summary>
+        ///     Determines whether specified item exists in the current instance.
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        public bool Contains(T item)
+        {
+            int rows = Rows;
+            int cols = Columns;
+
+            for (int i = 0; i < rows; i++)
+            {
+                for (int j = 0; j < cols; j++)
+                {
+                    if (GetItemInternal(i, j).Equals(item))
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
         public void CopyTo(Array array, int index)
         {
             throw new NotImplementedException();
@@ -1183,6 +1206,40 @@ namespace Sztorm.Collections
             var result = new Array2D<T>(bounds);
 
             CopyToInternal(new Index2D(), result, bounds, new Index2D());
+            return result;
+        }
+
+        /// <summary>
+        ///     Constructs a new <see cref="List2D{T}"/> object that contains elements copied from
+        ///     specified <typeparamref name = "T"/>[,] instance and has capacity equal to number
+        ///     of elements stored in given array.
+        /// <para>
+        ///     Exceptions:<br/>
+        ///     <see cref="ArgumentNullException"/>: Array argument cannot be null.
+        /// </para>
+        /// </summary>
+        /// <param name="array"></param>
+        /// <returns></returns>
+        public static List2D<T> FromSystem2DArray(T[,] array)
+        {
+            if (array == null)
+            {
+                throw new ArgumentNullException(nameof(array), "Array argument cannot be null.");
+            }
+            Bounds2D bounds =
+                Bounds2D.NotCheckedConstructor(array.GetLength(0), array.GetLength(1));
+            var result = new List2D<T>(bounds);
+
+            result.AddRows(bounds.Rows);
+            result.AddColumns(bounds.Columns);
+
+            for (int i = 0; i < bounds.Rows; i++)
+            {
+                for (int j = 0; j < bounds.Columns; j++)
+                {
+                    result[i, j] = array[i, j];
+                }
+            }
             return result;
         }
     }
