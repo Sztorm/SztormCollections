@@ -4,29 +4,29 @@ using System.Runtime.CompilerServices;
 namespace Sztorm.Collections
 {
     /// <summary>
-    ///     Represent result of finding an item.
+    ///     Represent result of requesting an item.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public readonly struct FindResult<T> : IEquatable<FindResult<T>>
+    public readonly struct RequestResult<T> : IEquatable<RequestResult<T>>
     {
         private readonly T item;
-        private readonly bool isFound;
+        private readonly bool isSuccess;
 
         /// <summary>
-        ///     Determines whether desired item is found.
+        ///     Determines whether requested item is delivered.
         /// </summary>
-        public bool IsFound
+        public bool IsSuccess
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => isFound;
+            get => isSuccess;
         }
 
         /// <summary>
-        ///     Returns current instance underlying item if it has been found.
+        ///     Returns current instance underlying item if it has been delivered.
         ///     <para>
         ///         Exceptions:<br/>
-        ///         <see cref="InvalidOperationException"/> Item must be found to be able to use
-        ///         it.
+        ///         <see cref="InvalidOperationException"/> Item must be delivered to be able to
+        ///         use it.
         ///     </para>
         /// </summary>
         public T Item
@@ -34,17 +34,18 @@ namespace Sztorm.Collections
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
-                if (isFound)
+                if (isSuccess)
                 {
                     return item;
                 }
-                throw new InvalidOperationException("Item must be found to be able to use it.");
+                throw new InvalidOperationException(
+                    "Item must be delivered to be able to use it.");
             }
         }
 
         /// <summary>
         ///     Returns current instance underlying item or its default value if it has not been
-        ///     found.
+        ///     delivered.
         /// </summary>
         public T ItemOrDefault
         {
@@ -54,21 +55,21 @@ namespace Sztorm.Collections
 
         /// <summary>
         ///     Returns current instance underlying item or specified default value if the item has
-        ///     not been found.
+        ///     not been delivered.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public T GetItemOrDefault(T defaultValue) => isFound ? item : defaultValue;
+        public T GetItemOrDefault(T defaultValue) => isSuccess ? item : defaultValue;
 
         /// <summary>
-        ///     Initializes a new instance of <see cref="FindResult{T}"/> indicating that the item
-        ///     has been found.
+        ///     Initializes a new instance of <see cref="RequestResult{T}"/> indicating that the item
+        ///     has been delivered.
         /// </summary>
-        /// <param name="item">Found item.</param>
+        /// <param name="item">Delivered item.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public FindResult(T item)
+        public RequestResult(T item)
         {
             this.item = item;
-            this.isFound = true;
+            this.isSuccess = true;
         }
 
         /// <summary>
@@ -81,19 +82,20 @@ namespace Sztorm.Collections
 
         /// <summary>
         ///     Returns a <see cref="string"/> representation of current instance underlying item
-        ///     if it has been found.
+        ///     if it has been delivered.
         ///     <para>
         ///         Exceptions:<br/>
-        ///         <see cref="InvalidOperationException"/> Item must be found to be able to use
-        ///         it.
+        ///         <see cref="InvalidOperationException"/> Item must be delivered to be able to
+        ///         use it.
         ///     </para>    
         /// </summary>
         /// <returns></returns>
         public override string ToString()
         {
-            if (!isFound)
+            if (!isSuccess)
             {
-                throw new InvalidOperationException("Item must be found to be able to use it.");
+                throw new InvalidOperationException(
+                    "Item must be delivered to be able to use it.");
             }
             return item.ToString();
         }
@@ -103,38 +105,38 @@ namespace Sztorm.Collections
         /// </summary>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public override int GetHashCode() => isFound ? item.GetHashCode() * 13 : 0;
+        public override int GetHashCode() => isSuccess ? item.GetHashCode() * 13 : 0;
 
         /// <summary>
         ///     Returns a value indicating whether this instance is equal to a specified
-        ///     <see cref="FindResult{T}"/> value.
+        ///     <see cref="RequestResult{T}"/> value.
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
         public override bool Equals(object other)
         {
-            if (other == null || !(other is FindResult<T>))
+            if (other == null || !(other is RequestResult<T>))
             {
                 return false;
             }
-            return Equals((FindResult<T>)other);
+            return Equals((RequestResult<T>)other);
         }
 
         /// <summary>
         ///     Returns a value indicating whether this instance is equal to a specified
-        ///     <see cref="FindResult{T}"/> value.<br/>
-        ///     Use <see cref="Equals{U}(FindResult{U})"/> if the parameter underlying value is
+        ///     <see cref="RequestResult{T}"/> value.<br/>
+        ///     Use <see cref="Equals{U}(RequestResult{U})"/> if the parameter underlying value is
         ///     <see cref="IEquatable{T}"/> to avoid boxing. 
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool Equals(FindResult<T> other) 
-            => item.Equals(other.item) && this.isFound == other.isFound;
+        public bool Equals(RequestResult<T> other) 
+            => item.Equals(other.item) && this.isSuccess == other.isSuccess;
 
         /// <summary>
         ///     Returns a value indicating whether this instance is equal to a specified
-        ///     <see cref="FindResult{T}"/> value.
+        ///     <see cref="RequestResult{T}"/> value.
         /// </summary>
         /// <typeparam name="U">
         ///     <typeparamref name = "U"/> is <see cref="IEquatable{T}"/> and
@@ -143,23 +145,23 @@ namespace Sztorm.Collections
         /// <param name="other"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool Equals<U>(FindResult<U> other) where U : T, IEquatable<T> 
-            => other.item.Equals(item) && this.isFound == other.isFound;
+        public bool Equals<U>(RequestResult<U> other) where U : T, IEquatable<T> 
+            => other.item.Equals(item) && this.isSuccess == other.isSuccess;
 
         /// <summary>
         ///     Casts current instance to its underlying item or default value if it has not been
-        ///     found.
+        ///     delivered.
         /// </summary>
         /// <param name="result"></param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static explicit operator T(FindResult<T> result) => result.item;
+        public static explicit operator T(RequestResult<T> result) => result.item;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator ==(FindResult<T> left, FindResult<T> right)
+        public static bool operator ==(RequestResult<T> left, RequestResult<T> right)
             => left.Equals(right);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator !=(FindResult<T> left, FindResult<T> right)
+        public static bool operator !=(RequestResult<T> left, RequestResult<T> right)
             => !left.Equals(right);
     }
 }
