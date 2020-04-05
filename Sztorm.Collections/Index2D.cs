@@ -151,7 +151,7 @@ namespace Sztorm.Collections
         /// <returns></returns>
         public override bool Equals(object other)
         {
-            if (!(other is Index2D))
+            if (other == null || !(other is Index2D))
             {
                 return false;
             }
