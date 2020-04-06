@@ -76,62 +76,6 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        ///     Gets item stored at this instance index from an array. 
-        ///     <para>
-        ///         Exceptions:<br/>
-        ///         <see cref="IndexOutOfRangeException"/>: Specified index does not exist in
-        ///         an array.
-        ///     </para>
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="array"></param>
-        /// <returns></returns>
-        public T GetItemFrom<T>(Array2D<T> array)
-        {
-            try
-            {
-                return array[this];
-            }
-            catch (IndexOutOfRangeException)
-            {
-                throw;
-            }
-        }
-
-        /// <summary>
-        ///     Tries to get value stored at this instance index from an array.
-        ///     If operation fails, this returns null (<typeparamref name="T"/>?
-        ///     with HasValue property set to false).
-        /// </summary>
-        /// <typeparam name="T"><typeparamref name="T"/> is struct.</typeparam>
-        /// <param name="array"></param>
-        /// <returns></returns>
-        public T? TryGetValueFrom<T>(Array2D<T> array) where T : struct
-        {
-            if (!array.IsValidIndex(this))
-            {
-                return null;
-            }
-            return array[this];
-        }
-
-        /// <summary>
-        ///     Tries to get reference stored at this instance index from an array.
-        ///     If operation fails, this function returns null.
-        /// </summary>
-        /// <typeparam name="T"><typeparamref name="T"/> is class.</typeparam>
-        /// <param name="array"></param>
-        /// <returns></returns>
-        public T TryGetRefFrom<T>(Array2D<T> array) where T : class
-        {
-            if (!array.IsValidIndex(this))
-            {
-                return null;
-            }
-            return array[this];
-        }
-
-        /// <summary>
         ///     Returns a value indicating whether this instance is equal to a specified
         ///     <see cref="Index2D"></see> value.
         /// </summary>

@@ -7,10 +7,15 @@ namespace Sztorm.Collections
     ///     Represent result of requesting an item.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public readonly struct RequestResult<T> : IEquatable<RequestResult<T>>
+    public readonly struct ItemRequestResult<T> : IEquatable<ItemRequestResult<T>>
     {
         private readonly T item;
         private readonly bool isSuccess;
+
+        /// <summary>
+        ///     Represents a failed request. The item has not been delivered.
+        /// </summary>
+        public static readonly ItemRequestResult<T> Failed = new ItemRequestResult<T>();
 
         /// <summary>
         ///     Determines whether requested item is delivered.
@@ -61,12 +66,12 @@ namespace Sztorm.Collections
         public T GetItemOrDefault(T defaultValue) => isSuccess ? item : defaultValue;
 
         /// <summary>
-        ///     Initializes a new instance of <see cref="RequestResult{T}"/> indicating that the item
+        ///     Initializes a new instance of <see cref="ItemRequestResult{T}"/> indicating that the item
         ///     has been delivered.
         /// </summary>
         /// <param name="item">Delivered item.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public RequestResult(T item)
+        public ItemRequestResult(T item)
         {
             this.item = item;
             this.isSuccess = true;
@@ -109,34 +114,34 @@ namespace Sztorm.Collections
 
         /// <summary>
         ///     Returns a value indicating whether this instance is equal to a specified
-        ///     <see cref="RequestResult{T}"/> value.
+        ///     <see cref="ItemRequestResult{T}"/> value.
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
         public override bool Equals(object other)
         {
-            if (other == null || !(other is RequestResult<T>))
+            if (other == null || !(other is ItemRequestResult<T>))
             {
                 return false;
             }
-            return Equals((RequestResult<T>)other);
+            return Equals((ItemRequestResult<T>)other);
         }
 
         /// <summary>
         ///     Returns a value indicating whether this instance is equal to a specified
-        ///     <see cref="RequestResult{T}"/> value.<br/>
-        ///     Use <see cref="Equals{U}(RequestResult{U})"/> if the parameter underlying value is
+        ///     <see cref="ItemRequestResult{T}"/> value.<br/>
+        ///     Use <see cref="Equals{U}(ItemRequestResult{U})"/> if the parameter underlying value is
         ///     <see cref="IEquatable{T}"/> to avoid boxing. 
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool Equals(RequestResult<T> other) 
+        public bool Equals(ItemRequestResult<T> other) 
             => item.Equals(other.item) && this.isSuccess == other.isSuccess;
 
         /// <summary>
         ///     Returns a value indicating whether this instance is equal to a specified
-        ///     <see cref="RequestResult{T}"/> value.
+        ///     <see cref="ItemRequestResult{T}"/> value.
         /// </summary>
         /// <typeparam name="U">
         ///     <typeparamref name = "U"/> is <see cref="IEquatable{T}"/> and
@@ -145,7 +150,7 @@ namespace Sztorm.Collections
         /// <param name="other"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool Equals<U>(RequestResult<U> other) where U : T, IEquatable<T> 
+        public bool Equals<U>(ItemRequestResult<U> other) where U : T, IEquatable<T> 
             => other.item.Equals(item) && this.isSuccess == other.isSuccess;
 
         /// <summary>
@@ -154,14 +159,14 @@ namespace Sztorm.Collections
         /// </summary>
         /// <param name="result"></param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static explicit operator T(RequestResult<T> result) => result.item;
+        public static explicit operator T(ItemRequestResult<T> result) => result.item;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator ==(RequestResult<T> left, RequestResult<T> right)
+        public static bool operator ==(ItemRequestResult<T> left, ItemRequestResult<T> right)
             => left.Equals(right);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool operator !=(RequestResult<T> left, RequestResult<T> right)
+        public static bool operator !=(ItemRequestResult<T> left, ItemRequestResult<T> right)
             => !left.Equals(right);
     }
 }
