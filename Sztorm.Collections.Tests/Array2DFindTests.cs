@@ -28,6 +28,20 @@ namespace Sztorm.Collections.Tests
             where TPredicate : struct, IPredicate<T>
             => array.Find(match);
 
+        [TestCaseSource(typeof(Array2DTests), nameof(FindAllTestCases))]
+        public static void TestFindAll<T, TCollection>(
+            Array2D<T> array, Predicate<T> match, TCollection expected)
+            where TCollection : ICollection<T>, new()
+            => CollectionAssert.AreEqual(expected, array.FindAll<TCollection>(match));
+
+
+        [TestCaseSource(typeof(Array2DTests), nameof(FindAllIPredicateTestCases))]
+        public static void TestFindAll<T, TCollection, TPredicate>(
+            Array2D<T> array, TPredicate match, TCollection expected)
+            where TCollection : ICollection<T>, new()
+            where TPredicate : struct, IPredicate<T>
+            => CollectionAssert.AreEqual(expected, array.FindAll<TCollection, TPredicate>(match));
+
         private static IEnumerable<TestCaseData> FindTestCases()
         {
             yield return new TestCaseData(
@@ -62,6 +76,42 @@ namespace Sztorm.Collections.Tests
                                  { 8, 2, 3 } }),
                 new EqualsPredicate<int>(10))
                 .Returns(ItemRequestResult<int>.Failed);
+        }
+
+        private static IEnumerable<TestCaseData> FindAllTestCases()
+        {
+            yield return new TestCaseData(
+                Array2D<int>.FromSystem2DArray(
+                    new int[,] { { 2, 3, 5 },
+                                 { 4, 9, 1 },
+                                 { 8, 2, 3 } }),
+                new Predicate<int>(o => o > 5),
+                new List<int>() { 9, 8 });
+            yield return new TestCaseData(
+                Array2D<int>.FromSystem2DArray(
+                    new int[,] { { 2, 3, 5 },
+                                 { 4, 9, 1 },
+                                 { 8, 2, 3 } }),
+                new Predicate<int>(o => o == 10),
+                new List<int>());
+        }
+
+        private static IEnumerable<TestCaseData> FindAllIPredicateTestCases()
+        {
+            yield return new TestCaseData(
+                Array2D<int>.FromSystem2DArray(
+                    new int[,] { { 2, 3, 5 },
+                                 { 4, 9, 1 },
+                                 { 8, 2, 3 } }),
+                new GreaterThanPredicateInt(5),
+                new List<int>() { 9, 8 });
+            yield return new TestCaseData(
+                Array2D<int>.FromSystem2DArray(
+                    new int[,] { { 2, 3, 5 },
+                                 { 4, 9, 1 },
+                                 { 8, 2, 3 } }),
+                new EqualsPredicate<int>(10),
+                new List<int>());
         }
 
         private struct GreaterThanPredicateInt : IPredicate<int>

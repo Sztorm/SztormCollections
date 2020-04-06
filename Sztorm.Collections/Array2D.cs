@@ -883,7 +883,7 @@ namespace Sztorm.Collections
         ///     Otherwise returns <see cref="ItemRequestResult{T}.Failed"/><br/>
         ///     Use <see cref="Find{TPredicate}(TPredicate)"/> to avoid virtual call.
         ///     <para>
-        ///         Exceptions:
+        ///         Exceptions:<br/>
         ///         <see cref="ArgumentNullException"/> Match cannot be null.
         ///     </para>
         /// </summary>
@@ -914,7 +914,7 @@ namespace Sztorm.Collections
         ///     Searches for an item that matches the conditions defined by the specified
         ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying first 
         ///     occurrence of item searched within the entire <see cref="Array2D{T}"/> if found.
-        ///     Otherwise returns <see cref="ItemRequestResult{T}.Failed"/><br/>
+        ///     Otherwise returns <see cref="ItemRequestResult{T}.Failed"/>
         /// </summary>
         /// <typeparam name="TPredicate">
         ///     <typeparamref name = "TPredicate"/> is <see cref="IPredicate{T}"/> and
@@ -941,6 +941,101 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
+        ///     Returns <see cref="ICollection{T}"/> containing all the elements that match the
+        ///     conditions defined by the specified predicate.<br/>
+        ///     Use <see cref="FindAll{TCollection, TPredicate}(TPredicate)"/> to avoid virtual
+        ///     call.
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentNullException"/> Match cannot be null.<br/>
+        ///         <see cref="NotSupportedException"/> Provided type must support
+        ///         <see cref="ICollection{T}.Add(T)"/> method.
+        ///     </para>
+        /// </summary>
+        /// <typeparam name="TCollection">
+        ///     <typeparamref name = "TCollection"/> is <see cref="ICollection{T}"/> and has a
+        ///     parameterless constructor.
+        /// </typeparam>
+        /// <param name="match">
+        ///     The <see cref="Predicate{T}"/> delegate that defines the conditions of the element
+        ///     to search for.
+        /// </param>
+        /// <returns></returns>
+        public TCollection FindAll<TCollection>(Predicate<T> match)
+            where TCollection : ICollection<T>, new()
+        {
+            if (match == null)
+            {
+                throw new ArgumentNullException(nameof(match), "Match cannot be null.");
+            }
+            var resizableCollection = new TCollection();
+
+            try
+            {
+                for (int i = 0, length = Count; i < length; i++)
+                {
+                    ref readonly T item = ref items[i];
+
+                    if (match(item))
+                    {
+                        resizableCollection.Add(item);
+                    }
+                }
+            }
+            catch (NotSupportedException)
+            {
+                throw new NotSupportedException("Provided type must support Add(T) method.");
+            }
+            return resizableCollection;
+        }
+
+        /// <summary>
+        ///     Returns <see cref="ICollection{T}"/> containing all the elements that match the
+        ///     conditions defined by the specified predicate.
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="NotSupportedException"/> Provided type must support 
+        ///         <see cref="ICollection{T}.Add(T)"/> method.
+        ///     </para>
+        /// </summary>
+        /// <typeparam name="TCollection">
+        ///     <typeparamref name = "TCollection"/> is <see cref="ICollection{T}"/> and has a
+        ///     parameterless constructor.
+        /// </typeparam>
+        /// <typeparam name="TPredicate">
+        ///     <typeparamref name = "TPredicate"/> is <see cref="IPredicate{T}"/> and
+        ///     <see langword="struct"/>
+        /// </typeparam>
+        /// <param name="match">
+        ///     An <see langword="struct"/> implementing <see cref="IPredicate{T}"/> that defines
+        ///     the conditions of the element to search for.
+        /// </param>
+        /// <returns></returns>
+        public TCollection FindAll<TCollection, TPredicate>(TPredicate match)
+            where TCollection : ICollection<T>, new()
+            where TPredicate : struct, IPredicate<T>
+        {
+            var resizableCollection = new TCollection();
+            try
+            {
+                for (int i = 0, length = Count; i < length; i++)
+                {
+                    ref readonly T item = ref items[i];
+
+                    if (match.Invoke(item))
+                    {
+                        resizableCollection.Add(item);
+                    }
+                }
+            }
+            catch (NotSupportedException)
+            {
+                throw new NotSupportedException("Provided type must support Add(T) method.");
+            }
+            return resizableCollection;
+        }
+
+        /// <summary>
         ///     Creates a <typeparamref name = "T"/>[,] from this <see cref="Array2D{T}"/>
         ///     instance.
         /// </summary>
@@ -955,10 +1050,10 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        /// Creates a <see cref="Array2D{T}"/> from <typeparamref name = "T"/>[,] intance.
+        /// Creates a <see cref="Array2D{T}"/> from <typeparamref name = "T"/>[,] instance.
         /// <para>
         ///     Exceptions:<br/>
-        ///     <see cref="ArgumentNullException"/>: Array argument cannot be null.
+        ///     <see cref="ArgumentNullException"/>: Array cannot be null.
         /// </para>
         /// </summary>
         /// <param name="array"></param>
@@ -967,7 +1062,7 @@ namespace Sztorm.Collections
         {
             if (array == null)
             {
-                throw new ArgumentNullException(nameof(array), "Array argument cannot be null.");
+                throw new ArgumentNullException(nameof(array), "Array cannot be null.");
             }
             Bounds2D bounds =
                 Bounds2D.NotCheckedConstructor(array.GetLength(0), array.GetLength(1));
