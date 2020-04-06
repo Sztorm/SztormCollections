@@ -1,0 +1,76 @@
+﻿using System;
+using System.Linq;
+using System.Collections;
+using System.Collections.Generic;
+using NUnit.Framework.Api;
+using NUnit.Framework;
+
+namespace Sztorm.Collections.Tests
+{
+    public partial class Array2DTests
+    {
+        [Test]
+        public static void TestFindThrowsExceptionIfMatchIsNull()
+        {
+            var array = new Array2D<int>(0, 0);
+            void findNull() => array.Find(match: null);
+
+            Assert.Throws<ArgumentNullException>(findNull);
+        }
+
+        [TestCaseSource(typeof(Array2DTests), nameof(FindTestCases))]
+        public static ItemRequestResult<T> TestFind<T>(Array2D<T> array, Predicate<T> match)
+            => array.Find(match);
+
+        [TestCaseSource(typeof(Array2DTests), nameof(FindIPredicateTestCases))]
+        public static ItemRequestResult<T> TestFind<T, TPredicate>(
+            Array2D<T> array, TPredicate match)
+            where TPredicate : struct, IPredicate<T>
+            => array.Find(match);
+
+        private static IEnumerable<TestCaseData> FindTestCases()
+        {
+            yield return new TestCaseData(
+                Array2D<int>.FromSystem2DArray(
+                    new int[,] { { 2, 3, 5 },
+                                 { 4, 9, 1 },
+                                 { 8, 2, 3 } }),
+                new Predicate<int>(o => o > 5))
+                .Returns(new ItemRequestResult<int>(9));
+            yield return new TestCaseData(
+                Array2D<int>.FromSystem2DArray(
+                    new int[,] { { 2, 3, 5 },
+                                 { 4, 9, 1 },
+                                 { 8, 2, 3 } }),
+                new Predicate<int>(o => o == 10))
+                .Returns(ItemRequestResult<int>.Failed);
+        }
+
+        private static IEnumerable<TestCaseData> FindIPredicateTestCases()
+        {
+            yield return new TestCaseData(
+                Array2D<int>.FromSystem2DArray(
+                    new int[,] { { 2, 3, 5 },
+                                 { 4, 9, 1 },
+                                 { 8, 2, 3 } }),
+                new GreaterThanPredicateInt(5))
+                .Returns(new ItemRequestResult<int>(9));
+            yield return new TestCaseData(
+                Array2D<int>.FromSystem2DArray(
+                    new int[,] { { 2, 3, 5 },
+                                 { 4, 9, 1 },
+                                 { 8, 2, 3 } }),
+                new EqualsPredicate<int>(10))
+                .Returns(ItemRequestResult<int>.Failed);
+        }
+
+        private struct GreaterThanPredicateInt : IPredicate<int>
+        {
+            public readonly int InnerValue;
+
+            public GreaterThanPredicateInt(int value) => InnerValue = value;
+
+            public bool Invoke(int other) => other > InnerValue;
+        }
+    }
+}

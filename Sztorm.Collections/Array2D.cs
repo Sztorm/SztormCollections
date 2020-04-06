@@ -877,6 +877,70 @@ namespace Sztorm.Collections
             => Index2DOfHelper(IndexOfComparable(item));
 
         /// <summary>
+        ///     Searches for an item that matches the conditions defined by the specified
+        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying first 
+        ///     occurrence of item searched within the entire <see cref="Array2D{T}"/> if found.
+        ///     Otherwise returns <see cref="ItemRequestResult{T}.Failed"/><br/>
+        ///     Use <see cref="Find{TPredicate}(TPredicate)"/> to avoid virtual call.
+        ///     <para>
+        ///         Exceptions:
+        ///         <see cref="ArgumentNullException"/> Match cannot be null.
+        ///     </para>
+        /// </summary>
+        /// <param name="match">
+        ///     The <see cref="Predicate{T}"/> delegate that defines the conditions of the element
+        ///     to search for.
+        /// </param>
+        /// <returns></returns>
+        public ItemRequestResult<T> Find(Predicate<T> match)
+        {
+            if (match == null)
+            {
+                throw new ArgumentNullException(nameof(match), "Match cannot be null.");
+            }
+            for (int i = 0, length = Count; i < length; i++)
+            {
+                ref readonly T item = ref items[i];
+
+                if (match(item))
+                {
+                    return new ItemRequestResult<T>(item);
+                }
+            }
+            return ItemRequestResult<T>.Failed;
+        }
+
+        /// <summary>
+        ///     Searches for an item that matches the conditions defined by the specified
+        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying first 
+        ///     occurrence of item searched within the entire <see cref="Array2D{T}"/> if found.
+        ///     Otherwise returns <see cref="ItemRequestResult{T}.Failed"/><br/>
+        /// </summary>
+        /// <typeparam name="TPredicate">
+        ///     <typeparamref name = "TPredicate"/> is <see cref="IPredicate{T}"/> and
+        ///     <see langword="struct"/>
+        /// </typeparam>
+        /// <param name="match">
+        ///     An <see langword="struct"/> implementing <see cref="IPredicate{T}"/> that defines
+        ///     the conditions of the element to search for.
+        /// </param>
+        /// <returns></returns>
+        public ItemRequestResult<T> Find<TPredicate>(TPredicate match)
+            where TPredicate : struct, IPredicate<T>
+        {
+            for (int i = 0, length = Count; i < length; i++)
+            {
+                ref readonly T item = ref items[i];
+
+                if (match.Invoke(item))
+                {
+                    return new ItemRequestResult<T>(item);
+                }
+            }
+            return ItemRequestResult<T>.Failed;
+        }
+
+        /// <summary>
         ///     Creates a <typeparamref name = "T"/>[,] from this <see cref="Array2D{T}"/>
         ///     instance.
         /// </summary>
