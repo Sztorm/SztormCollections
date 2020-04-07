@@ -165,11 +165,12 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        ///     An one dimensional indexer that can be used to iterate through all the stored
-        ///     elements. Indexing start at zero.
+        ///     Returns an element stored at specified one-dimensional index. Indexing start at
+        ///     zero and follows row-major ordering.
         ///     <para>
-        ///         Throws <see cref="IndexOutOfRangeException"/> if index exceeds
-        ///         <see cref="Count"/> property.
+        ///         Exceptions:<br/>
+        ///         <see cref="IndexOutOfRangeException"/>: Index cannot exceed
+        ///         <see cref="Count"/>.
         ///     </para>
         /// </summary>
         /// <param name="index"></param>
@@ -185,7 +186,7 @@ namespace Sztorm.Collections
                 }
                 catch (IndexOutOfRangeException)
                 {
-                    throw;
+                    throw new IndexOutOfRangeException("Index cannot exceed Count.");
                 }
             }
         }
@@ -193,8 +194,8 @@ namespace Sztorm.Collections
         /// <summary>
         ///     Returns an element stored at specified row and column.
         ///     <para>
-        ///         Throws <see cref="IndexOutOfRangeException"/> if any of indices is out of array
-        ///         bounds.
+        ///         Exceptions:<br/>
+        ///         <see cref="IndexOutOfRangeException"/>: Index is out of array bounds.
         ///     </para>
         /// </summary>
         /// <param name="row"></param>
@@ -207,8 +208,7 @@ namespace Sztorm.Collections
             {
                 if (!IsValidIndex(row, column))
                 {
-                    throw new IndexOutOfRangeException(
-                        "At least one of indices is out of array bounds.");
+                    throw new IndexOutOfRangeException("Index is out of array bounds.");
                 }
                 return ref items[row * Columns + column];
             }
@@ -218,8 +218,7 @@ namespace Sztorm.Collections
         ///     Returns an element stored at specified index.
         ///     <para>
         ///         Exceptions:<br/>
-        ///         <see cref="IndexOutOfRangeException"/>: At least one of indices is out of array
-        ///         bounds.
+        ///         <see cref="IndexOutOfRangeException"/>: Index is out of array bounds.
         ///     </para>
         /// </summary>
         /// <param name="index"></param>
@@ -231,8 +230,7 @@ namespace Sztorm.Collections
             {
                 if (!IsValidIndex(index))
                 {
-                    throw new IndexOutOfRangeException(
-                        "At least one of indices is out of array bounds.");
+                    throw new IndexOutOfRangeException("Index is out of array bounds.");
                 }
                 return ref items[index.Dimension1Index * Columns + index.Dimension2Index];
             }
@@ -266,8 +264,8 @@ namespace Sztorm.Collections
             => ref items[index.Dimension1Index * Columns + index.Dimension2Index];
 
         /// <summary>
-        ///     Returns true if specified index exists in this <see cref="Array2D{T}"/> instance,
-        ///     false otherwise.
+        ///     Determines whether specified index exists in this <see cref="Array2D{T}"/>
+        ///     instance.
         /// </summary>
         /// <param name="row"></param>
         /// <param name="column"></param>
@@ -277,8 +275,8 @@ namespace Sztorm.Collections
             => bounds.IsValidIndex(row, column);
 
         /// <summary>
-        ///     Returns true if specified index exists in this <see cref="Array2D{T}"/> instance,
-        ///     false otherwise.
+        ///     Determines whether specified index exists in this <see cref="Array2D{T}"/>
+        ///     instance.
         /// </summary>
         /// <param name="index"></param>
         /// <returns></returns>
@@ -730,7 +728,7 @@ namespace Sztorm.Collections
         /// <param name="item"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool Contains(T item) => IndexOf(item).HasValue;
+        public bool Contains(T item) => IndexOf(item).IsSuccess;
 
         /// <summary>
         ///     Determines whether specified item exists in the current instance.
@@ -743,7 +741,7 @@ namespace Sztorm.Collections
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool ContainsEquatable<U>(U item) where U : T, IEquatable<T>
-            => IndexOfEquatable(item).HasValue;
+            => IndexOfEquatable(item).IsSuccess;
 
         /// <summary>
         ///     Determines whether specified item exists in the current instance.
@@ -756,32 +754,36 @@ namespace Sztorm.Collections
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool ContainsComparable<U>(U item) where U : T, IComparable<T>
-            => IndexOfComparable(item).HasValue;
+            => IndexOfComparable(item).IsSuccess;
 
         /// <summary>
-        ///     Searches for the specified item and returns the one-dimensional index of its first
-        ///     occurrence in this intance if found; returns <see langword="null"/> otherwise.<br/>
+        ///     Returns the <see cref="ItemRequestResult{T}"/> with underlying underlying
+        ///     one-dimensional index of first occurrence of item searched within the entire
+        ///     <see cref="Array2D{T}"/> if found. Otherwise returns
+        ///     <see cref="ItemRequestResult{T}.Failed"/><br/>
         ///     Use <see cref="IndexOfEquatable{U}(U)"/> or <see cref="IndexOfComparable{U}(U)"/>
         ///     to avoid unnecessary boxing if stored type is <see cref="IEquatable{T}"/> or
         ///     <see cref="IComparable{T}"/>.
         /// </summary>
         /// <param name="item">An element value to search.</param>
         /// <returns></returns>
-        public int? IndexOf(T item)
+        public ItemRequestResult<int> IndexOf(T item)
         {
             for (int i = 0, length = Count; i < length; i++)
             {
                 if (item.Equals(items[i]))
                 {
-                    return i;
+                    return new ItemRequestResult<int>(i);
                 }
             }
-            return null;
+            return ItemRequestResult<int>.Failed;
         }
 
         /// <summary>
-        ///     Searches for the specified item and returns the one-dimensional index of its first
-        ///     occurrence in this intance if found; returns <see langword="null"/> otherwise.
+        ///     Returns the <see cref="ItemRequestResult{T}"/> with underlying underlying
+        ///     one-dimensional index of first occurrence of item searched within the entire
+        ///     <see cref="Array2D{T}"/> if found. Otherwise returns
+        ///     <see cref="ItemRequestResult{T}.Failed"/>
         /// </summary>
         /// <typeparam name="U">
         ///     <typeparamref name = "U"/> is <see cref="IEquatable{T}"/> and
@@ -789,21 +791,23 @@ namespace Sztorm.Collections
         /// </typeparam>
         /// <param name="item">An element value to search.</param>
         /// <returns></returns>
-        public int? IndexOfEquatable<U>(U item) where U : T, IEquatable<T>
+        public ItemRequestResult<int> IndexOfEquatable<U>(U item) where U : T, IEquatable<T>
         {
             for (int i = 0, length = Count; i < length; i++)
             {
                 if (item.Equals(items[i]))
                 {
-                    return i;
+                    return new ItemRequestResult<int>(i);
                 }
             }
-            return null;
+            return ItemRequestResult<int>.Failed;
         }
 
         /// <summary>
-        ///     Searches for the specified item and returns the one-dimensional index of its first
-        ///     occurrence in this intance if found; returns <see langword="null"/> otherwise.
+        ///     Returns the <see cref="ItemRequestResult{T}"/> with underlying underlying
+        ///     one-dimensional index of first occurrence of item searched within the entire
+        ///     <see cref="Array2D{T}"/> if found. Otherwise returns
+        ///     <see cref="ItemRequestResult{T}.Failed"/>
         /// </summary>
         /// <typeparam name="U">
         ///     <typeparamref name = "U"/> is <see cref="IComparable{T}"/> and
@@ -811,34 +815,35 @@ namespace Sztorm.Collections
         /// </typeparam>
         /// <param name="item">An element value to search.</param>
         /// <returns></returns>
-        public int? IndexOfComparable<U>(U item) where U : T, IComparable<T>
+        public ItemRequestResult<int> IndexOfComparable<U>(U item) where U : T, IComparable<T>
         {
             for (int i = 0, length = Count; i < length; i++)
             {
                 if (item.CompareTo(items[i]) == 0)
                 {
-                    return i;
+                    return new ItemRequestResult<int>(i);
                 }
             }
-            return null;
+            return ItemRequestResult<int>.Failed;
         }
 
-        private Index2D? Index2DOfHelper(int? possibleIndex)
+        private ItemRequestResult<Index2D> Index2DOfHelper(ItemRequestResult<int> possibleIndex)
         {
-            if (!possibleIndex.HasValue)
+            if (!possibleIndex.IsSuccess)
             {
-                return null;
+                return ItemRequestResult<Index2D>.Failed;
             }
-            int oneDimIndex = possibleIndex.Value;
+            int oneDimIndex = possibleIndex.ItemOrDefault;
             int row = oneDimIndex / Columns;
             int column = oneDimIndex % Columns;
 
-            return new Index2D(row, column);
+            return new ItemRequestResult<Index2D>(new Index2D(row, column));
         }
 
         /// <summary>
-        ///     Searches for the specified item and returns the 2D index of its first occurrence
-        ///     in this instance if found; returns <see langword="null"/> otherwise.<br/>
+        ///     Returns the <see cref="ItemRequestResult{T}"/> with underlying underlying index of
+        ///     first occurrence of item searched within the entire <see cref="Array2D{T}"/> if
+        ///     found. Otherwise returns <see cref="ItemRequestResult{T}.Failed"/><br/>
         ///     Use <see cref="Index2DOfEquatable{U}(U)"/> or
         ///     <see cref="Index2DOfComparable{U}(U)"/> to avoid unnecessary boxing if stored type
         ///     is <see cref="IEquatable{T}"/> or <see cref="IComparable{T}"/>.
@@ -846,11 +851,12 @@ namespace Sztorm.Collections
         /// <param name="item">An element value to search.</param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public Index2D? Index2DOf(T item) => Index2DOfHelper(IndexOf(item));
+        public ItemRequestResult<Index2D> Index2DOf(T item) => Index2DOfHelper(IndexOf(item));
 
         /// <summary>
-        ///     Searches for the specified item and returns the 2D index of its first occurrence
-        ///     in this instance if found; returns <see langword="null"/> otherwise.
+        ///     Returns the <see cref="ItemRequestResult{T}"/> with underlying underlying index of
+        ///     first occurrence of item searched within the entire <see cref="Array2D{T}"/> if
+        ///     found. Otherwise returns <see cref="ItemRequestResult{T}.Failed"/>
         /// </summary>
         /// <typeparam name="U">
         ///     <typeparamref name = "U"/> is <see cref="IEquatable{T}"/> and
@@ -859,12 +865,13 @@ namespace Sztorm.Collections
         /// <param name="item"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public Index2D? Index2DOfEquatable<U>(U item) where U : IEquatable<T>, T
+        public ItemRequestResult<Index2D> Index2DOfEquatable<U>(U item) where U : IEquatable<T>, T
             => Index2DOfHelper(IndexOfEquatable(item));
 
         /// <summary>
-        ///     Searches for the specified item and returns the 2D index of its first occurrence
-        ///     in this instance if found; returns <see langword="null"/> otherwise.
+        ///     Returns the <see cref="ItemRequestResult{T}"/> with underlying underlying index of
+        ///     first occurrence of item searched within the entire <see cref="Array2D{T}"/> if
+        ///     found. Otherwise returns <see cref="ItemRequestResult{T}.Failed"/>
         /// </summary>
         /// <typeparam name="U">
         ///     <typeparamref name = "U"/> is <see cref="IComparable{T}"/> and
@@ -873,7 +880,8 @@ namespace Sztorm.Collections
         /// <param name="item"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public Index2D? Index2DOfComparable<U>(U item) where U : IComparable<T>, T
+        public ItemRequestResult<Index2D> Index2DOfComparable<U>(U item)
+            where U : IComparable<T>, T
             => Index2DOfHelper(IndexOfComparable(item));
 
         /// <summary>
@@ -884,7 +892,8 @@ namespace Sztorm.Collections
         ///     Use <see cref="Find{TPredicate}(TPredicate)"/> to avoid virtual call.
         ///     <para>
         ///         Exceptions:<br/>
-        ///         <see cref="ArgumentNullException"/> Match cannot be null.
+        ///         <see cref="ArgumentNullException"/> <paramref name="match"/> cannot be
+        ///         <see langword="null"/>.
         ///     </para>
         /// </summary>
         /// <param name="match">
@@ -947,7 +956,8 @@ namespace Sztorm.Collections
         ///     call.
         ///     <para>
         ///         Exceptions:<br/>
-        ///         <see cref="ArgumentNullException"/> Match cannot be null.<br/>
+        ///         <see cref="ArgumentNullException"/> <paramref name="match"/> cannot be
+        ///         <see langword="null"/>.<br/>
         ///         <see cref="NotSupportedException"/> Provided type must support
         ///         <see cref="ICollection{T}.Add(T)"/> method.
         ///     </para>
