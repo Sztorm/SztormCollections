@@ -10,7 +10,7 @@ namespace Sztorm.Collections.Tests
     public partial class Array2DTests
     {
         [Test]
-        public static void TestFindThrowsExceptionIfMatchIsNull()
+        public static void FindThrowsExceptionIfMatchIsNull()
         {
             var array = new Array2D<int>(0, 0);
             void findNull() => array.Find(match: null);

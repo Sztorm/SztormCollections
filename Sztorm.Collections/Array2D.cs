@@ -1151,6 +1151,38 @@ namespace Sztorm.Collections
             => Requested1DIndexToRequested2DIndex(FindIndex(match));
 
         /// <summary>
+        ///     Returns a new <see cref="Array2D{TOutput}"/> instance containing items from this
+        ///     instance converted to another type.
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentNullException"/> <paramref name="converter"/> cannot be
+        ///         <see langword="null"/>.<br/>
+        ///     </para>
+        /// </summary>
+        /// <typeparam name="TOutput">
+        ///     Target type of resulting <see cref="Array2D{T}"/>.
+        /// </typeparam>
+        /// <param name="converter">
+        ///    A <see cref="Converter{TInput, TOutput}"/> delegate that converts each element from
+        ///    one type to another type.
+        /// </param>
+        /// <returns></returns>
+        public Array2D<TOutput> ConvertAll<TOutput>(Converter<T, TOutput> converter)
+        {
+            if (converter == null)
+            {
+                throw new ArgumentNullException(nameof(converter), "Match cannot be null.");
+            }
+            var result = new Array2D<TOutput>(this.bounds);
+
+            for (int i = 0, length = Count; i < length; i++)
+            {
+                result.items[i] = converter(items[i]);
+            }
+            return result;
+        }
+
+        /// <summary>
         ///     Creates a <typeparamref name = "T"/>[,] from this <see cref="Array2D{T}"/>
         ///     instance.
         /// </summary>
