@@ -28,26 +28,30 @@ using System.Runtime.CompilerServices;
 namespace Sztorm.Collections
 {
     /// <summary>
-    ///     Represents a predicate which use is to check equality.
+    ///     Represents a predicate which determines whether inner object in is less than or equal
+    ///     to any <typeparamref name="T"/> object it may be compared to.
     /// </summary>
-    /// <typeparam name="T"><typeparamref name = "T"/> is <see cref="IEquatable{T}"/></typeparam>
-    public readonly struct EqualsPredicate<T> : IPredicate<T> where T : IEquatable<T>
+    /// <typeparam name="T"><typeparamref name = "T"/> is <see cref="IComparable{T}"/></typeparam>
+    public readonly struct LessThanOrEqualToPredicate<T> : IPredicate<T> where T : IComparable<T>
     {
         public readonly T InnerObject;
 
         /// <summary>
-        ///     Constructs a predicate which use is to check equality with object passed in.
+        ///     Constructs a predicate which determines whether object passed in is less than or
+        ///     equal to any <typeparamref name="T"/> object it may be compared to.
         /// </summary>
-        /// <param name="obj"></param>
+        /// <param name="obj">The object that may be compared to</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public EqualsPredicate(T obj) => InnerObject = obj;
+        public LessThanOrEqualToPredicate(T obj) => InnerObject = obj;
 
         /// <summary>
-        ///     Returns a value indicating whether inner object is equal to other.
+        ///     Returns a value indicating whether <see cref="InnerObject"/> is less than or equal
+        ///     to other.
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool Invoke(T other) => InnerObject.Equals(other);
+        public bool Invoke(T other) => InnerObject.CompareTo(other) <= 0;
     }
 }
+

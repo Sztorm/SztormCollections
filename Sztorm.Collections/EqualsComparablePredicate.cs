@@ -30,8 +30,8 @@ namespace Sztorm.Collections
     /// <summary>
     ///     Represents a predicate which use is to check equality.
     /// </summary>
-    /// <typeparam name="T"><typeparamref name = "T"/> is <see cref="IEquatable{T}"/></typeparam>
-    public readonly struct EqualsPredicate<T> : IPredicate<T> where T : IEquatable<T>
+    /// <typeparam name="T"><typeparamref name = "T"/> is <see cref="IComparable{T}"/></typeparam>
+    public readonly struct EqualsComparablePredicate<T> : IPredicate<T> where T : IComparable<T>
     {
         public readonly T InnerObject;
 
@@ -40,7 +40,7 @@ namespace Sztorm.Collections
         /// </summary>
         /// <param name="obj"></param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public EqualsPredicate(T obj) => InnerObject = obj;
+        public EqualsComparablePredicate(T obj) => InnerObject = obj;
 
         /// <summary>
         ///     Returns a value indicating whether inner object is equal to other.
@@ -48,6 +48,6 @@ namespace Sztorm.Collections
         /// <param name="other"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool Invoke(T other) => InnerObject.Equals(other);
+        public bool Invoke(T other) => InnerObject.CompareTo(other) == 0;
     }
 }
