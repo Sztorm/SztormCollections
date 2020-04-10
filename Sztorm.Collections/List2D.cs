@@ -397,7 +397,7 @@ namespace Sztorm.Collections
             }
             try
             {
-                Reallocate(Bounds2D.NotCheckedConstructor(newRows, newCols));
+                Reallocate(new Bounds2D(new Box<int>(newRows), new Box<int>(newCols)));
             }
             catch (OutOfMemoryException)
             {
@@ -462,7 +462,7 @@ namespace Sztorm.Collections
                     newCapCols = int.MaxValue;
                 }
             }
-            return Bounds2D.NotCheckedConstructor(newCapRows, newCapCols);
+            return new Bounds2D(new Box<int>(newCapRows), new Box<int>(newCapCols));
         }
 
         /// <summary>
@@ -569,7 +569,7 @@ namespace Sztorm.Collections
                     throw;
                 }
             }
-            bounds = Bounds2D.NotCheckedConstructor(newRows, newCols);
+            bounds = new Bounds2D(new Box<int>(newRows), new Box<int>(newCols));
         }
 
         /// <summary>
@@ -614,7 +614,7 @@ namespace Sztorm.Collections
                     throw;
                 }
             }
-            bounds = Bounds2D.NotCheckedConstructor(newRows, newCols);
+            bounds = new Bounds2D(new Box<int>(newRows), new Box<int>(newCols));
         }
 
         /// <summary>
@@ -633,8 +633,8 @@ namespace Sztorm.Collections
         /// Sets items of specified count of rows at given starting index to default values.
         /// Arguments are not checked on release build.
         /// </summary>
-        /// <param name="startIndex">Range: [0, <see cref="capacity.Rows"/>].</param>
-        /// <param name="count">Range: [0, <see cref="capacity.Rows"/> - startIndex).</param>
+        /// <param name="startIndex">Range: [0, <see cref="capacity"/>.Rows]</param>
+        /// <param name="count">Range: [0, <see cref="capacity"/> - startIndex.Rows)</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal void ClearRows(int startIndex, int count)
         {
@@ -652,8 +652,8 @@ namespace Sztorm.Collections
         /// Sets items of specified count of columns at given starting index to default values.
         /// Arguments are not checked on release build.
         /// </summary>
-        /// <param name="startIndex">Range: [0, <see cref="capacity.Columns"/>].</param>
-        /// <param name="count">Range: [0, <see cref="capacity.Columns"/> - startIndex).</param>
+        /// <param name="startIndex">Range: [0, <see cref="capacity"/>.Columns]</param>
+        /// <param name="count">Range: [0, <see cref="capacity"/>.Columns - startIndex)</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal void ClearColumns(int startIndex, int count)
         {
@@ -712,7 +712,7 @@ namespace Sztorm.Collections
             }
             ClearRows(newRows, count);
 
-            bounds = Bounds2D.NotCheckedConstructor(newRows, cols);
+            bounds = new Bounds2D(new Box<int>(newRows), new Box<int>(cols));
         }
 
         /// <summary>
@@ -783,7 +783,7 @@ namespace Sztorm.Collections
             }
             ClearColumns(newCols, count);
 
-            bounds = Bounds2D.NotCheckedConstructor(rows, newCols);
+            bounds = new Bounds2D(new Box<int>(rows), new Box<int>(newCols));
         }
 
         /// <summary>
@@ -818,7 +818,7 @@ namespace Sztorm.Collections
         ///     Arguments are not checked on release build.
         /// </summary>
         /// <param name="startIndex">Range: [0, <see cref="Rows"/>]</param>
-        /// <param name="count">Range: [0, (<see cref="capacity.Rows"/> - startIndex)]</param>
+        /// <param name="count">Range: [0, (<see cref="capacity"/>.Rows - startIndex)]</param>
         /// <param name="newBounds">newBounds.Columns &lt;= <see cref="Columns"/>
         /// </param>
         internal void InsertRowsNotAlloc(int startIndex, int count, Bounds2D newBounds)
@@ -913,7 +913,7 @@ namespace Sztorm.Collections
                 throw new ArgumentOutOfRangeException(
                     nameof(count), "Count must be greater or equal to zero.");
             }
-            Bounds2D newBounds = Bounds2D.NotCheckedConstructor(Rows + count, Columns);
+            Bounds2D newBounds = new Bounds2D(new Box<int>(Rows + count), new Box<int>(Columns));
 
             if (IsReallocationNeeded(newBounds))
             {
@@ -965,7 +965,7 @@ namespace Sztorm.Collections
         ///     Arguments are not checked on release build.
         /// </summary>
         /// <param name="startIndex">Range: [0, <see cref="Columns"/>]</param>
-        /// <param name="count">Range: [0, (<see cref="capacity.Columns"/> - startIndex)]</param>
+        /// <param name="count">Range: [0, (<see cref="capacity"/>.Columns - startIndex)]</param>
         /// <param name="newBounds">newBounds.Rows &lt;= <see cref="Rows"/>
         /// </param>
         internal void InsertColumnsNotAlloc(int startIndex, int count, Bounds2D newBounds)
@@ -1063,7 +1063,7 @@ namespace Sztorm.Collections
                 throw new ArgumentOutOfRangeException(
                     nameof(count), "Count must be greater or equal to zero.");
             }
-            Bounds2D newBounds = Bounds2D.NotCheckedConstructor(Rows, Columns + count);
+            Bounds2D newBounds = new Bounds2D(new Box<int>(Rows), new Box<int>(Columns + count));
 
             if (IsReallocationNeeded(newBounds))
             {
@@ -1226,8 +1226,8 @@ namespace Sztorm.Collections
             {
                 throw new ArgumentNullException(nameof(array), "Array argument cannot be null.");
             }
-            Bounds2D bounds =
-                Bounds2D.NotCheckedConstructor(array.GetLength(0), array.GetLength(1));
+            Bounds2D bounds = new Bounds2D(
+                new Box<int>(array.GetLength(0)), new Box<int>(array.GetLength(1)));
             var result = new List2D<T>(bounds);
 
             result.AddRows(bounds.Rows);
