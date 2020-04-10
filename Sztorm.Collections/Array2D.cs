@@ -1171,13 +1171,41 @@ namespace Sztorm.Collections
         {
             if (converter == null)
             {
-                throw new ArgumentNullException(nameof(converter), "Match cannot be null.");
+                throw new ArgumentNullException(nameof(converter), "converter cannot be null.");
             }
             var result = new Array2D<TOutput>(this.bounds);
 
             for (int i = 0, length = Count; i < length; i++)
             {
                 result.items[i] = converter(items[i]);
+            }
+            return result;
+        }
+
+        /// <summary>
+        ///     Returns a new <see cref="Array2D{TOutput}"/> instance containing items from this
+        ///     instance converted to another type.
+        /// </summary>
+        /// <typeparam name="TOutput">
+        ///     Target type of resulting <see cref="Array2D{T}"/>.
+        /// </typeparam>
+        /// <typeparam name="TConverter">
+        ///     <typeparamref name = "TConverter"/> is <see cref="IConverter{T, TOutput}"/> and
+        ///     <see langword="struct"/>
+        /// </typeparam>
+        /// <param name="converter">
+        ///     An <see langword="struct"/> implementing <see cref="IConverter{T, TOutput}"/> that
+        ///     converts each element from one type to another type.
+        /// </param>
+        /// <returns></returns>
+        public Array2D<TOutput> ConvertAll<TOutput, TConverter>(TConverter converter)
+            where TConverter : struct, IConverter<T, TOutput>
+        {
+            var result = new Array2D<TOutput>(this.bounds);
+
+            for (int i = 0, length = Count; i < length; i++)
+            {
+                result.items[i] = converter.Invoke(items[i]);
             }
             return result;
         }
