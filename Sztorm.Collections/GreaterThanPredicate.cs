@@ -28,28 +28,39 @@ using System.Runtime.CompilerServices;
 namespace Sztorm.Collections
 {
     /// <summary>
-    ///     Represents a predicate which determines whether inner object in is greater than any
-    ///     <typeparamref name="T"/> object it may be compared to.
+    ///     Represents a predicate which determines whether any <typeparamref name="T"/> object
+    ///     is greater than <see cref="InnerObject"/>.
     /// </summary>
     /// <typeparam name="T"><typeparamref name = "T"/> is <see cref="IComparable{T}"/></typeparam>
     public readonly struct GreaterThanPredicate<T> : IPredicate<T> where T : IComparable<T>
     {
-        public readonly T InnerObject;
+        private readonly T innerObj;
 
         /// <summary>
-        ///     Constructs a predicate which determines whether object passed in is greater than
-        ///     any <typeparamref name="T"/> object it may be compared to.
+        ///     The object which may be used in comparisons.
         /// </summary>
-        /// <param name="obj">The object that may be compared to</param>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public GreaterThanPredicate(T obj) => InnerObject = obj;
+        public T InnerObject
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => innerObj;
+        }
 
         /// <summary>
-        ///     Returns a value indicating whether <see cref="InnerObject"/> is greater than other.
+        ///     Constructs a predicate that takes an object which may be used to determine
+        ///     whether any other <typeparamref name="T"/> object is greater than object passed in
+        ///     constructor.
+        /// </summary>
+        /// <param name="obj">The object which may be used in comparisons.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public GreaterThanPredicate(T obj) => innerObj = obj;
+
+        /// <summary>
+        ///     Returns a value indicating whether <paramref name="other"/> is greater than
+        ///     <see cref="InnerObject"/>.
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool Invoke(T other) => InnerObject.CompareTo(other) > 0;
+        public bool Invoke(T other) => other.CompareTo(innerObj) > 0;
     }
 }

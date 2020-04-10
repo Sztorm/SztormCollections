@@ -33,21 +33,33 @@ namespace Sztorm.Collections
     /// <typeparam name="T"><typeparamref name = "T"/> is <see cref="IComparable{T}"/></typeparam>
     public readonly struct EqualsComparablePredicate<T> : IPredicate<T> where T : IComparable<T>
     {
-        public readonly T InnerObject;
+        private readonly T innerObj;
 
         /// <summary>
-        ///     Constructs a predicate which use is to check equality with object passed in.
+        ///     The object which may be used in comparisons.
         /// </summary>
-        /// <param name="obj"></param>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public EqualsComparablePredicate(T obj) => InnerObject = obj;
+        public T InnerObject
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => innerObj;
+        }
 
         /// <summary>
-        ///     Returns a value indicating whether inner object is equal to other.
+        ///     Constructs a predicate that takes an object which may be used to determine
+        ///     whether any other <typeparamref name="T"/> object equals object passed in
+        ///     constructor.
+        /// </summary>
+        /// <param name="obj">The object which may be used in comparisons.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public EqualsComparablePredicate(T obj) => innerObj = obj;
+
+        /// <summary>
+        ///     Returns a value indicating whether <paramref name="other"/> equals
+        ///     <see cref="InnerObject"/>.
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool Invoke(T other) => InnerObject.CompareTo(other) == 0;
+        public bool Invoke(T other) => other.CompareTo(innerObj) == 0;
     }
 }
