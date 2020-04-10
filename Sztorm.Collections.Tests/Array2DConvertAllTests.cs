@@ -23,6 +23,13 @@ namespace Sztorm.Collections.Tests
             Array2D<TInput> array, Converter<TInput, TOutput> converter, Array2D<TOutput> expected)
             => CollectionAssert.AreEqual(expected, array.ConvertAll(converter));
 
+        [TestCaseSource(typeof(Array2DTests), nameof(ConvertAllIConverterTestCases))]
+        public static void TestConvertAll<TInput, TOutput, TConverter>(
+            Array2D<TInput> array, TConverter converter, Array2D<TOutput> expected)
+            where TConverter : struct, IConverter<TInput, TOutput>
+            => CollectionAssert.AreEqual(
+                expected, array.ConvertAll<TOutput, TConverter>(converter));
+
         private static IEnumerable<TestCaseData> ConvertAllTestCases()
         {
             yield return new TestCaseData(
@@ -45,6 +52,35 @@ namespace Sztorm.Collections.Tests
                     new string[,] { { "2", "3", "5" },
                                     { "4", "9", "1" },
                                     { "8", "2", "3" } }));
+        }
+
+        private static IEnumerable<TestCaseData> ConvertAllIConverterTestCases()
+        {
+            yield return new TestCaseData(
+                Array2D<int>.FromSystem2DArray(
+                    new int[,] { { 2, 3, 5 },
+                                 { 4, 0, 0 },
+                                 { 0, 2, 3 } }),
+                new IntToBoolConverter(),
+                Array2D<bool>.FromSystem2DArray(
+                    new bool[,] { { true, true, true },
+                                  { true, false, false },
+                                  { false, true, true } }));
+            yield return new TestCaseData(
+                Array2D<int>.FromSystem2DArray(
+                    new int[,] { { 2, 3, 5 },
+                                 { 4, 9, 1 },
+                                 { 8, 2, 3 } }),
+                new ToStringConverter<int>(),
+                Array2D<string>.FromSystem2DArray(
+                    new string[,] { { "2", "3", "5" },
+                                    { "4", "9", "1" },
+                                    { "8", "2", "3" } }));
+        }
+
+        private struct IntToBoolConverter : IConverter<int, bool>
+        {
+            public bool Invoke(int input) => input != 0; 
         }
     }
 }
