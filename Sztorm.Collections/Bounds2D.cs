@@ -32,10 +32,10 @@ namespace Sztorm.Collections
     ///     greater or equal to zero.
     /// </summary>
     [Serializable]
-    public struct Bounds2D : IEquatable<Bounds2D>
+    public readonly struct Bounds2D : IEquatable<Bounds2D>
     {
-        private int len1;
-        private int len2;
+        private readonly int len1;
+        private readonly int len2;
 
         /// <summary>
         ///     Returns total amount of rows in this <see cref="Bounds2D"/> instance. This property
@@ -198,20 +198,6 @@ namespace Sztorm.Collections
                 throw;
             }
         }
-
-        [Obsolete(
-            "This method is obsolete. Use Bounds2D(Box<int>, Box<int>) constructor instead.",
-            false)]
-        /// <summary>
-        ///     Constructs an <see cref="Bounds2D"/> instance without argument validation.
-        ///     For internal purposes only.
-        /// </summary>
-        /// <param name="rows">Range: [0, <see cref="int.MaxValue"/>]</param>
-        /// <param name="columns">Range: [0, <see cref="int.MaxValue"/>]</param>
-        /// <returns></returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static Bounds2D NotCheckedConstructor(int rows, int columns)
-            => new Bounds2D(new Box<int>(rows), new Box<int>(columns));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool operator ==(Bounds2D left, Bounds2D right)
