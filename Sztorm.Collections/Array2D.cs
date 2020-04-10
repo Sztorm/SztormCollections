@@ -757,6 +757,52 @@ namespace Sztorm.Collections
             => IndexOfComparable(item).IsSuccess;
 
         /// <summary>
+        ///     Determines whether any item that match the conditions defined by the specified
+        ///     predicate exists in the current instance.<br/>  
+        ///     Use <see cref="Exists{TPredicate}(TPredicate)"/> to avoid virtual call.
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentNullException"/> <paramref name="match"/> cannot be
+        ///         <see langword="null"/>.
+        ///     </para>
+        /// </summary>
+        /// <param name="match">
+        ///     The <see cref="Predicate{T}"/> delegate that defines the conditions of the element
+        ///     to search for.
+        /// </param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool Exists(Predicate<T> match)
+        {
+            try
+            {
+                return FindIndex(match).IsSuccess;
+            }
+            catch (ArgumentNullException)
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        ///     Determines whether any item that match the conditions defined by the specified
+        ///     predicate exists in the current instance.
+        /// </summary>
+        /// <typeparam name="TPredicate">
+        ///     <typeparamref name = "TPredicate"/> is <see cref="IPredicate{T}"/> and
+        ///     <see langword="struct"/>
+        /// </typeparam>
+        /// <param name="match">
+        ///     An <see langword="struct"/> implementing <see cref="IPredicate{T}"/> that defines
+        ///     the conditions of the element to search for.
+        /// </param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool Exists<TPredicate>(TPredicate match)
+            where TPredicate : struct, IPredicate<T> 
+            => FindIndex(match).IsSuccess;
+
+        /// <summary>
         ///     Returns the <see cref="ItemRequestResult{T}"/> with underlying underlying
         ///     one-dimensional index of first occurrence of item searched within the entire
         ///     <see cref="Array2D{T}"/> if found. Otherwise returns
@@ -886,10 +932,11 @@ namespace Sztorm.Collections
             => Requested1DIndexToRequested2DIndex(IndexOfComparable(item));
 
         /// <summary>
-        ///     Searches for an item that matches the conditions defined by the specified
-        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying first 
-        ///     occurrence of item searched within the entire <see cref="Array2D{T}"/> if found.
-        ///     Otherwise returns <see cref="ItemRequestResult{T}.Failed"/><br/>
+        ///     Searches row by row for an item that matches the conditions defined by the
+        ///     specified predicate, and returns the <see cref="ItemRequestResult{T}"/> with
+        ///     underlying first occurrence of item searched within the entire
+        ///     <see cref="Array2D{T}"/> if found. Otherwise returns
+        ///     <see cref="ItemRequestResult{T}.Failed"/><br/>
         ///     Use <see cref="Find{TPredicate}(TPredicate)"/> to avoid virtual call.
         ///     <para>
         ///         Exceptions:<br/>
@@ -921,10 +968,11 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        ///     Searches for an item that matches the conditions defined by the specified
-        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying first 
-        ///     occurrence of item searched within the entire <see cref="Array2D{T}"/> if found.
-        ///     Otherwise returns <see cref="ItemRequestResult{T}.Failed"/>
+        ///     Searches row by row for an item that matches the conditions defined by the
+        ///     specified predicate, and returns the <see cref="ItemRequestResult{T}"/> with
+        ///     underlying first occurrence of item searched within the entire
+        ///     <see cref="Array2D{T}"/> if found. Otherwise returns
+        ///     <see cref="ItemRequestResult{T}.Failed"/>
         /// </summary>
         /// <typeparam name="TPredicate">
         ///     <typeparamref name = "TPredicate"/> is <see cref="IPredicate{T}"/> and
@@ -1047,16 +1095,16 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        ///     Searches for an item that matches the conditions defined by the specified
-        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying
-        ///     one-dimensional index of first occurrence searched within the entire
+        ///     Searches from the beginning for an item that matches the conditions defined by the
+        ///     specified predicate, and returns the <see cref="ItemRequestResult{T}"/> with
+        ///     underlying one-dimensional index of first occurrence searched within the entire
         ///     <see cref="Array2D{T}"/> if found. Otherwise returns
         ///     <see cref="ItemRequestResult{T}.Failed"/><br/>
         ///     Use <see cref="FindIndex{TPredicate}(TPredicate)"/> to avoid virtual call.
         ///     <para>
         ///         Exceptions:<br/>
         ///         <see cref="ArgumentNullException"/> <paramref name="match"/> cannot be
-        ///         <see langword="null"/>.<br/>
+        ///         <see langword="null"/>.
         ///     </para>
         /// </summary>
         /// <param name="match">
@@ -1081,9 +1129,9 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        ///     Searches for an item that matches the conditions defined by the specified
-        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying
-        ///     one-dimensional index of first occurrence searched within the entire
+        ///     Searches from the beginning for an item that matches the conditions defined by the
+        ///     specified predicate, and returns the <see cref="ItemRequestResult{T}"/> with
+        ///     underlying one-dimensional index of first occurrence searched within the entire
         ///     <see cref="Array2D{T}"/> if found. Otherwise returns
         ///     <see cref="ItemRequestResult{T}.Failed"/>
         /// </summary>
@@ -1110,10 +1158,11 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        ///     Searches for an item that matches the conditions defined by the specified
-        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying index
-        ///     of first occurrence searched within the entire <see cref="Array2D{T}"/> if found.
-        ///     Otherwise returns <see cref="ItemRequestResult{T}.Failed"/><br/>
+        ///     Searches row by row for an item that matches the conditions defined by the
+        ///     specified predicate, and returns the <see cref="ItemRequestResult{T}"/> with
+        ///     underlying index of first occurrence searched within the entire
+        ///     <see cref="Array2D{T}"/> if found. Otherwise returns
+        ///     <see cref="ItemRequestResult{T}.Failed"/><br/>
         ///     Use <see cref="FindIndex2D{TPredicate}(TPredicate)"/> to avoid virtual call.
         ///     <para>
         ///         Exceptions:<br/>
@@ -1131,10 +1180,11 @@ namespace Sztorm.Collections
             => Requested1DIndexToRequested2DIndex(FindIndex(match));
 
         /// <summary>
-        ///     Searches for an item that matches the conditions defined by the specified
-        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying index
-        ///     of first occurrence searched within the entire <see cref="Array2D{T}"/> if found.
-        ///     Otherwise returns <see cref="ItemRequestResult{T}.Failed"/>
+        ///     Searches row by row for an item that matches the conditions defined by the
+        ///     specified predicate, and returns the <see cref="ItemRequestResult{T}"/> with
+        ///     underlying index of first occurrence searched within the entire
+        ///     <see cref="Array2D{T}"/> if found. Otherwise returns
+        ///     <see cref="ItemRequestResult{T}.Failed"/>
         /// </summary>
         /// <typeparam name="TPredicate">
         ///     <typeparamref name = "TPredicate"/> is <see cref="IPredicate{T}"/> and
@@ -1152,7 +1202,9 @@ namespace Sztorm.Collections
 
         /// <summary>
         ///     Returns a new <see cref="Array2D{TOutput}"/> instance containing items from this
-        ///     instance converted to another type.
+        ///     instance converted to another type.<br/>
+        ///     Use <see cref="ConvertAll{TOutput, TConverter}(TConverter)"/> to avoid virtual
+        ///     call.
         ///     <para>
         ///         Exceptions:<br/>
         ///         <see cref="ArgumentNullException"/> <paramref name="converter"/> cannot be

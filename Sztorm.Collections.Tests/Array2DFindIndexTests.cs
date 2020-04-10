@@ -18,6 +18,15 @@ namespace Sztorm.Collections.Tests
             Assert.Throws<ArgumentNullException>(findIndexNull);
         }
 
+        [Test]
+        public static void FindIndex2DThrowsExceptionIfMatchIsNull()
+        {
+            var array = new Array2D<int>(0, 0);
+            void findIndex2DNull() => array.FindIndex2D(match: null);
+
+            Assert.Throws<ArgumentNullException>(findIndex2DNull);
+        }
+
         [TestCaseSource(typeof(Array2DTests), nameof(FindIndexTestCases))]
         public static ItemRequestResult<int> TestFindIndex<T>(Array2D<T> array, Predicate<T> match)
             => array.FindIndex(match);
@@ -63,7 +72,7 @@ namespace Sztorm.Collections.Tests
                     new int[,] { { 2, 3, 5 },
                                  { 4, 9, 1 },
                                  { 8, 2, 3 } }),
-                new GreaterThanPredicateInt(5))
+                new GreaterThanPredicate<int>(5))
                 .Returns(new ItemRequestResult<int>(4));
             yield return new TestCaseData(
                 Array2D<int>.FromSystem2DArray(
@@ -99,7 +108,7 @@ namespace Sztorm.Collections.Tests
                     new int[,] { { 2, 3, 5 },
                                  { 4, 9, 1 },
                                  { 8, 2, 3 } }),
-                new GreaterThanPredicateInt(5))
+                new GreaterThanPredicate<int>(5))
                 .Returns(new ItemRequestResult<Index2D>(new Index2D(1, 1)));
             yield return new TestCaseData(
                 Array2D<int>.FromSystem2DArray(

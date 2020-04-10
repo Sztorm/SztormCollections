@@ -67,7 +67,7 @@ namespace Sztorm.Collections.Tests
                     new int[,] { { 2, 3, 5 },
                                  { 4, 9, 1 },
                                  { 8, 2, 3 } }),
-                new GreaterThanPredicateInt(5))
+                new GreaterThanPredicate<int>(5))
                 .Returns(new ItemRequestResult<int>(9));
             yield return new TestCaseData(
                 Array2D<int>.FromSystem2DArray(
@@ -103,7 +103,7 @@ namespace Sztorm.Collections.Tests
                     new int[,] { { 2, 3, 5 },
                                  { 4, 9, 1 },
                                  { 8, 2, 3 } }),
-                new GreaterThanPredicateInt(5),
+                new GreaterThanPredicate<int>(5),
                 new List<int>() { 9, 8 });
             yield return new TestCaseData(
                 Array2D<int>.FromSystem2DArray(
@@ -112,15 +112,6 @@ namespace Sztorm.Collections.Tests
                                  { 8, 2, 3 } }),
                 new EqualsPredicate<int>(10),
                 new List<int>());
-        }
-
-        private struct GreaterThanPredicateInt : IPredicate<int>
-        {
-            public readonly int InnerValue;
-
-            public GreaterThanPredicateInt(int value) => InnerValue = value;
-
-            public bool Invoke(int other) => other > InnerValue;
         }
     }
 }
