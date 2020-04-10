@@ -104,6 +104,17 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
+        ///     Constructs an <see cref="Bounds2D"/> instance without argument validation.
+        /// </summary>
+        /// <param name="rows">Range: [0, <see cref="int.MaxValue"/>]</param>
+        /// <param name="columns">Range: [0, <see cref="int.MaxValue"/>]</param>
+        internal Bounds2D(Box<int> rows, Box<int> columns)
+        {
+            len1 = rows;
+            len2 = columns;
+        }
+
+        /// <summary>
         ///     Returns true if specified index remains within boundaries. false otherwise.
         /// </summary>
         /// <param name="row"></param>
@@ -147,7 +158,7 @@ namespace Sztorm.Collections
             {
                 return false;
             }
-            return this == (Bounds2D)other;    
+            return this == (Bounds2D)other;
         }
 
         /// <summary>
@@ -180,14 +191,17 @@ namespace Sztorm.Collections
         {
             try
             {
-               return new Bounds2D(value.Item1, value.Item2);
+                return new Bounds2D(value.Item1, value.Item2);
             }
-            catch(ArgumentOutOfRangeException)
+            catch (ArgumentOutOfRangeException)
             {
                 throw;
             }
         }
 
+        [Obsolete(
+            "This method is obsolete. Use Bounds2D(Box<int>, Box<int>) constructor instead.",
+            false)]
         /// <summary>
         ///     Constructs an <see cref="Bounds2D"/> instance without argument validation.
         ///     For internal purposes only.
@@ -197,13 +211,7 @@ namespace Sztorm.Collections
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static Bounds2D NotCheckedConstructor(int rows, int columns)
-        {
-            Bounds2D bounds;
-            bounds.len1 = rows;
-            bounds.len2 = columns;
-
-            return bounds;
-        }
+            => new Bounds2D(new Box<int>(rows), new Box<int>(columns));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool operator ==(Bounds2D left, Bounds2D right)
