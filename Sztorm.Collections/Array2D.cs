@@ -456,7 +456,7 @@ namespace Sztorm.Collections
             }
             int destRows = destination.GetLength(0);
             int destCols = destination.GetLength(1);
-            var destBounds = Bounds2D.NotCheckedConstructor(destRows, destCols);
+            var destBounds = new Bounds2D(new Box<int>(destRows), new Box<int>(destCols));
 
             if (!destBounds.IsValidIndex(destIndex))
             {
@@ -515,7 +515,7 @@ namespace Sztorm.Collections
             }
             int destRows = destination.GetLength(0);
             int destCols = destination.GetLength(1);
-            var destBounds = Bounds2D.NotCheckedConstructor(destRows, destCols);
+            var destBounds = new Bounds2D(new Box<int>(destRows), new Box<int>(destCols));
 
             if (!destBounds.IsValidIndex(index))
             {
@@ -617,7 +617,7 @@ namespace Sztorm.Collections
             }
             int destRows = destination.GetLength(0);
             int destCols = destination.GetLength(1);
-            var destBounds = Bounds2D.NotCheckedConstructor(destRows, destCols);
+            var destBounds = new Bounds2D(new Box<int>(destRows), new Box<int>(destCols));
 
             if (!destBounds.IsValidIndex(index))
             {
@@ -1211,8 +1211,8 @@ namespace Sztorm.Collections
             {
                 throw new ArgumentNullException(nameof(array), "Array cannot be null.");
             }
-            Bounds2D bounds =
-                Bounds2D.NotCheckedConstructor(array.GetLength(0), array.GetLength(1));
+            Bounds2D bounds = new Bounds2D(
+                new Box<int>(array.GetLength(0)), new Box<int>(array.GetLength(1)));
             var result = new Array2D<T>(bounds);
 
             for (int i = 0; i < bounds.Rows; i++)
