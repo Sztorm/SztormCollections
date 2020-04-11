@@ -793,7 +793,7 @@ namespace Sztorm.Collections
         ///     <see langword="struct"/>
         /// </typeparam>
         /// <param name="match">
-        ///     An <see langword="struct"/> implementing <see cref="IPredicate{T}"/> that defines
+        ///     A <see langword="struct"/> implementing <see cref="IPredicate{T}"/> that defines
         ///     the conditions of the element to search for.
         /// </param>
         /// <returns></returns>
@@ -979,7 +979,7 @@ namespace Sztorm.Collections
         ///     <see langword="struct"/>
         /// </typeparam>
         /// <param name="match">
-        ///     An <see langword="struct"/> implementing <see cref="IPredicate{T}"/> that defines
+        ///     A <see langword="struct"/> implementing <see cref="IPredicate{T}"/> that defines
         ///     the conditions of the element to search for.
         /// </param>
         /// <returns></returns>
@@ -1066,7 +1066,7 @@ namespace Sztorm.Collections
         ///     <see langword="struct"/>
         /// </typeparam>
         /// <param name="match">
-        ///     An <see langword="struct"/> implementing <see cref="IPredicate{T}"/> that defines
+        ///     A <see langword="struct"/> implementing <see cref="IPredicate{T}"/> that defines
         ///     the conditions of the element to search for.
         /// </param>
         /// <returns></returns>
@@ -1140,7 +1140,7 @@ namespace Sztorm.Collections
         ///     <see langword="struct"/>
         /// </typeparam>
         /// <param name="match">
-        ///     An <see langword="struct"/> implementing <see cref="IPredicate{T}"/> that defines
+        ///     A <see langword="struct"/> implementing <see cref="IPredicate{T}"/> that defines
         ///     the conditions of the element to search for.
         /// </param>
         /// <returns></returns>
@@ -1167,7 +1167,7 @@ namespace Sztorm.Collections
         ///     <para>
         ///         Exceptions:<br/>
         ///         <see cref="ArgumentNullException"/> <paramref name="match"/> cannot be
-        ///         <see langword="null"/>.<br/>
+        ///         <see langword="null"/>.
         ///     </para>
         /// </summary>
         /// <param name="match">
@@ -1191,7 +1191,7 @@ namespace Sztorm.Collections
         ///     <see langword="struct"/>
         /// </typeparam>
         /// <param name="match">
-        ///     An <see langword="struct"/> implementing <see cref="IPredicate{T}"/> that defines
+        ///     A <see langword="struct"/> implementing <see cref="IPredicate{T}"/> that defines
         ///     the conditions of the element to search for.
         /// </param>
         /// <returns></returns>
@@ -1260,6 +1260,65 @@ namespace Sztorm.Collections
                 result.items[i] = converter.Invoke(items[i]);
             }
             return result;
+        }
+
+        /// <summary>
+        ///     Determines whether every item matches the conditions defined by the specified
+        ///     predicate. If the current instance contains no items the return value is
+        ///     <see langword="true"/>.<br/>
+        ///     Use <see cref="TrueForAll{TPredicate}(TPredicate)"/> to avoid virtual call.
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentNullException"/> <paramref name="match"/> cannot be
+        ///         <see langword="null"/>.
+        ///     </para>
+        /// </summary>
+        /// <param name="match">
+        ///     The <see cref="Predicate{T}"/> delegate that defines the conditions to check
+        ///     against the items.
+        /// </param>
+        /// <returns></returns>
+        public bool TrueForAll(Predicate<T> match)
+        {
+            if (match == null)
+            {
+                throw new ArgumentNullException(nameof(match), "match cannot be null.");
+            }
+            for (int i = 0, length = Count; i < length; i++)
+            {
+                if (!match(items[i]))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        /// <summary>
+        ///     Determines whether every item matches the conditions defined by the specified
+        ///     predicate. If the current instance contains no items the return value is
+        ///     <see langword="true"/>.
+        /// </summary>
+        /// <typeparam name="TPredicate">
+        ///     <typeparamref name = "TPredicate"/> is <see cref="IPredicate{T}"/> and
+        ///     <see langword="struct"/>
+        /// </typeparam>
+        /// <param name="match">
+        ///     A <see langword="struct"/> implementing <see cref="IPredicate{T}"/> that defines
+        ///     the conditions to check against the items.
+        /// </param>
+        /// <returns>true</returns>
+        public bool TrueForAll<TPredicate>(TPredicate match)
+             where TPredicate : struct, IPredicate<T>
+        {
+            for (int i = 0, length = Count; i < length; i++)
+            {
+                if (!match.Invoke(items[i]))
+                {
+                    return false;
+                }
+            }
+            return true;
         }
 
         /// <summary>
