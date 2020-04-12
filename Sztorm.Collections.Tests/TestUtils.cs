@@ -27,7 +27,7 @@ namespace Sztorm.Collections.Tests
             return sb.ToString();
         }
 
-        public static void WriteTable<T>(T[,] array, string format)
+        public static void WriteTable<T>(T[,] array, string format = "")
         {
             int len0 = array.GetLength(0);
             int lastColIndex = array.GetLength(1) - 1;
@@ -42,7 +42,7 @@ namespace Sztorm.Collections.Tests
             }
         }
 
-        public static void WriteTable<T>(Array2D<T> array, string format)
+        public static void WriteTable<T>(Array2D<T> array, string format = "")
         {
             int len1 = array.Length1;
             int lastColIndex = array.Columns - 1;
@@ -104,6 +104,16 @@ namespace Sztorm.Collections.Tests
                 }
             }
             return result;
+        }
+
+        public readonly struct AlwaysTruePredicate<T> : IPredicate<T>
+        {
+            public bool Invoke(T obj) => true;
+        }
+
+        public readonly struct AlwaysFalsePredicate<T> : IPredicate<T>
+        {
+            public bool Invoke(T obj) => false;
         }
     }
 }
