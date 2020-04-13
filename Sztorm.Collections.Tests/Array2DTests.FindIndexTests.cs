@@ -50,6 +50,7 @@ namespace Sztorm.Collections.Tests
                 Array2D<T> array, Index2D startIndex)
             {
                 void findIndex() => array.FindIndex(startIndex, 0, o => true);
+
                 Assert.Throws<ArgumentOutOfRangeException>(findIndex);
             }
 
@@ -180,22 +181,22 @@ namespace Sztorm.Collections.Tests
                 yield return new TestCaseData(
                     Array2D<int>.FromSystem2DArray(
                         new int[,] { { 2, 3, 5 },
-                                 { 4, 9, 1 } }),
+                                     { 4, 9, 1 } }),
                     new Index2D(-1, 0));
                 yield return new TestCaseData(
                     Array2D<int>.FromSystem2DArray(
                         new int[,] { { 2, 3, 5 },
-                                 { 4, 9, 1 } }),
+                                     { 4, 9, 1 } }),
                     new Index2D(0, -1));
                 yield return new TestCaseData(
                     Array2D<int>.FromSystem2DArray(
                         new int[,] { { 2, 3, 5 },
-                                 { 4, 9, 1 } }),
+                                     { 4, 9, 1 } }),
                     new Index2D(2, 0));
                 yield return new TestCaseData(
                     Array2D<int>.FromSystem2DArray(
                         new int[,] { { 2, 3, 5 },
-                                 { 4, 9, 1 } }),
+                                     { 4, 9, 1 } }),
                     new Index2D(0, 3));
                 yield return new TestCaseData(
                     new Array2D<int>(0, 0),
@@ -213,25 +214,25 @@ namespace Sztorm.Collections.Tests
                 yield return new TestCaseData(
                     Array2D<int>.FromSystem2DArray(
                         new int[,] { { 2, 3, 5 },
-                                 { 4, 9, 1 } }),
+                                     { 4, 9, 1 } }),
                     new Index2D(0, 0),
                     -1);
                 yield return new TestCaseData(
                     Array2D<int>.FromSystem2DArray(
                         new int[,] { { 2, 3, 5 },
-                                 { 4, 9, 1 } }),
+                                     { 4, 9, 1 } }),
                     new Index2D(1, 2),
                     -1);
                 yield return new TestCaseData(
                     Array2D<int>.FromSystem2DArray(
                         new int[,] { { 2, 3, 5 },
-                                 { 4, 9, 1 } }),
+                                     { 4, 9, 1 } }),
                     new Index2D(1, 1),
                     3);
                 yield return new TestCaseData(
                     Array2D<int>.FromSystem2DArray(
                         new int[,] { { 2, 3, 5 },
-                                 { 4, 9, 1 } }),
+                                     { 4, 9, 1 } }),
                     new Index2D(0, 0),
                     7);
             }
@@ -241,25 +242,25 @@ namespace Sztorm.Collections.Tests
                 yield return new TestCaseData(
                     Array2D<int>.FromSystem2DArray(
                         new int[,] { { 2, 3, 5 },
-                                 { 4, 9, 1 } }),
+                                     { 4, 9, 1 } }),
                     new Index2D(0, 0),
                     new Bounds2D(3, 0));
                 yield return new TestCaseData(
                     Array2D<int>.FromSystem2DArray(
                         new int[,] { { 2, 3, 5 },
-                                 { 4, 9, 1 } }),
+                                     { 4, 9, 1 } }),
                     new Index2D(0, 0),
                     new Bounds2D(0, 4));
                 yield return new TestCaseData(
                     Array2D<int>.FromSystem2DArray(
                         new int[,] { { 2, 3, 5 },
-                                 { 4, 9, 1 } }),
+                                     { 4, 9, 1 } }),
                     new Index2D(1, 1),
                     new Bounds2D(2, 0));
                 yield return new TestCaseData(
                     Array2D<int>.FromSystem2DArray(
                         new int[,] { { 2, 3, 5 },
-                                 { 4, 9, 1 } }),
+                                     { 4, 9, 1 } }),
                     new Index2D(1, 1),
                     new Bounds2D(0, 3));
             }
@@ -269,15 +270,15 @@ namespace Sztorm.Collections.Tests
                 yield return new TestCaseData(
                     Array2D<int>.FromSystem2DArray(
                         new int[,] { { 2, 3, 5 },
-                                 { 4, 9, 1 },
-                                 { 8, 2, 3 } }),
+                                     { 4, 9, 1 },
+                                     { 8, 2, 3 } }),
                     new Predicate<int>(o => o > 5))
                     .Returns(new ItemRequestResult<int>(4));
                 yield return new TestCaseData(
                     Array2D<int>.FromSystem2DArray(
                         new int[,] { { 2, 3, 5 },
-                                 { 4, 9, 1 },
-                                 { 8, 2, 3 } }),
+                                     { 4, 9, 1 },
+                                     { 8, 2, 3 } }),
                     new Predicate<int>(o => o == 10))
                     .Returns(ItemRequestResult<int>.Failed);
             }
@@ -287,7 +288,7 @@ namespace Sztorm.Collections.Tests
                 yield return new TestCaseData(
                     Array2D<int>.FromSystem2DArray(
                         new int[,] { { 2, 3, 5 },
-                                 { 4, 9, 1 } }),
+                                     { 4, 9, 1 } }),
                     new Index2D(0, 0),
                     6,
                     new Predicate<int>(o => o > 5))
@@ -295,7 +296,7 @@ namespace Sztorm.Collections.Tests
                 yield return new TestCaseData(
                     Array2D<int>.FromSystem2DArray(
                         new int[,] { { 2, 3, 5 },
-                                 { 4, 9, 1 } }),
+                                     { 4, 9, 1 } }),
                     new Index2D(1, 2),
                     0,
                     new Predicate<int>(o => true))
@@ -303,7 +304,7 @@ namespace Sztorm.Collections.Tests
                 yield return new TestCaseData(
                     Array2D<int>.FromSystem2DArray(
                         new int[,] { { 2, 3, 5 },
-                                 { 4, 9, 1 } }),
+                                     { 4, 9, 1 } }),
                     new Index2D(1, 1),
                     2,
                     new Predicate<int>(o => o == 10))
@@ -315,7 +316,7 @@ namespace Sztorm.Collections.Tests
                 yield return new TestCaseData(
                     Array2D<int>.FromSystem2DArray(
                         new int[,] { { 2, 3, 5 },
-                                 { 4, 9, 1 } }),
+                                     { 4, 9, 1 } }),
                     new Index2D(0, 0),
                     new Bounds2D(2, 3),
                     new Predicate<int>(o => o > 5))
@@ -323,7 +324,7 @@ namespace Sztorm.Collections.Tests
                 yield return new TestCaseData(
                     Array2D<int>.FromSystem2DArray(
                         new int[,] { { 2, 3, 5 },
-                                 { 4, 9, 1 } }),
+                                     { 4, 9, 1 } }),
                     new Index2D(0, 0),
                     new Bounds2D(0, 0),
                     new Predicate<int>(o => true))
@@ -331,7 +332,7 @@ namespace Sztorm.Collections.Tests
                 yield return new TestCaseData(
                     Array2D<int>.FromSystem2DArray(
                         new int[,] { { 2, 3, 5 },
-                                 { 4, 9, 1 } }),
+                                     { 4, 9, 1 } }),
                     new Index2D(1, 1),
                     new Bounds2D(1, 2),
                     new Predicate<int>(o => o == 10))
@@ -343,15 +344,15 @@ namespace Sztorm.Collections.Tests
                 yield return new TestCaseData(
                     Array2D<int>.FromSystem2DArray(
                         new int[,] { { 2, 3, 5 },
-                                 { 4, 9, 1 },
-                                 { 8, 2, 3 } }),
+                                     { 4, 9, 1 },
+                                     { 8, 2, 3 } }),
                     new GreaterThanPredicate<int>(5))
                     .Returns(new ItemRequestResult<int>(4));
                 yield return new TestCaseData(
                     Array2D<int>.FromSystem2DArray(
                         new int[,] { { 2, 3, 5 },
-                                 { 4, 9, 1 },
-                                 { 8, 2, 3 } }),
+                                     { 4, 9, 1 },
+                                     { 8, 2, 3 } }),
                     new EqualsPredicate<int>(10))
                     .Returns(ItemRequestResult<int>.Failed);
             }
