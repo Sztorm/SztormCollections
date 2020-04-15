@@ -761,6 +761,24 @@ namespace Sztorm.Collections
 
         /// <summary>
         ///     Determines whether any item that match the conditions defined by the specified
+        ///     predicate exists in the current instance.
+        /// </summary>
+        /// <typeparam name="TPredicate">
+        ///     <typeparamref name = "TPredicate"/> is <see cref="IPredicate{T}"/> and
+        ///     <see langword="struct"/>
+        /// </typeparam>
+        /// <param name="match">
+        ///     A <see langword="struct"/> implementing <see cref="IPredicate{T}"/> that defines
+        ///     the conditions of the element to search for.
+        /// </param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool Exists<TPredicate>(TPredicate match)
+            where TPredicate : struct, IPredicate<T>
+            => FindIndex(match).IsSuccess;
+
+        /// <summary>
+        ///     Determines whether any item that match the conditions defined by the specified
         ///     predicate exists in the current instance.<br/>  
         ///     Use <see cref="Exists{TPredicate}(TPredicate)"/> to avoid virtual call.
         ///     <para>
@@ -786,24 +804,6 @@ namespace Sztorm.Collections
                 throw;
             }
         }
-
-        /// <summary>
-        ///     Determines whether any item that match the conditions defined by the specified
-        ///     predicate exists in the current instance.
-        /// </summary>
-        /// <typeparam name="TPredicate">
-        ///     <typeparamref name = "TPredicate"/> is <see cref="IPredicate{T}"/> and
-        ///     <see langword="struct"/>
-        /// </typeparam>
-        /// <param name="match">
-        ///     A <see langword="struct"/> implementing <see cref="IPredicate{T}"/> that defines
-        ///     the conditions of the element to search for.
-        /// </param>
-        /// <returns></returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool Exists<TPredicate>(TPredicate match)
-            where TPredicate : struct, IPredicate<T> 
-            => FindIndex(match).IsSuccess;
 
         /// <summary>
         ///     Returns the <see cref="ItemRequestResult{T}"/> with underlying underlying
@@ -898,7 +898,8 @@ namespace Sztorm.Collections
         /// <param name="item">An element value to search.</param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ItemRequestResult<Index2D> Index2DOf(T item) => RequestedIntToRequested2DIndex(IndexOf(item));
+        public ItemRequestResult<Index2D> Index2DOf(T item)
+            => RequestedIntToRequested2DIndex(IndexOf(item));
 
         /// <summary>
         ///     Returns the <see cref="ItemRequestResult{T}"/> with underlying underlying index of
@@ -935,6 +936,36 @@ namespace Sztorm.Collections
         ///     Searches for an item that matches the conditions defined by the specified
         ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying first
         ///     occurrence searched row by row within the entire <see cref="Array2D{T}"/> if found.
+        ///     Otherwise returns <see cref="ItemRequestResult{T}.Failed"/>
+        /// </summary>
+        /// <typeparam name="TPredicate">
+        ///     <typeparamref name = "TPredicate"/> is <see cref="IPredicate{T}"/> and
+        ///     <see langword="struct"/>
+        /// </typeparam>
+        /// <param name="match">
+        ///     A <see langword="struct"/> implementing <see cref="IPredicate{T}"/> that defines
+        ///     the conditions of the element to search for.
+        /// </param>
+        /// <returns></returns>
+        public ItemRequestResult<T> Find<TPredicate>(TPredicate match)
+            where TPredicate : struct, IPredicate<T>
+        {
+            for (int i = 0, length = Count; i < length; i++)
+            {
+                ref readonly T item = ref items[i];
+
+                if (match.Invoke(item))
+                {
+                    return new ItemRequestResult<T>(item);
+                }
+            }
+            return ItemRequestResult<T>.Failed;
+        }
+
+        /// <summary>
+        ///     Searches for an item that matches the conditions defined by the specified
+        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying first
+        ///     occurrence searched row by row within the entire <see cref="Array2D{T}"/> if found.
         ///     Otherwise returns <see cref="ItemRequestResult{T}.Failed"/><br/>
         ///     Use <see cref="Find{TPredicate}(TPredicate)"/> to avoid virtual call.
         ///     <para>
@@ -954,21 +985,12 @@ namespace Sztorm.Collections
             {
                 throw new ArgumentNullException(nameof(match), "Match cannot be null.");
             }
-            for (int i = 0, length = Count; i < length; i++)
-            {
-                ref readonly T item = ref items[i];
-
-                if (match(item))
-                {
-                    return new ItemRequestResult<T>(item);
-                }
-            }
-            return ItemRequestResult<T>.Failed;
+            return Find(new BoxedPredicate<T>(match));
         }
 
         /// <summary>
         ///     Searches for an item that matches the conditions defined by the specified
-        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying first
+        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying last
         ///     occurrence searched row by row within the entire <see cref="Array2D{T}"/> if found.
         ///     Otherwise returns <see cref="ItemRequestResult{T}.Failed"/>
         /// </summary>
@@ -981,10 +1003,10 @@ namespace Sztorm.Collections
         ///     the conditions of the element to search for.
         /// </param>
         /// <returns></returns>
-        public ItemRequestResult<T> Find<TPredicate>(TPredicate match)
+        public ItemRequestResult<T> FindLast<TPredicate>(TPredicate match)
             where TPredicate : struct, IPredicate<T>
         {
-            for (int i = 0, length = Count; i < length; i++)
+            for (int i = Count - 1; i >= 0; i--)
             {
                 ref readonly T item = ref items[i];
 
@@ -1019,96 +1041,7 @@ namespace Sztorm.Collections
             {
                 throw new ArgumentNullException(nameof(match), "Match cannot be null.");
             }
-            for (int i = Count - 1; i >= 0; i--)
-            {
-                ref readonly T item = ref items[i];
-
-                if (match(item))
-                {
-                    return new ItemRequestResult<T>(item);
-                }
-            }
-            return ItemRequestResult<T>.Failed;
-        }
-
-        /// <summary>
-        ///     Searches for an item that matches the conditions defined by the specified
-        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying last
-        ///     occurrence searched row by row within the entire <see cref="Array2D{T}"/> if found.
-        ///     Otherwise returns <see cref="ItemRequestResult{T}.Failed"/>
-        /// </summary>
-        /// <typeparam name="TPredicate">
-        ///     <typeparamref name = "TPredicate"/> is <see cref="IPredicate{T}"/> and
-        ///     <see langword="struct"/>
-        /// </typeparam>
-        /// <param name="match">
-        ///     A <see langword="struct"/> implementing <see cref="IPredicate{T}"/> that defines
-        ///     the conditions of the element to search for.
-        /// </param>
-        /// <returns></returns>
-        public ItemRequestResult<T> FindLast<TPredicate>(TPredicate match)
-            where TPredicate : struct, IPredicate<T>
-        {
-            for (int i = Count - 1; i >= 0; i--)
-            {
-                ref readonly T item = ref items[i];
-
-                if (match.Invoke(item))
-                {
-                    return new ItemRequestResult<T>(item);
-                }
-            }
-            return ItemRequestResult<T>.Failed;
-        }
-
-        /// <summary>
-        ///     Returns <see cref="ICollection{T}"/> containing all the elements that match the
-        ///     conditions defined by the specified predicate.<br/>
-        ///     Use <see cref="FindAll{TCollection, TPredicate}(TPredicate)"/> to avoid virtual
-        ///     call.
-        ///     <para>
-        ///         Exceptions:<br/>
-        ///         <see cref="ArgumentNullException"/> <paramref name="match"/> cannot be
-        ///         <see langword="null"/>.<br/>
-        ///         <see cref="NotSupportedException"/> Provided type must support
-        ///         <see cref="ICollection{T}.Add(T)"/> method.
-        ///     </para>
-        /// </summary>
-        /// <typeparam name="TCollection">
-        ///     <typeparamref name = "TCollection"/> is <see cref="ICollection{T}"/> and has a
-        ///     parameterless constructor.
-        /// </typeparam>
-        /// <param name="match">
-        ///     The <see cref="Predicate{T}"/> delegate that defines the conditions of the element
-        ///     to search for.
-        /// </param>
-        /// <returns></returns>
-        public TCollection FindAll<TCollection>(Predicate<T> match)
-            where TCollection : ICollection<T>, new()
-        {
-            if (match == null)
-            {
-                throw new ArgumentNullException(nameof(match), "Match cannot be null.");
-            }
-            var resizableCollection = new TCollection();
-
-            try
-            {
-                for (int i = 0, length = Count; i < length; i++)
-                {
-                    ref readonly T item = ref items[i];
-
-                    if (match(item))
-                    {
-                        resizableCollection.Add(item);
-                    }
-                }
-            }
-            catch (NotSupportedException)
-            {
-                throw new NotSupportedException("Provided type must support Add(T) method.");
-            }
-            return resizableCollection;
+            return FindLast(new BoxedPredicate<T>(match));
         }
 
         /// <summary>
@@ -1157,163 +1090,43 @@ namespace Sztorm.Collections
             return resizableCollection;
         }
 
-        internal ItemRequestResult<int> FindIndexInternal(
-            int startIndex, int indexAfterEnd, Predicate<T> match)
-        {
-            Debug.Assert(match != null);
-            Debug.Assert(startIndex >= 0);
-            Debug.Assert(startIndex < Count);
-            Debug.Assert(indexAfterEnd >= 0);
-            Debug.Assert(indexAfterEnd <= Count);
-
-            for (int i = startIndex; i < indexAfterEnd; i++)
-            {
-                if (match(items[i]))
-                {
-                    return new ItemRequestResult<int>(i);
-                }
-            }
-            return ItemRequestResult<int>.Failed;
-        }
-
         /// <summary>
-        ///     Searches for an item that matches the conditions defined by the specified
-        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying
-        ///     one-dimensional index of first occurrence searched within the entire
-        ///     <see cref="Array2D{T}"/> if found. Otherwise returns
-        ///     <see cref="ItemRequestResult{T}.Failed"/><br/>
-        ///     Use <see cref="FindIndex{TPredicate}(TPredicate)"/> to avoid virtual call.
+        ///     Returns <see cref="ICollection{T}"/> containing all the elements that match the
+        ///     conditions defined by the specified predicate.<br/>
+        ///     Use <see cref="FindAll{TCollection, TPredicate}(TPredicate)"/> to avoid virtual
+        ///     call.
         ///     <para>
         ///         Exceptions:<br/>
-        ///         <see cref="ArgumentNullException"/>: <paramref name="match"/> cannot be
-        ///         <see langword="null"/>.
+        ///         <see cref="ArgumentNullException"/> <paramref name="match"/> cannot be
+        ///         <see langword="null"/>.<br/>
+        ///         <see cref="NotSupportedException"/> Provided type must support
+        ///         <see cref="ICollection{T}.Add(T)"/> method.
         ///     </para>
         /// </summary>
+        /// <typeparam name="TCollection">
+        ///     <typeparamref name = "TCollection"/> is <see cref="ICollection{T}"/> and has a
+        ///     parameterless constructor.
+        /// </typeparam>
         /// <param name="match">
         ///     The <see cref="Predicate{T}"/> delegate that defines the conditions of the element
         ///     to search for.
         /// </param>
         /// <returns></returns>
-        public ItemRequestResult<int> FindIndex(Predicate<T> match)
+        public TCollection FindAll<TCollection>(Predicate<T> match)
+            where TCollection : ICollection<T>, new()
         {
             if (match == null)
             {
                 throw new ArgumentNullException(nameof(match), "Match cannot be null.");
             }
-            return FindIndexInternal(0, Count, match);
-        }
-
-        /// <summary>
-        ///     Searches for an item that matches the conditions defined by the specified
-        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying
-        ///     one-dimensional index of first occurrence searched row by row within the specified
-        ///     range of items if found. Otherwise returns
-        ///     <see cref="ItemRequestResult{T}.Failed"/><br/>
-        ///     Use <see cref="FindIndex{TPredicate}(Index2D, int, TPredicate)"/> to avoid virtual
-        ///     call.
-        ///     <para>
-        ///         Exceptions:<br/>
-        ///         <see cref="ArgumentNullException"/>: <paramref name="match"/> cannot be
-        ///         <see langword="null"/>.<br/>
-        ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="startIndex"/> must
-        ///         be within array bounds;<br/>
-        ///         <paramref name="count"/> must be greater or equal to zero;<br/>
-        ///         Sum of <paramref name="startIndex"/> and <paramref name="count"/> must not
-        ///         exceed <see cref="Count"/>
-        ///     </para>
-        /// </summary>
-        /// <param name="startIndex">Zero-based index from which searching starts.</param>
-        /// <param name="count">Number of items to search.</param>
-        /// <param name="match">
-        ///     The <see cref="Predicate{T}"/> delegate that defines the conditions of the element
-        ///     to search for.
-        /// </param>
-        /// <returns></returns>
-        public ItemRequestResult<int> FindIndex(Index2D startIndex, int count, Predicate<T> match)
-        {
-            if (match == null)
+            try
             {
-                throw new ArgumentNullException(nameof(match), "match cannot be null.");
+                return FindAll<TCollection, BoxedPredicate<T>>(new BoxedPredicate<T>(match));
             }
-            if (!IsValidIndex(startIndex))
+            catch (NotSupportedException)
             {
-                throw new ArgumentOutOfRangeException(
-                    nameof(startIndex), "startIndex must be within array bounds.");
+                throw;
             }
-            if (count < 0)
-            {
-                throw new ArgumentOutOfRangeException(
-                    nameof(count), "count must be greater or equal to zero.");
-            }
-            int startIndex1D = RowMajorIndex2DToInt(startIndex, Columns);
-            int indexAfterEnd = startIndex1D + count;
-
-            if (indexAfterEnd > items.Length)
-            {
-                throw new ArgumentOutOfRangeException(
-                    nameof(count), "Sum of startIndex and count must not exceed Array2D.Count");
-            }
-            return FindIndexInternal(startIndex1D, indexAfterEnd, match);
-        }
-
-        /// <summary>
-        ///     Searches for an item that matches the conditions defined by the specified
-        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying
-        ///     one-dimensional index of first occurrence searched within the specified sector.
-        ///     Otherwise returns <see cref="ItemRequestResult{T}.Failed"/><br/>
-        ///     Use <see cref="FindIndex{TPredicate}(Index2D, Bounds2D, TPredicate)"/> to avoid
-        ///     virtual call.
-        ///     <para>
-        ///         Exceptions:<br/>
-        ///         <see cref="ArgumentNullException"/>: <paramref name="match"/> cannot be
-        ///         <see langword="null"/>.<br/>
-        ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="startIndex"/> must
-        ///         be within array bounds;<br/>
-        ///         <paramref name="sectorSize"/> must be within array bounds, beginning from
-        ///         <paramref name="startIndex"/>.
-        ///     </para>
-        /// </summary>
-        /// <param name="startIndex">Zero-based index from which searching starts.</param>
-        /// <param name="sectorSize">The rectangular sector size to be searched.</param>
-        /// <param name="match">
-        ///     The <see cref="Predicate{T}"/> delegate that defines the conditions of the element
-        ///     to search for.
-        /// </param>
-        /// <returns></returns>
-        public ItemRequestResult<int> FindIndex(
-            Index2D startIndex, Bounds2D sectorSize, Predicate<T> match)
-        {
-            if (match == null)
-            {
-                throw new ArgumentNullException(nameof(match), "match cannot be null.");
-            }
-            if (!IsValidIndex(startIndex))
-            {
-                throw new ArgumentOutOfRangeException(
-                    nameof(startIndex), "startIndex must be within array bounds.");
-            }
-            var indexAfterEnd = new Index2D(
-                startIndex.Row + sectorSize.Rows,
-                startIndex.Column + sectorSize.Columns);
-
-            if (indexAfterEnd.Row > Rows || indexAfterEnd.Column > Columns)
-            {
-                throw new ArgumentOutOfRangeException(
-                    nameof(sectorSize),
-                    "sectorSize must be within array bounds, beginning from startIndex.");
-            }
-            for (int i = startIndex.Row; i < indexAfterEnd.Row; i++)
-            {
-                for (int j = startIndex.Column; j < indexAfterEnd.Column; j++)
-                {
-                    if (match(GetItemInternal(i, j)))
-                    {
-                        return new ItemRequestResult<int>(
-                            RowMajorIndex2DToInt(new Index2D(i, j), Columns));
-                    }
-                }
-            }
-            return ItemRequestResult<int>.Failed;
         }
 
         internal ItemRequestResult<int> FindIndexInternal<TPredicate>(
@@ -1335,7 +1148,6 @@ namespace Sztorm.Collections
             return ItemRequestResult<int>.Failed;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         /// <summary>
         ///     Searches from the beginning for an item that matches the conditions defined by the
         ///     specified predicate, and returns the <see cref="ItemRequestResult{T}"/> with
@@ -1352,6 +1164,7 @@ namespace Sztorm.Collections
         ///     the conditions of the element to search for.
         /// </param>
         /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ItemRequestResult<int> FindIndex<TPredicate>(TPredicate match)
             where TPredicate : struct, IPredicate<T>
             => FindIndexInternal(0, Count, match);
@@ -1462,6 +1275,215 @@ namespace Sztorm.Collections
                 }
             }
             return ItemRequestResult<int>.Failed;
+        }
+
+        /// <summary>
+        ///     Searches for an item that matches the conditions defined by the specified
+        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying
+        ///     one-dimensional index of first occurrence searched within the entire
+        ///     <see cref="Array2D{T}"/> if found. Otherwise returns
+        ///     <see cref="ItemRequestResult{T}.Failed"/><br/>
+        ///     Use <see cref="FindIndex{TPredicate}(TPredicate)"/> to avoid virtual call.
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentNullException"/>: <paramref name="match"/> cannot be
+        ///         <see langword="null"/>.
+        ///     </para>
+        /// </summary>
+        /// <param name="match">
+        ///     The <see cref="Predicate{T}"/> delegate that defines the conditions of the element
+        ///     to search for.
+        /// </param>
+        /// <returns></returns>
+        public ItemRequestResult<int> FindIndex(Predicate<T> match)
+        {
+            if (match == null)
+            {
+                throw new ArgumentNullException(nameof(match), "Match cannot be null.");
+            }
+            return FindIndexInternal(0, Count, new BoxedPredicate<T>(match));
+        }
+
+        /// <summary>
+        ///     Searches for an item that matches the conditions defined by the specified
+        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying
+        ///     one-dimensional index of first occurrence searched row by row within the specified
+        ///     range of items if found. Otherwise returns
+        ///     <see cref="ItemRequestResult{T}.Failed"/><br/>
+        ///     Use <see cref="FindIndex{TPredicate}(Index2D, int, TPredicate)"/> to avoid virtual
+        ///     call.
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentNullException"/>: <paramref name="match"/> cannot be
+        ///         <see langword="null"/>.<br/>
+        ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="startIndex"/> must
+        ///         be within array bounds;<br/>
+        ///         <paramref name="count"/> must be greater or equal to zero;<br/>
+        ///         Sum of <paramref name="startIndex"/> and <paramref name="count"/> must not
+        ///         exceed <see cref="Count"/>
+        ///     </para>
+        /// </summary>
+        /// <param name="startIndex">Zero-based index from which searching starts.</param>
+        /// <param name="count">Number of items to search.</param>
+        /// <param name="match">
+        ///     The <see cref="Predicate{T}"/> delegate that defines the conditions of the element
+        ///     to search for.
+        /// </param>
+        /// <returns></returns>
+        public ItemRequestResult<int> FindIndex(Index2D startIndex, int count, Predicate<T> match)
+        {
+            if (match == null)
+            {
+                throw new ArgumentNullException(nameof(match), "match cannot be null.");
+            }
+            try
+            {
+                return FindIndex(startIndex, count, new BoxedPredicate<T>(match));
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        ///     Searches for an item that matches the conditions defined by the specified
+        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying
+        ///     one-dimensional index of first occurrence searched within the specified sector.
+        ///     Otherwise returns <see cref="ItemRequestResult{T}.Failed"/><br/>
+        ///     Use <see cref="FindIndex{TPredicate}(Index2D, Bounds2D, TPredicate)"/> to avoid
+        ///     virtual call.
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentNullException"/>: <paramref name="match"/> cannot be
+        ///         <see langword="null"/>.<br/>
+        ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="startIndex"/> must
+        ///         be within array bounds;<br/>
+        ///         <paramref name="sectorSize"/> must be within array bounds, beginning from
+        ///         <paramref name="startIndex"/>.
+        ///     </para>
+        /// </summary>
+        /// <param name="startIndex">Zero-based index from which searching starts.</param>
+        /// <param name="sectorSize">The rectangular sector size to be searched.</param>
+        /// <param name="match">
+        ///     The <see cref="Predicate{T}"/> delegate that defines the conditions of the element
+        ///     to search for.
+        /// </param>
+        /// <returns></returns>
+        public ItemRequestResult<int> FindIndex(
+            Index2D startIndex, Bounds2D sectorSize, Predicate<T> match)
+        {
+            if (match == null)
+            {
+                throw new ArgumentNullException(nameof(match), "match cannot be null.");
+            }
+            try
+            {
+                return FindIndex(startIndex, sectorSize, new BoxedPredicate<T>(match));
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        ///     Searches for an item that matches the conditions defined by the specified
+        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying index
+        ///     of first occurrence searched within the entire <see cref="Array2D{T}"/> if found.
+        ///     Otherwise returns <see cref="ItemRequestResult{T}.Failed"/>
+        /// </summary>
+        /// <typeparam name="TPredicate">
+        ///     <typeparamref name = "TPredicate"/> is <see cref="IPredicate{T}"/> and
+        ///     <see langword="struct"/>
+        /// </typeparam>
+        /// <param name="match">
+        ///     A <see langword="struct"/> implementing <see cref="IPredicate{T}"/> that defines
+        ///     the conditions of the element to search for.
+        /// </param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public ItemRequestResult<Index2D> FindIndex2D<TPredicate>(TPredicate match)
+            where TPredicate : struct, IPredicate<T>
+            => RequestedIntToRequested2DIndex(FindIndex(match));
+
+        /// <summary>
+        ///     Searches for an item that matches the conditions defined by the specified
+        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying index
+        ///     of first occurrence searched row by row within the specified range of items if
+        ///     found. Otherwise returns <see cref="ItemRequestResult{T}.Failed"/>
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="startIndex"/> must
+        ///         be within array bounds;<br/>
+        ///         <paramref name="count"/> must be greater or equal to zero;<br/>
+        ///         Sum of <paramref name="startIndex"/> and <paramref name="count"/> must not
+        ///         exceed <see cref="Count"/>
+        ///     </para>
+        /// </summary>
+        /// <typeparam name="TPredicate">
+        ///     <typeparamref name = "TPredicate"/> is <see cref="IPredicate{T}"/> and
+        ///     <see langword="struct"/>
+        /// </typeparam>
+        /// <param name="startIndex">Zero-based index from which searching starts.</param>
+        /// <param name="count">Number of items to search.</param>
+        /// <param name="match">
+        ///     A <see langword="struct"/> implementing <see cref="IPredicate{T}"/> that defines
+        ///     the conditions of the element to search for.
+        /// </param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public ItemRequestResult<Index2D> FindIndex2D<TPredicate>(
+            Index2D startIndex, int count, TPredicate match)
+            where TPredicate : struct, IPredicate<T>
+        {
+            try
+            {
+                return RequestedIntToRequested2DIndex(FindIndex(startIndex, count, match));
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        ///     Searches for an item that matches the conditions defined by the specified
+        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying index
+        ///     of first occurrence searched within the specified sector. Otherwise returns
+        ///     <see cref="ItemRequestResult{T}.Failed"/>
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="startIndex"/> must
+        ///         be within array bounds;<br/>
+        ///         <paramref name="sectorSize"/> must be within array bounds, beginning from
+        ///         <paramref name="startIndex"/>.
+        ///     </para>   
+        /// </summary>
+        /// <typeparam name="TPredicate">
+        ///     <typeparamref name = "TPredicate"/> is <see cref="IPredicate{T}"/> and
+        ///     <see langword="struct"/>
+        /// </typeparam>
+        /// <param name="startIndex">Zero-based index from which searching starts.</param>
+        /// <param name="sectorSize">The rectangular sector size to be searched.</param>
+        /// <param name="match">
+        ///     A <see langword="struct"/> implementing <see cref="IPredicate{T}"/> that defines
+        ///     the conditions of the element to search for.
+        /// </param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public ItemRequestResult<Index2D> FindIndex2D<TPredicate>(
+            Index2D startIndex, Bounds2D sectorSize, TPredicate match)
+            where TPredicate : struct, IPredicate<T>
+        {
+            try
+            {
+                return RequestedIntToRequested2DIndex(FindIndex(startIndex, sectorSize, match));
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                throw;
+            }
         }
 
         /// <summary>
@@ -1580,102 +1602,31 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        ///     Searches for an item that matches the conditions defined by the specified
-        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying index
-        ///     of first occurrence searched within the entire <see cref="Array2D{T}"/> if found.
-        ///     Otherwise returns <see cref="ItemRequestResult{T}.Failed"/>
+        ///     Returns a new <see cref="Array2D{TOutput}"/> instance containing items from this
+        ///     instance converted to another type.
         /// </summary>
-        /// <typeparam name="TPredicate">
-        ///     <typeparamref name = "TPredicate"/> is <see cref="IPredicate{T}"/> and
+        /// <typeparam name="TOutput">
+        ///     Target type of resulting <see cref="Array2D{T}"/>.
+        /// </typeparam>
+        /// <typeparam name="TConverter">
+        ///     <typeparamref name = "TConverter"/> is <see cref="IConverter{T, TOutput}"/> and
         ///     <see langword="struct"/>
         /// </typeparam>
-        /// <param name="match">
-        ///     A <see langword="struct"/> implementing <see cref="IPredicate{T}"/> that defines
-        ///     the conditions of the element to search for.
+        /// <param name="converter">
+        ///     An <see langword="struct"/> implementing <see cref="IConverter{T, TOutput}"/> that
+        ///     converts each element from one type to another type.
         /// </param>
         /// <returns></returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ItemRequestResult<Index2D> FindIndex2D<TPredicate>(TPredicate match)
-            where TPredicate : struct, IPredicate<T>
-            => RequestedIntToRequested2DIndex(FindIndex(match));
-
-        /// <summary>
-        ///     Searches for an item that matches the conditions defined by the specified
-        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying index
-        ///     of first occurrence searched row by row within the specified range of items if
-        ///     found. Otherwise returns <see cref="ItemRequestResult{T}.Failed"/>
-        ///     <para>
-        ///         Exceptions:<br/>
-        ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="startIndex"/> must
-        ///         be within array bounds;<br/>
-        ///         <paramref name="count"/> must be greater or equal to zero;<br/>
-        ///         Sum of <paramref name="startIndex"/> and <paramref name="count"/> must not
-        ///         exceed <see cref="Count"/>
-        ///     </para>
-        /// </summary>
-        /// <typeparam name="TPredicate">
-        ///     <typeparamref name = "TPredicate"/> is <see cref="IPredicate{T}"/> and
-        ///     <see langword="struct"/>
-        /// </typeparam>
-        /// <param name="startIndex">Zero-based index from which searching starts.</param>
-        /// <param name="count">Number of items to search.</param>
-        /// <param name="match">
-        ///     A <see langword="struct"/> implementing <see cref="IPredicate{T}"/> that defines
-        ///     the conditions of the element to search for.
-        /// </param>
-        /// <returns></returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ItemRequestResult<Index2D> FindIndex2D<TPredicate>(
-            Index2D startIndex, int count, TPredicate match)
-            where TPredicate : struct, IPredicate<T>
+        public Array2D<TOutput> ConvertAll<TOutput, TConverter>(TConverter converter)
+            where TConverter : struct, IConverter<T, TOutput>
         {
-            try
-            {
-                return RequestedIntToRequested2DIndex(FindIndex(startIndex, count, match));
-            }
-            catch (ArgumentOutOfRangeException)
-            {
-                throw;
-            }
-        }
+            var result = new Array2D<TOutput>(this.bounds);
 
-        /// <summary>
-        ///     Searches for an item that matches the conditions defined by the specified
-        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying index
-        ///     of first occurrence searched within the specified sector. Otherwise returns
-        ///     <see cref="ItemRequestResult{T}.Failed"/>
-        ///     <para>
-        ///         Exceptions:<br/>
-        ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="startIndex"/> must
-        ///         be within array bounds;<br/>
-        ///         <paramref name="sectorSize"/> must be within array bounds, beginning from
-        ///         <paramref name="startIndex"/>.
-        ///     </para>   
-        /// </summary>
-        /// <typeparam name="TPredicate">
-        ///     <typeparamref name = "TPredicate"/> is <see cref="IPredicate{T}"/> and
-        ///     <see langword="struct"/>
-        /// </typeparam>
-        /// <param name="startIndex">Zero-based index from which searching starts.</param>
-        /// <param name="sectorSize">The rectangular sector size to be searched.</param>
-        /// <param name="match">
-        ///     A <see langword="struct"/> implementing <see cref="IPredicate{T}"/> that defines
-        ///     the conditions of the element to search for.
-        /// </param>
-        /// <returns></returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ItemRequestResult<Index2D> FindIndex2D<TPredicate>(
-            Index2D startIndex, Bounds2D sectorSize, TPredicate match)
-            where TPredicate : struct, IPredicate<T>
-        {
-            try
+            for (int i = 0, length = Count; i < length; i++)
             {
-                return RequestedIntToRequested2DIndex(FindIndex(startIndex, sectorSize, match));
+                result.items[i] = converter.Invoke(items[i]);
             }
-            catch (ArgumentOutOfRangeException)
-            {
-                throw;
-            }
+            return result;
         }
 
         /// <summary>
@@ -1713,31 +1664,30 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        ///     Returns a new <see cref="Array2D{TOutput}"/> instance containing items from this
-        ///     instance converted to another type.
+        ///     Determines whether every item matches the conditions defined by the specified
+        ///     predicate. If the current instance contains no items the return value is
+        ///     <see langword="true"/>.
         /// </summary>
-        /// <typeparam name="TOutput">
-        ///     Target type of resulting <see cref="Array2D{T}"/>.
-        /// </typeparam>
-        /// <typeparam name="TConverter">
-        ///     <typeparamref name = "TConverter"/> is <see cref="IConverter{T, TOutput}"/> and
+        /// <typeparam name="TPredicate">
+        ///     <typeparamref name = "TPredicate"/> is <see cref="IPredicate{T}"/> and
         ///     <see langword="struct"/>
         /// </typeparam>
-        /// <param name="converter">
-        ///     An <see langword="struct"/> implementing <see cref="IConverter{T, TOutput}"/> that
-        ///     converts each element from one type to another type.
+        /// <param name="match">
+        ///     A <see langword="struct"/> implementing <see cref="IPredicate{T}"/> that defines
+        ///     the conditions to check against the items.
         /// </param>
-        /// <returns></returns>
-        public Array2D<TOutput> ConvertAll<TOutput, TConverter>(TConverter converter)
-            where TConverter : struct, IConverter<T, TOutput>
+        /// <returns>true</returns>
+        public bool TrueForAll<TPredicate>(TPredicate match)
+             where TPredicate : struct, IPredicate<T>
         {
-            var result = new Array2D<TOutput>(this.bounds);
-
             for (int i = 0, length = Count; i < length; i++)
             {
-                result.items[i] = converter.Invoke(items[i]);
+                if (!match.Invoke(items[i]))
+                {
+                    return false;
+                }
             }
-            return result;
+            return true;
         }
 
         /// <summary>
@@ -1765,33 +1715,6 @@ namespace Sztorm.Collections
             for (int i = 0, length = Count; i < length; i++)
             {
                 if (!match(items[i]))
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        /// <summary>
-        ///     Determines whether every item matches the conditions defined by the specified
-        ///     predicate. If the current instance contains no items the return value is
-        ///     <see langword="true"/>.
-        /// </summary>
-        /// <typeparam name="TPredicate">
-        ///     <typeparamref name = "TPredicate"/> is <see cref="IPredicate{T}"/> and
-        ///     <see langword="struct"/>
-        /// </typeparam>
-        /// <param name="match">
-        ///     A <see langword="struct"/> implementing <see cref="IPredicate{T}"/> that defines
-        ///     the conditions to check against the items.
-        /// </param>
-        /// <returns>true</returns>
-        public bool TrueForAll<TPredicate>(TPredicate match)
-             where TPredicate : struct, IPredicate<T>
-        {
-            for (int i = 0, length = Count; i < length; i++)
-            {
-                if (!match.Invoke(items[i]))
                 {
                     return false;
                 }
