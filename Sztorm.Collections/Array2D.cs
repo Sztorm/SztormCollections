@@ -816,17 +816,9 @@ namespace Sztorm.Collections
         /// </summary>
         /// <param name="item">An element value to search.</param>
         /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ItemRequestResult<int> IndexOf(T item)
-        {
-            for (int i = 0, length = Count; i < length; i++)
-            {
-                if (item.Equals(items[i]))
-                {
-                    return new ItemRequestResult<int>(i);
-                }
-            }
-            return ItemRequestResult<int>.Failed;
-        }
+            => FindIndex(new EqualsObjectPredicate<T>(item));
 
         /// <summary>
         ///     Returns the <see cref="ItemRequestResult{T}"/> with underlying underlying
@@ -840,17 +832,9 @@ namespace Sztorm.Collections
         /// </typeparam>
         /// <param name="item">An element value to search.</param>
         /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ItemRequestResult<int> IndexOfEquatable<U>(U item) where U : T, IEquatable<T>
-        {
-            for (int i = 0, length = Count; i < length; i++)
-            {
-                if (item.Equals(items[i]))
-                {
-                    return new ItemRequestResult<int>(i);
-                }
-            }
-            return ItemRequestResult<int>.Failed;
-        }
+            => FindIndex(new EqualsPredicate<U, T>(item));
 
         /// <summary>
         ///     Returns the <see cref="ItemRequestResult{T}"/> with underlying underlying
@@ -864,17 +848,9 @@ namespace Sztorm.Collections
         /// </typeparam>
         /// <param name="item">An element value to search.</param>
         /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ItemRequestResult<int> IndexOfComparable<U>(U item) where U : T, IComparable<T>
-        {
-            for (int i = 0, length = Count; i < length; i++)
-            {
-                if (item.CompareTo(items[i]) == 0)
-                {
-                    return new ItemRequestResult<int>(i);
-                }
-            }
-            return ItemRequestResult<int>.Failed;
-        }
+            => FindIndex(new EqualsComparablePredicate<U, T>(item));
 
         private ItemRequestResult<Index2D> RequestedIntToRequested2DIndex(
             ItemRequestResult<int> possibleIndex)
@@ -1210,14 +1186,14 @@ namespace Sztorm.Collections
                     nameof(count), "count must be greater or equal to zero.");
             }
             int startIndex1D = RowMajorIndex2DToInt(startIndex, Columns);
-            int length = startIndex1D + count;
+            int indexAfterEnd = startIndex1D + count;
 
-            if (length > items.Length)
+            if (indexAfterEnd > items.Length)
             {
                 throw new ArgumentOutOfRangeException(
                     nameof(count), "Sum of startIndex and count must not exceed Array2D.Count");
             }
-            return FindIndexInternal(startIndex1D, length, match);
+            return FindIndexInternal(startIndex1D, indexAfterEnd, match);
         }
 
         /// <summary>
@@ -1712,14 +1688,7 @@ namespace Sztorm.Collections
             {
                 throw new ArgumentNullException(nameof(match), "match cannot be null.");
             }
-            for (int i = 0, length = Count; i < length; i++)
-            {
-                if (!match(items[i]))
-                {
-                    return false;
-                }
-            }
-            return true;
+            return TrueForAll(new BoxedPredicate<T>(match));
         }
 
         /// <summary>
