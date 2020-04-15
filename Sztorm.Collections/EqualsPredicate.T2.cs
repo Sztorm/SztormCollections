@@ -28,38 +28,46 @@ using System.Runtime.CompilerServices;
 namespace Sztorm.Collections
 {
     /// <summary>
-    ///     Represents a predicate which use is to check equality.
+    ///     Represents a predicate which determines whether <see cref="InnerObject"/> equals any
+    ///     other <typeparamref name="T"/> object.
     /// </summary>
-    /// <typeparam name="T"><typeparamref name = "T"/> is <see cref="IEquatable{T}"/></typeparam>
-    public readonly struct EqualsPredicate<T> : IPredicate<T> where T : IEquatable<T>
+    /// <typeparam name="TEquatable">
+    ///     <typeparamref name = "TEquatable"/> is <see cref="IEquatable{T}"/>
+    /// </typeparam>
+    /// <typeparam name="TOther">
+    ///     <typeparamref name = "TOther"/> is type of any other object.
+    /// </typeparam>
+    public readonly struct EqualsPredicate<TEquatable, TOther> : IPredicate<TOther>
+        where TEquatable : IEquatable<TOther>
     {
-        private readonly T innerObj;
+        private readonly TEquatable innerObj;
 
         /// <summary>
         ///     The object which may be used in comparisons.
         /// </summary>
-        public T InnerObject
+        public TEquatable InnerObject
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get => innerObj;
         }
 
         /// <summary>
-        ///     Constructs a predicate that takes an object which may be used to determine
-        ///     whether any other <typeparamref name="T"/> object equals object passed in
-        ///     constructor.
+        ///     Constructs a predicate that takes an object which may be used to determine whether
+        ///     object passed in constructor equals any other <typeparamref name="T"/> object.
         /// </summary>
         /// <param name="obj">The object which may be used in comparisons.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public EqualsPredicate(T obj) => innerObj = obj;
+        public EqualsPredicate(TEquatable obj) => this.innerObj = obj;
 
         /// <summary>
-        ///     Returns a value indicating whether <paramref name="other"/> equals
-        ///     <see cref="InnerObject"/>.
+        ///     Returns a value indicating whether <see cref="InnerObject"/> equals 
+        ///     <paramref name="other"/>
         /// </summary>
-        /// <param name="other"></param>
+        /// <param name="other">
+        ///     The other object that does not need to implement <see cref="IEquatable{T}"/>
+        /// </param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool Invoke(T other) => other.Equals(innerObj);
+        public bool Invoke(TOther other) => innerObj.Equals(other);
     }
 }
