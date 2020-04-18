@@ -34,6 +34,8 @@ namespace Sztorm.Collections
     /// <typeparam name="T"></typeparam>
     public readonly struct EqualsObjectPredicate<T> : IPredicate<T>
     {
+        private static readonly bool TIsValueType = typeof(T).IsValueType;
+
         private readonly object innerObj;
 
         /// <summary>
@@ -62,6 +64,17 @@ namespace Sztorm.Collections
         /// </param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool Invoke(T other) => other.Equals(innerObj);
+        public bool Invoke(T other)
+        {
+            if (TIsValueType)
+            {
+                return other.Equals(innerObj);
+            }
+            if (innerObj == null || other == null)
+            {
+                return ReferenceEquals(other, innerObj);
+            }
+            return other.Equals(innerObj);
+        }
     }
 }
