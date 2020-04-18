@@ -52,12 +52,46 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
+        ///     Does a method call to trigger <see cref="NullReferenceException"/> if object is
+        ///     null, then throws <see cref="ArgumentNullException"/>. This avoids unnecessary
+        ///     boxing when argument is a value type.
+        /// </summary>
+        /// <param name="obj"></param>
+        private static void ThrowExceptionIfArgumentIsNull(TEquatable obj)
+        {
+            try
+            {
+                obj.GetHashCode();
+            }
+            catch (NullReferenceException)
+            {
+                throw new ArgumentNullException();
+            }
+        }
+
+        /// <summary>
         ///     Constructs a predicate that takes an object which may be used to determine whether
         ///     object passed in constructor equals any other <typeparamref name="T"/> object.
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentNullException"/>: <paramref name="obj"/> cannot be
+        ///         <see langword="null"/>.
+        ///     </para>
         /// </summary>
         /// <param name="obj">The object which may be used in comparisons.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public EqualsPredicate(TEquatable obj) => this.innerObj = obj;
+        public EqualsPredicate(TEquatable obj)
+        {
+            try
+            {
+                ThrowExceptionIfArgumentIsNull(obj);
+            }
+            catch (ArgumentNullException)
+            {
+                throw new ArgumentNullException(nameof(obj), "obj cannot be null.");
+            }
+            this.innerObj = obj;
+        }
 
         /// <summary>
         ///     Returns a value indicating whether <see cref="InnerObject"/> equals 
