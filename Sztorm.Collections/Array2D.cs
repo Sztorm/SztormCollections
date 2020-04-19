@@ -734,7 +734,13 @@ namespace Sztorm.Collections
         public bool Contains(T item) => IndexOf(item).IsSuccess;
 
         /// <summary>
-        ///     Determines whether specified item exists in the current instance.
+        ///     Determines whether specified item exists in the current instance.<br/>
+        ///     To search for <see langword="null"/> use <see cref="Contains(T)"/>
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentNullException"/>: <paramref name="item"/> cannot be
+        ///         <see langword="null"/>.
+        ///     </para>
         /// </summary>
         /// <typeparam name="U">
         ///     <typeparamref name = "U"/> is <see cref="IEquatable{T}"/> and
@@ -744,10 +750,25 @@ namespace Sztorm.Collections
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool ContainsEquatable<U>(U item) where U : T, IEquatable<T>
-            => IndexOfEquatable(item).IsSuccess;
+        {
+            try
+            {
+                return IndexOfEquatable(item).IsSuccess;
+            }
+            catch (ArgumentNullException)
+            {
+                throw new ArgumentNullException("item cannot be null.");
+            }
+        }
 
         /// <summary>
-        ///     Determines whether specified item exists in the current instance.
+        ///     Determines whether specified item exists in the current instance.<br/>
+        ///     To search for <see langword="null"/> use <see cref="Contains(T)"/>
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentNullException"/>: <paramref name="item"/> cannot be
+        ///         <see langword="null"/>.
+        ///     </para>
         /// </summary>
         /// <typeparam name="U">
         ///     <typeparamref name = "U"/> is <see cref="IComparable{T}"/> and
@@ -757,7 +778,16 @@ namespace Sztorm.Collections
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool ContainsComparable<U>(U item) where U : T, IComparable<T>
-            => IndexOfComparable(item).IsSuccess;
+        {
+            try
+            {
+                return IndexOfComparable(item).IsSuccess;
+            }
+            catch (ArgumentNullException)
+            {
+                throw new ArgumentNullException("item cannot be null.");
+            }
+        }
 
         /// <summary>
         ///     Determines whether any item that match the conditions defined by the specified
