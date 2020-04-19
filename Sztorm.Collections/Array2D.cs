@@ -887,8 +887,8 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        ///     Returns the <see cref="ItemRequestResult{T}"/> with underlying underlying
-        ///     one-dimensional index of first occurrence of item searched within the entire
+        ///     Returns the <see cref="ItemRequestResult{T}"/> with underlying one-dimensional
+        ///     index of first occurrence of item searched within the entire
         ///     <see cref="Array2D{T}"/> if found. Otherwise returns
         ///     <see cref="ItemRequestResult{T}.Failed"/><br/>
         ///     To search for <see langword="null"/> use <see cref="IndexOf(T)"/>
@@ -1000,8 +1000,8 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        ///     Returns the <see cref="ItemRequestResult{T}"/> with underlying underlying
-        ///     one-dimensional index of first occurrence of item searched within the entire
+        ///     Returns the <see cref="ItemRequestResult{T}"/> with underlying one-dimensional
+        ///     index of first occurrence of item searched within the entire
         ///     <see cref="Array2D{T}"/> if found. Otherwise returns
         ///     <see cref="ItemRequestResult{T}.Failed"/><br/>
         ///     To search for <see langword="null"/> use <see cref="IndexOf(T)"/>
@@ -1115,21 +1115,10 @@ namespace Sztorm.Collections
             }
         }
 
-        private ItemRequestResult<Index2D> RequestedIntToRequested2DIndex(
-            ItemRequestResult<int> possibleIndex)
-        {
-            if (!possibleIndex.IsSuccess)
-            {
-                return ItemRequestResult<Index2D>.Failed;
-            }
-            return new ItemRequestResult<Index2D>(
-                IntToRowMajorIndex2D(possibleIndex.ItemOrDefault, Columns));
-        }
-
         /// <summary>
-        ///     Returns the <see cref="ItemRequestResult{T}"/> with underlying underlying index of
-        ///     first occurrence of item searched within the entire <see cref="Array2D{T}"/> if
-        ///     found. Otherwise returns <see cref="ItemRequestResult{T}.Failed"/><br/>
+        ///     Returns the <see cref="ItemRequestResult{T}"/> with underlying index of first
+        ///     occurrence of item searched within the entire <see cref="Array2D{T}"/> if found.
+        ///     Otherwise returns <see cref="ItemRequestResult{T}.Failed"/><br/>
         ///     Use <see cref="Index2DOfEquatable{U}(U)"/> or
         ///     <see cref="Index2DOfComparable{U}(U)"/> to avoid unnecessary boxing if stored type
         ///     is <see cref="IEquatable{T}"/> or <see cref="IComparable{T}"/>.
@@ -1138,38 +1127,304 @@ namespace Sztorm.Collections
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ItemRequestResult<Index2D> Index2DOf(T item)
-            => RequestedIntToRequested2DIndex(IndexOf(item));
+             => FindIndex2D(new EqualsObjectPredicate<T>(item));
 
         /// <summary>
-        ///     Returns the <see cref="ItemRequestResult{T}"/> with underlying underlying index of
-        ///     first occurrence of item searched within the entire <see cref="Array2D{T}"/> if
-        ///     found. Otherwise returns <see cref="ItemRequestResult{T}.Failed"/>
+        ///     Returns the <see cref="ItemRequestResult{T}"/> with underlying index of first
+        ///     occurrence of item searched row by row within the specified range of items if
+        ///     found. Otherwise returns <see cref="ItemRequestResult{T}.Failed"/><br/>
+        ///     Use <see cref="Index2DOfEquatable{U}(U, Index2D, int)"/> or
+        ///     <see cref="Index2DOfComparable{U}(U, Index2D, int)"/> to avoid unnecessary boxing
+        ///     if stored type is <see cref="IEquatable{T}"/> or <see cref="IComparable{T}"/>.
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="startIndex"/> must
+        ///         be within array bounds;<br/>
+        ///         <paramref name="count"/> must be greater or equal to zero;<br/>
+        ///         Sum of <paramref name="startIndex"/> and <paramref name="count"/> must not
+        ///         exceed <see cref="Count"/>
+        ///     </para>
+        /// </summary>
+        /// <param name="item">An element value to search.</param>
+        /// <param name="startIndex">Zero-based index from which searching starts.</param>
+        /// <param name="count">Number of items to search.</param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public ItemRequestResult<Index2D> Index2DOf(T item, Index2D startIndex, int count)
+        {
+            try
+            {
+                return FindIndex2D(startIndex, count, new EqualsObjectPredicate<T>(item));
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        ///     Returns the <see cref="ItemRequestResult{T}"/> with underlying index of first
+        ///     occurrence of item searched searched within the specified sector if found.
+        ///     Otherwise returns <see cref="ItemRequestResult{T}.Failed"/><br/>
+        ///     Use <see cref="Index2DOfEquatable{U}(U, Index2D, Bounds2D)"/> or
+        ///     <see cref="Index2DOfComparable{U}(U, Index2D, Bounds2D)"/> to avoid unnecessary
+        ///     boxing if stored type is <see cref="IEquatable{T}"/> or
+        ///     <see cref="IComparable{T}"/>.
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="startIndex"/> must
+        ///         be within array bounds;<br/>
+        ///         <paramref name="sectorSize"/> must be within array bounds, beginning from
+        ///         <paramref name="startIndex"/>.
+        ///     </para>
+        /// </summary>
+        /// <param name="item">An element value to search.</param>
+        /// <param name="startIndex">Zero-based index from which searching starts.</param>
+        /// <param name="sectorSize">The rectangular sector size to be searched.</param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public ItemRequestResult<Index2D> Index2DOf(
+            T item, Index2D startIndex, Bounds2D sectorSize)
+        {
+            try
+            {
+                return FindIndex2D(startIndex, sectorSize, new EqualsObjectPredicate<T>(item));
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        ///     Returns the <see cref="ItemRequestResult{T}"/> with underlying index of first
+        ///     occurrence of item searched within the entire <see cref="Array2D{T}"/> if found.
+        ///     Otherwise returns <see cref="ItemRequestResult{T}.Failed"/><br/>
+        ///     To search for <see langword="null"/> use <see cref="Index2DOf(T)"/>
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentNullException"/>: <paramref name="item"/> cannot be
+        ///         <see langword="null"/>.
+        ///     </para>
         /// </summary>
         /// <typeparam name="U">
         ///     <typeparamref name = "U"/> is <see cref="IEquatable{T}"/> and
         ///     <typeparamref name = "T"/>
         /// </typeparam>
-        /// <param name="item"></param>
+        /// <param name="item">An element value to search.</param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ItemRequestResult<Index2D> Index2DOfEquatable<U>(U item) where U : IEquatable<T>, T
-            => RequestedIntToRequested2DIndex(IndexOfEquatable(item));
+        public ItemRequestResult<Index2D> Index2DOfEquatable<U>(U item)
+            where U : T, IEquatable<T>
+        {
+            try
+            {
+                return FindIndex2D(new EqualsPredicate<U, T>(item));
+            }
+            catch (ArgumentNullException)
+            {
+                throw new ArgumentNullException(nameof(item), "item cannot be null.");
+            }
+        }
 
         /// <summary>
-        ///     Returns the <see cref="ItemRequestResult{T}"/> with underlying underlying index of
-        ///     first occurrence of item searched within the entire <see cref="Array2D{T}"/> if
-        ///     found. Otherwise returns <see cref="ItemRequestResult{T}.Failed"/>
+        ///     Returns the <see cref="ItemRequestResult{T}"/> with underlying index of first
+        ///     occurrence of item searched row by row within the specified range of items if
+        ///     found. Otherwise returns <see cref="ItemRequestResult{T}.Failed"/><br/>
+        ///     To search for <see langword="null"/> use <see cref="Index2DOf(T, Index2D, int)"/>
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentNullException"/>: <paramref name="item"/> cannot be
+        ///         <see langword="null"/>.<br/>
+        ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="startIndex"/> must
+        ///         be within array bounds;<br/>
+        ///         <paramref name="count"/> must be greater or equal to zero;<br/>
+        ///         Sum of <paramref name="startIndex"/> and <paramref name="count"/> must not
+        ///         exceed <see cref="Count"/>
+        ///     </para>
+        /// </summary>
+        /// <typeparam name="U">
+        ///     <typeparamref name = "U"/> is <see cref="IEquatable{T}"/> and
+        ///     <typeparamref name = "T"/>
+        /// </typeparam>
+        /// <param name="item">An element value to search.</param>
+        /// <param name="startIndex">Zero-based index from which searching starts.</param>
+        /// <param name="count">Number of items to search.</param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public ItemRequestResult<Index2D> Index2DOfEquatable<U>(
+            U item, Index2D startIndex, int count)
+            where U : T, IEquatable<T>
+        {
+            try
+            {
+                return FindIndex2D(startIndex, count, new EqualsPredicate<U, T>(item));
+            }
+            catch (ArgumentNullException)
+            {
+                throw new ArgumentNullException(nameof(item), "item cannot be null.");
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        ///     Returns the <see cref="ItemRequestResult{T}"/> with underlying index of first
+        ///     occurrence of item searched searched within the specified sector if found.
+        ///     Otherwise returns <see cref="ItemRequestResult{T}.Failed"/><br/>
+        ///     To search for <see langword="null"/> use
+        ///     <see cref="Index2DOf(T, Index2D, Bounds2D)"/>
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentNullException"/>: <paramref name="item"/> cannot be
+        ///         <see langword="null"/>.<br/>
+        ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="startIndex"/> must
+        ///         be within array bounds;<br/>
+        ///         <paramref name="sectorSize"/> must be within array bounds, beginning from
+        ///         <paramref name="startIndex"/>.
+        ///     </para>
+        /// </summary>
+        /// <typeparam name="U">
+        ///     <typeparamref name = "U"/> is <see cref="IEquatable{T}"/> and
+        ///     <typeparamref name = "T"/>
+        /// </typeparam>
+        /// <param name="item">An element value to search.</param>
+        /// <param name="startIndex">Zero-based index from which searching starts.</param>
+        /// <param name="sectorSize">The rectangular sector size to be searched.</param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public ItemRequestResult<Index2D> Index2DOfEquatable<U>(
+            U item, Index2D startIndex, Bounds2D sectorSize)
+             where U : T, IEquatable<T>
+        {
+            try
+            {
+                return FindIndex2D(startIndex, sectorSize, new EqualsPredicate<U, T>(item));
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        ///     Returns the <see cref="ItemRequestResult{T}"/> with underlying index of first
+        ///     occurrence of item searched within the entire <see cref="Array2D{T}"/> if found.
+        ///     Otherwise returns <see cref="ItemRequestResult{T}.Failed"/><br/>
+        ///     To search for <see langword="null"/> use <see cref="Index2DOf(T)"/>
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentNullException"/>: <paramref name="item"/> cannot be
+        ///         <see langword="null"/>.
+        ///     </para>
         /// </summary>
         /// <typeparam name="U">
         ///     <typeparamref name = "U"/> is <see cref="IComparable{T}"/> and
         ///     <typeparamref name = "T"/>
         /// </typeparam>
-        /// <param name="item"></param>
+        /// <param name="item">An element value to search.</param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ItemRequestResult<Index2D> Index2DOfComparable<U>(U item)
-            where U : IComparable<T>, T
-            => RequestedIntToRequested2DIndex(IndexOfComparable(item));
+            where U : T, IComparable<T>
+        {
+            try
+            {
+                return FindIndex2D(new EqualsComparablePredicate<U, T>(item));
+            }
+            catch (ArgumentNullException)
+            {
+                throw new ArgumentNullException(nameof(item), "item cannot be null.");
+            }
+        }
+
+        /// <summary>
+        ///     Returns the <see cref="ItemRequestResult{T}"/> with underlying index of first
+        ///     occurrence of item searched row by row within the specified range of items if
+        ///     found. Otherwise returns <see cref="ItemRequestResult{T}.Failed"/><br/>
+        ///     To search for <see langword="null"/> use <see cref="Index2DOf(T, Index2D, int)"/>
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentNullException"/>: <paramref name="item"/> cannot be
+        ///         <see langword="null"/>.<br/>
+        ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="startIndex"/> must
+        ///         be within array bounds;<br/>
+        ///         <paramref name="count"/> must be greater or equal to zero;<br/>
+        ///         Sum of <paramref name="startIndex"/> and <paramref name="count"/> must not
+        ///         exceed <see cref="Count"/>
+        ///     </para>
+        /// </summary>
+        /// <typeparam name="U">
+        ///     <typeparamref name = "U"/> is <see cref="IComparable{T}"/> and
+        ///     <typeparamref name = "T"/>
+        /// </typeparam>
+        /// <param name="item">An element value to search.</param>
+        /// <param name="startIndex">Zero-based index from which searching starts.</param>
+        /// <param name="count">Number of items to search.</param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public ItemRequestResult<Index2D> Index2DOfComparable<U>(
+            U item, Index2D startIndex, int count)
+            where U : T, IComparable<T>
+        {
+            try
+            {
+                return FindIndex2D(startIndex, count, new EqualsComparablePredicate<U, T>(item));
+            }
+            catch (ArgumentNullException)
+            {
+                throw new ArgumentNullException(nameof(item), "item cannot be null.");
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        ///     Returns the <see cref="ItemRequestResult{T}"/> with underlying index of first
+        ///     occurrence of item searched searched within the specified sector if found.
+        ///     Otherwise returns <see cref="ItemRequestResult{T}.Failed"/><br/>
+        ///     To search for <see langword="null"/> use
+        ///     <see cref="Index2DOf(T, Index2D, Bounds2D)"/>
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentNullException"/>: <paramref name="item"/> cannot be
+        ///         <see langword="null"/>.<br/>
+        ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="startIndex"/> must
+        ///         be within array bounds;<br/>
+        ///         <paramref name="sectorSize"/> must be within array bounds, beginning from
+        ///         <paramref name="startIndex"/>.
+        ///     </para>
+        /// </summary>
+        /// <typeparam name="U">
+        ///     <typeparamref name = "U"/> is <see cref="IComparable{T}"/> and
+        ///     <typeparamref name = "T"/>
+        /// </typeparam>
+        /// <param name="item">An element value to search.</param>
+        /// <param name="startIndex">Zero-based index from which searching starts.</param>
+        /// <param name="sectorSize">The rectangular sector size to be searched.</param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public ItemRequestResult<Index2D> Index2DOfComparable<U>(
+            U item, Index2D startIndex, Bounds2D sectorSize)
+            where U : T, IComparable<T>
+        {
+            try
+            {
+                return FindIndex2D(startIndex, sectorSize, new EqualsComparablePredicate<U, T>(item));
+            }
+            catch (ArgumentNullException)
+            {
+                throw new ArgumentNullException(nameof(item), "item cannot be null.");
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                throw;
+            }
+        }
 
         /// <summary>
         ///     Searches for an item that matches the conditions defined by the specified
@@ -1623,6 +1878,17 @@ namespace Sztorm.Collections
             {
                 throw;
             }
+        }
+
+        private ItemRequestResult<Index2D> RequestedIntToRequested2DIndex(
+            ItemRequestResult<int> possibleIndex)
+        {
+            if (!possibleIndex.IsSuccess)
+            {
+                return ItemRequestResult<Index2D>.Failed;
+            }
+            return new ItemRequestResult<Index2D>(
+                IntToRowMajorIndex2D(possibleIndex.ItemOrDefault, Columns));
         }
 
         /// <summary>
