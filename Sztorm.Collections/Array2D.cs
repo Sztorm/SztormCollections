@@ -837,7 +837,7 @@ namespace Sztorm.Collections
 
         /// <summary>
         ///     Returns the <see cref="ItemRequestResult{T}"/> with underlying one-dimensional
-        ///     index of first occurrence of item searched within the entire
+        ///     index of the first occurrence of item searched within the entire
         ///     <see cref="Array2D{T}"/> if found. Otherwise returns
         ///     <see cref="ItemRequestResult{T}.Failed"/><br/>
         ///     Use <see cref="IndexOfEquatable{U}(U)"/> or <see cref="IndexOfComparable{U}(U)"/>
@@ -852,8 +852,9 @@ namespace Sztorm.Collections
 
         /// <summary>
         ///     Returns the <see cref="ItemRequestResult{T}"/> with underlying one-dimensional
-        ///     index of first occurrence of item searched row by row within the specified range of
-        ///     items if found. Otherwise returns <see cref="ItemRequestResult{T}.Failed"/><br/>
+        ///     index of the first occurrence of item searched row by row within the specified
+        ///     range of items if found. Otherwise returns
+        ///     <see cref="ItemRequestResult{T}.Failed"/><br/>
         ///     Use <see cref="IndexOfEquatable{U}(U, Index2D, int)"/> or
         ///     <see cref="IndexOfComparable{U}(U, Index2D, int)"/> to avoid unnecessary boxing if
         ///     stored type is <see cref="IEquatable{T}"/> or <see cref="IComparable{T}"/>.
@@ -862,7 +863,7 @@ namespace Sztorm.Collections
         ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="startIndex"/> must
         ///         be within array bounds;<br/>
         ///         <paramref name="count"/> must be greater or equal to zero;<br/>
-        ///         Sum of <paramref name="startIndex"/> and <paramref name="count"/> must not
+        ///         <paramref name="startIndex"/> together with <paramref name="count"/> must not
         ///         exceed <see cref="Count"/>
         ///     </para>
         /// </summary>
@@ -885,8 +886,8 @@ namespace Sztorm.Collections
 
         /// <summary>
         ///     Returns the <see cref="ItemRequestResult{T}"/> with underlying one-dimensional
-        ///     index of first occurrence of item searched searched within the specified sector if
-        ///     found. Otherwise returns <see cref="ItemRequestResult{T}.Failed"/><br/>
+        ///     index of the first occurrence of item searched searched within the specified sector
+        ///     if found. Otherwise returns <see cref="ItemRequestResult{T}.Failed"/><br/>
         ///     Use <see cref="IndexOfEquatable{U}(U, Index2D, Bounds2D)"/> or
         ///     <see cref="IndexOfComparable{U}(U, Index2D, Bounds2D)"/> to avoid unnecessary
         ///     boxing if stored type is <see cref="IEquatable{T}"/> or
@@ -918,7 +919,7 @@ namespace Sztorm.Collections
 
         /// <summary>
         ///     Returns the <see cref="ItemRequestResult{T}"/> with underlying one-dimensional
-        ///     index of first occurrence of item searched within the entire
+        ///     index of the first occurrence of item searched within the entire
         ///     <see cref="Array2D{T}"/> if found. Otherwise returns
         ///     <see cref="ItemRequestResult{T}.Failed"/><br/>
         ///     To search for <see langword="null"/> use <see cref="IndexOf(T)"/>
@@ -950,8 +951,9 @@ namespace Sztorm.Collections
 
         /// <summary>
         ///     Returns the <see cref="ItemRequestResult{T}"/> with underlying one-dimensional
-        ///     index of first occurrence of item searched row by row within the specified range of
-        ///     items if found. Otherwise returns <see cref="ItemRequestResult{T}.Failed"/><br/>
+        ///     index of the first occurrence of item searched row by row within the specified
+        ///     range of items if found. Otherwise returns
+        ///     <see cref="ItemRequestResult{T}.Failed"/><br/>
         ///     To search for <see langword="null"/> use <see cref="IndexOf(T, Index2D, int)"/>
         ///     <para>
         ///         Exceptions:<br/>
@@ -960,7 +962,7 @@ namespace Sztorm.Collections
         ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="startIndex"/> must
         ///         be within array bounds;<br/>
         ///         <paramref name="count"/> must be greater or equal to zero;<br/>
-        ///         Sum of <paramref name="startIndex"/> and <paramref name="count"/> must not
+        ///         <paramref name="startIndex"/> together with <paramref name="count"/> must not
         ///         exceed <see cref="Count"/>
         ///     </para>
         /// </summary>
@@ -992,8 +994,8 @@ namespace Sztorm.Collections
 
         /// <summary>
         ///     Returns the <see cref="ItemRequestResult{T}"/> with underlying one-dimensional
-        ///     index of first occurrence of item searched searched within the specified sector if
-        ///     found. Otherwise returns <see cref="ItemRequestResult{T}.Failed"/><br/>
+        ///     index of the first occurrence of item searched searched within the specified sector
+        ///     if found. Otherwise returns <see cref="ItemRequestResult{T}.Failed"/><br/>
         ///     To search for <see langword="null"/> use
         ///     <see cref="IndexOf(T, Index2D, Bounds2D)"/>
         ///     <para>
@@ -1031,7 +1033,7 @@ namespace Sztorm.Collections
 
         /// <summary>
         ///     Returns the <see cref="ItemRequestResult{T}"/> with underlying one-dimensional
-        ///     index of first occurrence of item searched within the entire
+        ///     index of the first occurrence of item searched within the entire
         ///     <see cref="Array2D{T}"/> if found. Otherwise returns
         ///     <see cref="ItemRequestResult{T}.Failed"/><br/>
         ///     To search for <see langword="null"/> use <see cref="IndexOf(T)"/>
@@ -1062,8 +1064,9 @@ namespace Sztorm.Collections
 
         /// <summary>
         ///     Returns the <see cref="ItemRequestResult{T}"/> with underlying one-dimensional
-        ///     index of first occurrence of item searched row by row within the specified range of
-        ///     items if found. Otherwise returns <see cref="ItemRequestResult{T}.Failed"/><br/>
+        ///     index of the first occurrence of item searched row by row within the specified
+        ///     range of items if found. Otherwise returns
+        ///     <see cref="ItemRequestResult{T}.Failed"/><br/>
         ///     To search for <see langword="null"/> use <see cref="IndexOf(T, Index2D, int)"/>
         ///     <para>
         ///         Exceptions:<br/>
@@ -1072,7 +1075,7 @@ namespace Sztorm.Collections
         ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="startIndex"/> must
         ///         be within array bounds;<br/>
         ///         <paramref name="count"/> must be greater or equal to zero;<br/>
-        ///         Sum of <paramref name="startIndex"/> and <paramref name="count"/> must not
+        ///         <paramref name="startIndex"/> together with <paramref name="count"/> must not
         ///         exceed <see cref="Count"/>
         ///     </para>
         /// </summary>
@@ -1104,8 +1107,8 @@ namespace Sztorm.Collections
 
         /// <summary>
         ///     Returns the <see cref="ItemRequestResult{T}"/> with underlying one-dimensional
-        ///     index of first occurrence of item searched searched within the specified sector if
-        ///     found. Otherwise returns <see cref="ItemRequestResult{T}.Failed"/><br/>
+        ///     index of the first occurrence of item searched searched within the specified sector
+        ///     if found. Otherwise returns <see cref="ItemRequestResult{T}.Failed"/><br/>
         ///     To search for <see langword="null"/> use
         ///     <see cref="IndexOf(T, Index2D, Bounds2D)"/>
         ///     <para>
@@ -1146,7 +1149,7 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        ///     Returns the <see cref="ItemRequestResult{T}"/> with underlying index of first
+        ///     Returns the <see cref="ItemRequestResult{T}"/> with underlying index of the first
         ///     occurrence of item searched within the entire <see cref="Array2D{T}"/> if found.
         ///     Otherwise returns <see cref="ItemRequestResult{T}.Failed"/><br/>
         ///     Use <see cref="Index2DOfEquatable{U}(U)"/> or
@@ -1160,7 +1163,7 @@ namespace Sztorm.Collections
              => FindIndex2D(new EqualsObjectPredicate<T>(item));
 
         /// <summary>
-        ///     Returns the <see cref="ItemRequestResult{T}"/> with underlying index of first
+        ///     Returns the <see cref="ItemRequestResult{T}"/> with underlying index of the first
         ///     occurrence of item searched row by row within the specified range of items if
         ///     found. Otherwise returns <see cref="ItemRequestResult{T}.Failed"/><br/>
         ///     Use <see cref="Index2DOfEquatable{U}(U, Index2D, int)"/> or
@@ -1171,7 +1174,7 @@ namespace Sztorm.Collections
         ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="startIndex"/> must
         ///         be within array bounds;<br/>
         ///         <paramref name="count"/> must be greater or equal to zero;<br/>
-        ///         Sum of <paramref name="startIndex"/> and <paramref name="count"/> must not
+        ///         <paramref name="startIndex"/> together with <paramref name="count"/> must not
         ///         exceed <see cref="Count"/>
         ///     </para>
         /// </summary>
@@ -1193,7 +1196,7 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        ///     Returns the <see cref="ItemRequestResult{T}"/> with underlying index of first
+        ///     Returns the <see cref="ItemRequestResult{T}"/> with underlying index of the first
         ///     occurrence of item searched searched within the specified sector if found.
         ///     Otherwise returns <see cref="ItemRequestResult{T}.Failed"/><br/>
         ///     Use <see cref="Index2DOfEquatable{U}(U, Index2D, Bounds2D)"/> or
@@ -1227,7 +1230,7 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        ///     Returns the <see cref="ItemRequestResult{T}"/> with underlying index of first
+        ///     Returns the <see cref="ItemRequestResult{T}"/> with underlying index of the first
         ///     occurrence of item searched within the entire <see cref="Array2D{T}"/> if found.
         ///     Otherwise returns <see cref="ItemRequestResult{T}.Failed"/><br/>
         ///     To search for <see langword="null"/> use <see cref="Index2DOf(T)"/>
@@ -1258,7 +1261,7 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        ///     Returns the <see cref="ItemRequestResult{T}"/> with underlying index of first
+        ///     Returns the <see cref="ItemRequestResult{T}"/> with underlying index of the first
         ///     occurrence of item searched row by row within the specified range of items if
         ///     found. Otherwise returns <see cref="ItemRequestResult{T}.Failed"/><br/>
         ///     To search for <see langword="null"/> use <see cref="Index2DOf(T, Index2D, int)"/>
@@ -1269,7 +1272,7 @@ namespace Sztorm.Collections
         ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="startIndex"/> must
         ///         be within array bounds;<br/>
         ///         <paramref name="count"/> must be greater or equal to zero;<br/>
-        ///         Sum of <paramref name="startIndex"/> and <paramref name="count"/> must not
+        ///         <paramref name="startIndex"/> together with <paramref name="count"/> must not
         ///         exceed <see cref="Count"/>
         ///     </para>
         /// </summary>
@@ -1301,7 +1304,7 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        ///     Returns the <see cref="ItemRequestResult{T}"/> with underlying index of first
+        ///     Returns the <see cref="ItemRequestResult{T}"/> with underlying index of the first
         ///     occurrence of item searched searched within the specified sector if found.
         ///     Otherwise returns <see cref="ItemRequestResult{T}.Failed"/><br/>
         ///     To search for <see langword="null"/> use
@@ -1340,7 +1343,7 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        ///     Returns the <see cref="ItemRequestResult{T}"/> with underlying index of first
+        ///     Returns the <see cref="ItemRequestResult{T}"/> with underlying index of the first
         ///     occurrence of item searched within the entire <see cref="Array2D{T}"/> if found.
         ///     Otherwise returns <see cref="ItemRequestResult{T}.Failed"/><br/>
         ///     To search for <see langword="null"/> use <see cref="Index2DOf(T)"/>
@@ -1371,7 +1374,7 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        ///     Returns the <see cref="ItemRequestResult{T}"/> with underlying index of first
+        ///     Returns the <see cref="ItemRequestResult{T}"/> with underlying index of the first
         ///     occurrence of item searched row by row within the specified range of items if
         ///     found. Otherwise returns <see cref="ItemRequestResult{T}.Failed"/><br/>
         ///     To search for <see langword="null"/> use <see cref="Index2DOf(T, Index2D, int)"/>
@@ -1382,7 +1385,7 @@ namespace Sztorm.Collections
         ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="startIndex"/> must
         ///         be within array bounds;<br/>
         ///         <paramref name="count"/> must be greater or equal to zero;<br/>
-        ///         Sum of <paramref name="startIndex"/> and <paramref name="count"/> must not
+        ///         <paramref name="startIndex"/> together with <paramref name="count"/> must not
         ///         exceed <see cref="Count"/>
         ///     </para>
         /// </summary>
@@ -1414,7 +1417,7 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        ///     Returns the <see cref="ItemRequestResult{T}"/> with underlying index of first
+        ///     Returns the <see cref="ItemRequestResult{T}"/> with underlying index of the first
         ///     occurrence of item searched searched within the specified sector if found.
         ///     Otherwise returns <see cref="ItemRequestResult{T}.Failed"/><br/>
         ///     To search for <see langword="null"/> use
@@ -1654,14 +1657,14 @@ namespace Sztorm.Collections
         }
 
         internal ItemRequestResult<int> FindIndexInternal<TPredicate>(
-            int start, int length, TPredicate match)
+            int startIndex, int indexAfterEnd, TPredicate match)
             where TPredicate : struct, IPredicate<T>
         {
-            Debug.Assert(start >= 0);
-            Debug.Assert(length >= 0);
-            Debug.Assert(length <= Count);
+            Debug.Assert(startIndex >= 0);
+            Debug.Assert(indexAfterEnd >= 0);
+            Debug.Assert(indexAfterEnd <= Count);
 
-            for (int i = start; i < length; i++)
+            for (int i = startIndex; i < indexAfterEnd; i++)
             {
                 if (match.Invoke(items[i]))
                 {
@@ -1674,7 +1677,7 @@ namespace Sztorm.Collections
         /// <summary>
         ///     Searches from the beginning for an item that matches the conditions defined by the
         ///     specified predicate, and returns the <see cref="ItemRequestResult{T}"/> with
-        ///     underlying one-dimensional index of first occurrence searched within the entire
+        ///     underlying one-dimensional index of the first occurrence searched within the entire
         ///     <see cref="Array2D{T}"/> if found. Otherwise returns
         ///     <see cref="ItemRequestResult{T}.Failed"/>
         /// </summary>
@@ -1695,15 +1698,15 @@ namespace Sztorm.Collections
         /// <summary>
         ///     Searches for an item that matches the conditions defined by the specified
         ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying
-        ///     one-dimensional index of first occurrence searched row by row within the specified
-        ///     range of items if found. Otherwise returns
+        ///     one-dimensional index of the first occurrence searched row by row within the
+        ///     specified range of items if found. Otherwise returns
         ///     <see cref="ItemRequestResult{T}.Failed"/>
         ///     <para>
         ///         Exceptions:<br/>
         ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="startIndex"/> must
         ///         be within array bounds;<br/>
         ///         <paramref name="count"/> must be greater or equal to zero;<br/>
-        ///         Sum of <paramref name="startIndex"/> and <paramref name="count"/> must not
+        ///         <paramref name="startIndex"/> together with <paramref name="count"/> must not
         ///         exceed <see cref="Count"/>
         ///     </para>
         /// </summary>
@@ -1738,7 +1741,7 @@ namespace Sztorm.Collections
             if (indexAfterEnd > items.Length)
             {
                 throw new ArgumentOutOfRangeException(
-                    nameof(count), "Sum of startIndex and count must not exceed Array2D.Count");
+                    nameof(count), "startIndex together with count must not exceed Array2D.Count");
             }
             return FindIndexInternal(startIndex1D, indexAfterEnd, match);
         }
@@ -1746,7 +1749,7 @@ namespace Sztorm.Collections
         /// <summary>
         ///     Searches for an item that matches the conditions defined by the specified
         ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying
-        ///     one-dimensional index of first occurrence searched within the specified sector.
+        ///     one-dimensional index of the first occurrence searched within the specified sector.
         ///     Otherwise returns <see cref="ItemRequestResult{T}.Failed"/>
         ///     <para>
         ///         Exceptions:<br/>
@@ -1803,7 +1806,7 @@ namespace Sztorm.Collections
         /// <summary>
         ///     Searches for an item that matches the conditions defined by the specified
         ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying
-        ///     one-dimensional index of first occurrence searched within the entire
+        ///     one-dimensional index of the first occurrence searched within the entire
         ///     <see cref="Array2D{T}"/> if found. Otherwise returns
         ///     <see cref="ItemRequestResult{T}.Failed"/><br/>
         ///     Use <see cref="FindIndex{TPredicate}(TPredicate)"/> to avoid virtual call.
@@ -1830,8 +1833,8 @@ namespace Sztorm.Collections
         /// <summary>
         ///     Searches for an item that matches the conditions defined by the specified
         ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying
-        ///     one-dimensional index of first occurrence searched row by row within the specified
-        ///     range of items if found. Otherwise returns
+        ///     one-dimensional index of the first occurrence searched row by row within the
+        ///     specified range of items if found. Otherwise returns
         ///     <see cref="ItemRequestResult{T}.Failed"/><br/>
         ///     Use <see cref="FindIndex{TPredicate}(Index2D, int, TPredicate)"/> to avoid virtual
         ///     call.
@@ -1842,7 +1845,7 @@ namespace Sztorm.Collections
         ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="startIndex"/> must
         ///         be within array bounds;<br/>
         ///         <paramref name="count"/> must be greater or equal to zero;<br/>
-        ///         Sum of <paramref name="startIndex"/> and <paramref name="count"/> must not
+        ///         <paramref name="startIndex"/> together with <paramref name="count"/> must not
         ///         exceed <see cref="Count"/>
         ///     </para>
         /// </summary>
@@ -1872,7 +1875,7 @@ namespace Sztorm.Collections
         /// <summary>
         ///     Searches for an item that matches the conditions defined by the specified
         ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying
-        ///     one-dimensional index of first occurrence searched within the specified sector.
+        ///     one-dimensional index of the first occurrence searched within the specified sector.
         ///     Otherwise returns <see cref="ItemRequestResult{T}.Failed"/><br/>
         ///     Use <see cref="FindIndex{TPredicate}(Index2D, Bounds2D, TPredicate)"/> to avoid
         ///     virtual call.
@@ -1924,8 +1927,8 @@ namespace Sztorm.Collections
         /// <summary>
         ///     Searches for an item that matches the conditions defined by the specified
         ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying index
-        ///     of first occurrence searched within the entire <see cref="Array2D{T}"/> if found.
-        ///     Otherwise returns <see cref="ItemRequestResult{T}.Failed"/>
+        ///     of the first occurrence searched within the entire <see cref="Array2D{T}"/> if
+        ///     found. Otherwise returns <see cref="ItemRequestResult{T}.Failed"/>
         /// </summary>
         /// <typeparam name="TPredicate">
         ///     <typeparamref name = "TPredicate"/> is <see cref="IPredicate{T}"/> and
@@ -1944,14 +1947,14 @@ namespace Sztorm.Collections
         /// <summary>
         ///     Searches for an item that matches the conditions defined by the specified
         ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying index
-        ///     of first occurrence searched row by row within the specified range of items if
+        ///     of the first occurrence searched row by row within the specified range of items if
         ///     found. Otherwise returns <see cref="ItemRequestResult{T}.Failed"/>
         ///     <para>
         ///         Exceptions:<br/>
         ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="startIndex"/> must
         ///         be within array bounds;<br/>
         ///         <paramref name="count"/> must be greater or equal to zero;<br/>
-        ///         Sum of <paramref name="startIndex"/> and <paramref name="count"/> must not
+        ///         <paramref name="startIndex"/> together with <paramref name="count"/> must not
         ///         exceed <see cref="Count"/>
         ///     </para>
         /// </summary>
@@ -1984,7 +1987,7 @@ namespace Sztorm.Collections
         /// <summary>
         ///     Searches for an item that matches the conditions defined by the specified
         ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying index
-        ///     of first occurrence searched within the specified sector. Otherwise returns
+        ///     of the first occurrence searched within the specified sector. Otherwise returns
         ///     <see cref="ItemRequestResult{T}.Failed"/>
         ///     <para>
         ///         Exceptions:<br/>
@@ -2023,7 +2026,7 @@ namespace Sztorm.Collections
         /// <summary>
         ///     Searches for an item that matches the conditions defined by the specified
         ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying index
-        ///     of first occurrence searched within the entire <see cref="Array2D{T}"/> if found.
+        ///     of the first occurrence searched within the entire <see cref="Array2D{T}"/> if found.
         ///     Otherwise returns <see cref="ItemRequestResult{T}.Failed"/><br/>
         ///     Use <see cref="FindIndex2D{TPredicate}(TPredicate)"/> to avoid virtual call.
         ///     <para>
@@ -2053,7 +2056,7 @@ namespace Sztorm.Collections
         /// <summary>
         ///     Searches for an item that matches the conditions defined by the specified
         ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying index
-        ///     of first occurrence searched row by row within the specified range of items if
+        ///     of the first occurrence searched row by row within the specified range of items if
         ///     found. Otherwise returns <see cref="ItemRequestResult{T}.Failed"/><br/>
         ///     Use <see cref="FindIndex2D{TPredicate}(Index2D, int, TPredicate)"/> to avoid
         ///     virtual call.
@@ -2064,7 +2067,7 @@ namespace Sztorm.Collections
         ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="startIndex"/> must
         ///         be within array bounds;<br/>
         ///         <paramref name="count"/> must be greater or equal to zero;<br/>
-        ///         Sum of <paramref name="startIndex"/> and <paramref name="count"/> must not
+        ///         <paramref name="startIndex"/> together with <paramref name="count"/> must not
         ///         exceed <see cref="Count"/>
         ///     </para>
         /// </summary>
@@ -2096,7 +2099,7 @@ namespace Sztorm.Collections
         /// <summary>
         ///     Searches for an item that matches the conditions defined by the specified
         ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying index
-        ///     of first occurrence searched within the specified sector. Otherwise returns
+        ///     of the first occurrence searched within the specified sector. Otherwise returns
         ///     <see cref="ItemRequestResult{T}.Failed"/><br/>
         ///     Use <see cref="FindIndex2D{TPredicate}(Index2D, Bounds2D, TPredicate)"/> to avoid
         ///     virtual call.
@@ -2128,6 +2131,264 @@ namespace Sztorm.Collections
             catch (ArgumentNullException)
             {
                 throw;
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                throw;
+            }
+        }
+
+        internal ItemRequestResult<int> FindLastIndexInternal<TPredicate>(
+            int startIndex, int indexAfterEnd, TPredicate match)
+            where TPredicate : struct, IPredicate<T>
+        {
+            Debug.Assert(startIndex < Count);
+            Debug.Assert(indexAfterEnd >= -1);
+
+            for (int i = startIndex; i > indexAfterEnd; i--)
+            {
+                if (match.Invoke(items[i]))
+                {
+                    return new ItemRequestResult<int>(i);
+                }
+            }
+            return ItemRequestResult<int>.Failed;
+        }
+
+        /// <summary>
+        ///     Searches from the beginning for an item that matches the conditions defined by the
+        ///     specified predicate, and returns the <see cref="ItemRequestResult{T}"/> with
+        ///     underlying one-dimensional index of the last occurrence searched within the entire
+        ///     <see cref="Array2D{T}"/> if found. Otherwise returns
+        ///     <see cref="ItemRequestResult{T}.Failed"/>
+        /// </summary>
+        /// <typeparam name="TPredicate">
+        ///     <typeparamref name = "TPredicate"/> is <see cref="IPredicate{T}"/> and
+        ///     <see langword="struct"/>
+        /// </typeparam>
+        /// <param name="match">
+        ///     A <see langword="struct"/> implementing <see cref="IPredicate{T}"/> that defines
+        ///     the conditions of the element to search for.
+        /// </param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public ItemRequestResult<int> FindLastIndex<TPredicate>(TPredicate match)
+            where TPredicate : struct, IPredicate<T>
+            => FindLastIndexInternal(Count - 1, -1, match);
+
+        /// <summary>
+        ///     Searches for an item that matches the conditions defined by the specified
+        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying
+        ///     one-dimensional index of the last occurrence searched row by row within the
+        ///     specified range of items if found. Otherwise returns
+        ///     <see cref="ItemRequestResult{T}.Failed"/>
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="startIndex"/> must
+        ///         be within array bounds;<br/>
+        ///         <paramref name="count"/> must be greater or equal to zero;<br/>
+        ///         <paramref name="startIndex"/> together with <paramref name="count"/> must not
+        ///         exceed <see cref="Count"/>
+        ///     </para>
+        /// </summary>
+        /// <typeparam name="TPredicate">
+        ///     <typeparamref name = "TPredicate"/> is <see cref="IPredicate{T}"/> and
+        ///     <see langword="struct"/>
+        /// </typeparam>
+        /// <param name="startIndex">Zero-based starting index of the backward search.</param>
+        /// <param name="count">Number of items to search.</param>
+        /// <param name="match">
+        ///     A <see langword="struct"/> implementing <see cref="IPredicate{T}"/> that defines
+        ///     the conditions of the element to search for.
+        /// </param>
+        /// <returns></returns>
+        public ItemRequestResult<int> FindLastIndex<TPredicate>(
+            Index2D startIndex, int count, TPredicate match)
+            where TPredicate : struct, IPredicate<T>
+        {
+            if (!IsValidIndex(startIndex))
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(startIndex), "startIndex must be within array bounds.");
+            }
+            if (count < 0)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(count), "count must be greater or equal to zero.");
+            }
+            int startIndex1D = RowMajorIndex2DToInt(startIndex, Columns);
+            int indexAfterEnd = startIndex1D - count;
+
+            if (indexAfterEnd < -1)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(count), "startIndex together with count must not exceed Array2D.Count");
+            }
+            return FindLastIndexInternal(startIndex1D, indexAfterEnd, match);
+        }
+
+        /// <summary>
+        ///     Searches for an item that matches the conditions defined by the specified
+        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying
+        ///     one-dimensional index of the last occurrence searched within the specified sector.
+        ///     Otherwise returns <see cref="ItemRequestResult{T}.Failed"/>
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="startIndex"/> must
+        ///         be within array bounds;<br/>
+        ///         <paramref name="sectorSize"/> must be within array bounds, beginning backwardly
+        ///         from <paramref name="startIndex"/>.
+        ///     </para>   
+        /// </summary>
+        /// <typeparam name="TPredicate">
+        ///     <typeparamref name = "TPredicate"/> is <see cref="IPredicate{T}"/> and
+        ///     <see langword="struct"/>
+        /// </typeparam>
+        /// <param name="startIndex">Zero-based starting index of the backward search.</param>
+        /// <param name="sectorSize">The rectangular sector size to be searched.</param>
+        /// <param name="match">
+        ///     A <see langword="struct"/> implementing <see cref="IPredicate{T}"/> that defines
+        ///     the conditions of the element to search for.
+        /// </param>
+        /// <returns></returns>
+        public ItemRequestResult<int> FindLastIndex<TPredicate>(
+            Index2D startIndex, Bounds2D sectorSize, TPredicate match)
+            where TPredicate : struct, IPredicate<T>
+        {
+            if (!IsValidIndex(startIndex))
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(startIndex), "startIndex must be within array bounds.");
+            }
+            var indexAfterEnd = new Index2D(
+                startIndex.Row - sectorSize.Rows,
+                startIndex.Column - sectorSize.Columns);
+
+            if (indexAfterEnd.Row < -1 || indexAfterEnd.Column < -1)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(sectorSize),
+                    "sectorSize must be within array bounds, beginning backwardly from " +
+                    "startIndex.");
+            }
+            for (int i = startIndex.Row; i > indexAfterEnd.Row; i--)
+            {
+                for (int j = startIndex.Column; j > indexAfterEnd.Column; j--)
+                {
+                    if (match.Invoke(GetItemInternal(i, j)))
+                    {
+                        return new ItemRequestResult<int>(
+                            RowMajorIndex2DToInt(new Index2D(i, j), Columns));
+                    }
+                }
+            }
+            return ItemRequestResult<int>.Failed;
+        }
+
+        /// <summary>
+        ///     Searches for an item that matches the conditions defined by the specified
+        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying
+        ///     one-dimensional index of the last occurrence searched within the entire
+        ///     <see cref="Array2D{T}"/> if found. Otherwise returns
+        ///     <see cref="ItemRequestResult{T}.Failed"/><br/>
+        ///     Use <see cref="FindLastIndex{TPredicate}(TPredicate)"/> to avoid virtual call.
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentNullException"/>: <paramref name="match"/> cannot be
+        ///         <see langword="null"/>.
+        ///     </para>
+        /// </summary>
+        /// <param name="match">
+        ///     The <see cref="Predicate{T}"/> delegate that defines the conditions of the element
+        ///     to search for.
+        /// </param>
+        /// <returns></returns>
+        public ItemRequestResult<int> FindLastIndex(Predicate<T> match)
+        {
+            if (match == null)
+            {
+                throw new ArgumentNullException(nameof(match), "Match cannot be null.");
+            }
+            return FindLastIndexInternal(Count - 1, -1, new BoxedPredicate<T>(match));
+        }
+
+        /// <summary>
+        ///     Searches for an item that matches the conditions defined by the specified
+        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying
+        ///     one-dimensional index of the last occurrence searched row by row within the
+        ///     specified range of items if found. Otherwise returns
+        ///     <see cref="ItemRequestResult{T}.Failed"/><br/>
+        ///     Use <see cref="FindLastIndex{TPredicate}(Index2D, int, TPredicate)"/> to avoid
+        ///     virtual call.
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentNullException"/>: <paramref name="match"/> cannot be
+        ///         <see langword="null"/>.<br/>
+        ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="startIndex"/> must
+        ///         be within array bounds;<br/>
+        ///         <paramref name="count"/> must be greater or equal to zero;<br/>
+        ///         <paramref name="startIndex"/> together with <paramref name="count"/> must not
+        ///         exceed <see cref="Count"/>
+        ///     </para>
+        /// </summary>
+        /// <param name="startIndex">Zero-based starting index of the backward search.</param>
+        /// <param name="count">Number of items to search.</param>
+        /// <param name="match">
+        ///     The <see cref="Predicate{T}"/> delegate that defines the conditions of the element
+        ///     to search for.
+        /// </param>
+        /// <returns></returns>
+        public ItemRequestResult<int> FindLastIndex(
+            Index2D startIndex, int count, Predicate<T> match)
+        {
+            if (match == null)
+            {
+                throw new ArgumentNullException(nameof(match), "match cannot be null.");
+            }
+            try
+            {
+                return FindLastIndex(startIndex, count, new BoxedPredicate<T>(match));
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        ///     Searches for an item that matches the conditions defined by the specified
+        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying
+        ///     one-dimensional index of the last occurrence searched within the specified sector.
+        ///     Otherwise returns <see cref="ItemRequestResult{T}.Failed"/><br/>
+        ///     Use <see cref="FindLastIndex{TPredicate}(Index2D, Bounds2D, TPredicate)"/> to avoid
+        ///     virtual call.
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentNullException"/>: <paramref name="match"/> cannot be
+        ///         <see langword="null"/>.<br/>
+        ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="startIndex"/> must
+        ///         be within array bounds;<br/>
+        ///         <paramref name="sectorSize"/> must be within array bounds, beginning backwardly
+        ///         from <paramref name="startIndex"/>.
+        ///     </para>
+        /// </summary>
+        /// <param name="startIndex">Zero-based starting index of the backward search.</param>
+        /// <param name="sectorSize">The rectangular sector size to be searched.</param>
+        /// <param name="match">
+        ///     The <see cref="Predicate{T}"/> delegate that defines the conditions of the element
+        ///     to search for.
+        /// </param>
+        /// <returns></returns>
+        public ItemRequestResult<int> FindLastIndex(
+            Index2D startIndex, Bounds2D sectorSize, Predicate<T> match)
+        {
+            if (match == null)
+            {
+                throw new ArgumentNullException(nameof(match), "match cannot be null.");
+            }
+            try
+            {
+                return FindLastIndex(startIndex, sectorSize, new BoxedPredicate<T>(match));
             }
             catch (ArgumentOutOfRangeException)
             {
