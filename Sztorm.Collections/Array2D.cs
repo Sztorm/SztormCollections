@@ -2283,6 +2283,90 @@ namespace Sztorm.Collections
             }
         }
 
+        /// <summary>
+        ///     Returns <see cref="ICollection{T}"/> containing all the indices of which items
+        ///     match the conditions defined by the specified predicate.<br/>
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="NotSupportedException"/>: Provided type must support 
+        ///         <see cref="ICollection{T}.Add(T)"/> method.
+        ///     </para>
+        /// </summary>
+        /// <typeparam name="Index2DCollection">
+        ///     <typeparamref name = "Index2DCollection"/> is <see cref="ICollection{T}"/> and has a
+        ///     parameterless constructor.
+        /// </typeparam>
+        /// <typeparam name="TPredicate">
+        ///     <typeparamref name = "TPredicate"/> is <see cref="IPredicate{T}"/> and
+        ///     <see langword="struct"/>
+        /// </typeparam>
+        /// <param name="match">
+        ///     A <see langword="struct"/> implementing <see cref="IPredicate{T}"/> that defines
+        ///     the conditions of the element to search for.
+        /// </param>
+        /// <returns></returns>
+        public Index2DCollection FindAllIndices<Index2DCollection, TPredicate>(TPredicate match)
+            where Index2DCollection : ICollection<Index2D>, new()
+            where TPredicate : struct, IPredicate<T>
+        {
+            var resizableCollection = new Index2DCollection();
+            try
+            {
+                for (int i = 0, length = Count, columns = Columns; i < length; i++)
+                {
+                    if (match.Invoke(items[i]))
+                    {
+                        resizableCollection.Add(IntToRowMajorIndex2D(i, columns));
+                    }
+                }
+            }
+            catch (NotSupportedException)
+            {
+                throw new NotSupportedException("Provided type must support Add(T) method.");
+            }
+            return resizableCollection;
+        }
+
+        /// <summary>
+        ///     Returns <see cref="ICollection{T}"/> containing all the indices of which items
+        ///     match the conditions defined by the specified predicate.<br/>
+        ///     Use <see cref="FindAll{TCollection, TPredicate}(TPredicate)"/> to avoid virtual
+        ///     call.
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentNullException"/>: <paramref name="match"/> cannot be
+        ///         <see langword="null"/>.<br/>
+        ///         <see cref="NotSupportedException"/>: Provided type must support
+        ///         <see cref="ICollection{T}.Add(T)"/> method.
+        ///     </para>
+        /// </summary>
+        /// <typeparam name="Index2DCollection">
+        ///     <typeparamref name = "Index2DCollection"/> is <see cref="ICollection{T}"/> and has a
+        ///     parameterless constructor.
+        /// </typeparam>
+        /// <param name="match">
+        ///     The <see cref="Predicate{T}"/> delegate that defines the conditions of the element
+        ///     to search for.
+        /// </param>
+        /// <returns></returns>
+        public Index2DCollection FindAllIndices<Index2DCollection>(Predicate<T> match)
+            where Index2DCollection : ICollection<Index2D>, new()
+        {
+            if (match == null)
+            {
+                throw new ArgumentNullException(nameof(match), "Match cannot be null.");
+            }
+            try
+            {
+                return FindAllIndices<Index2DCollection, BoxedPredicate<T>>(
+                    new BoxedPredicate<T>(match));
+            }
+            catch (NotSupportedException)
+            {
+                throw;
+            }
+        }
+
         internal ItemRequestResult<int> FindIndexInternal<TPredicate>(
             int startIndex, int indexAfterEnd, TPredicate match)
             where TPredicate : struct, IPredicate<T>
@@ -3381,12 +3465,14 @@ namespace Sztorm.Collections
             Bounds2D bounds = new Bounds2D(
                 new Box<int>(array.GetLength(0)), new Box<int>(array.GetLength(1)));
             var result = new Array2D<T>(bounds);
+            int index1D = 0;
 
             for (int i = 0; i < bounds.Rows; i++)
             {
                 for (int j = 0; j < bounds.Columns; j++)
                 {
-                    result[i, j] = array[i, j];
+                    result.items[index1D] = array[i, j];
+                    index1D++;
                 }
             }
             return result;
