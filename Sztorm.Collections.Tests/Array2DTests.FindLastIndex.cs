@@ -20,7 +20,7 @@ namespace Sztorm.Collections.Tests
                     => Assert.Throws<ArgumentNullException>(
                         () => new Array2D<int>(0, 0).FindLastIndex(match: null));
 
-                [TestCaseSource(typeof(FindLastIndex), nameof(IndexTestCases))]
+                [TestCaseSource(typeof(FindLastIndex), nameof(PredicateTestCases))]
                 public static ItemRequestResult<int> Test<T>(
                     Array2D<T> array, Predicate<T> match)
                     => array.FindLastIndex(match);
@@ -42,7 +42,7 @@ namespace Sztorm.Collections.Tests
                     => Assert.Throws<ArgumentOutOfRangeException>(
                         () => array.FindLastIndex(startIndex, count, o => true));
 
-                [TestCaseSource(typeof(FindLastIndex), nameof(IndexIndex2DIntTestCases))]
+                [TestCaseSource(typeof(FindLastIndex), nameof(PredicateIndex2DIntTestCases))]
                 public static ItemRequestResult<int> Test<T>(
                     Array2D<T> array, Index2D startIndex, int count, Predicate<T> match)
                     => array.FindLastIndex(startIndex, count, match);
@@ -64,7 +64,7 @@ namespace Sztorm.Collections.Tests
                     => Assert.Throws<ArgumentOutOfRangeException>(
                         () => array.FindLastIndex(startIndex, sector, o => true));
 
-                [TestCaseSource(typeof(FindLastIndex), nameof(IndexIndex2DBounds2DTestCases))]
+                [TestCaseSource(typeof(FindLastIndex), nameof(PredicateIndex2DBounds2DTestCases))]
                 public static ItemRequestResult<int> TestFindLastIndex<T>(
                     Array2D<T> array, Index2D startIndex, Bounds2D sector, Predicate<T> match)
                     => array.FindLastIndex(startIndex, sector, match);
@@ -79,14 +79,14 @@ namespace Sztorm.Collections.Tests
                     => array.FindLastIndex(match);
 
                 [TestCaseSource(typeof(FindLastIndex), nameof(InvalidStartIndexCases))]
-                public static void Index2DIntIPredicateThrowsExceptionIfStartIndexIsOutOfBounds
-                    <T>(Array2D<T> array, Index2D startIndex)
+                public static void Index2DIntIPredicateThrowsExceptionIfStartIndexIsOutOfBounds<T>
+                    (Array2D<T> array, Index2D startIndex)
                     => Assert.Throws<ArgumentOutOfRangeException>(
                         () => array.FindLastIndex(startIndex, 0, new AlwaysTruePredicate<T>()));
 
                 [TestCaseSource(typeof(FindLastIndex), nameof(InvalidCountTestCases))]
-                public static void Index2DIntIPredicateThrowsExceptionIfCountExceedsArray2DCount
-                    <T>(Array2D<T> array, Index2D startIndex, int count)
+                public static void Index2DIntIPredicateThrowsExceptionIfCountExceedsArray2DCount<T>
+                    (Array2D<T> array, Index2D startIndex, int count)
                     => Assert.Throws<ArgumentOutOfRangeException>(
                         () => array.FindLastIndex(
                             startIndex, count, new AlwaysTruePredicate<T>()));
@@ -105,8 +105,8 @@ namespace Sztorm.Collections.Tests
                             startIndex, new Bounds2D(), new AlwaysTruePredicate<T>()));
 
                 [TestCaseSource(typeof(FindLastIndex), nameof(InvalidSectorTestCases))]
-                public static void Index2DBounds2DIPredicateThrowsExceptionIfSectorIsOutOfBounds
-                    <T>(Array2D<T> array, Index2D startIndex, Bounds2D sector)
+                public static void Index2DBounds2DIPredicateThrowsExceptionIfSectorIsOutOfBounds<T>
+                    (Array2D<T> array, Index2D startIndex, Bounds2D sector)
                     => Assert.Throws<ArgumentOutOfRangeException>(
                         () => array.FindLastIndex(
                             startIndex, sector, new AlwaysTruePredicate<T>()));
@@ -157,7 +157,7 @@ namespace Sztorm.Collections.Tests
                 yield return new TestCaseData(array2x3, new Index2D(0, 1), new Bounds2D(0, 3));
             }
       
-            private static IEnumerable<TestCaseData> IndexTestCases()
+            private static IEnumerable<TestCaseData> PredicateTestCases()
             {
                 var array3x3 = Array2D<int>.FromSystem2DArray(
                     new int[,] { { 2, 3, 5 },
@@ -172,7 +172,7 @@ namespace Sztorm.Collections.Tests
                     .Returns(ItemRequestResult<int>.Failed);
             }
 
-            private static IEnumerable<TestCaseData> IndexIndex2DIntTestCases()
+            private static IEnumerable<TestCaseData> PredicateIndex2DIntTestCases()
             {
                 var array2x3 = Array2D<int>.FromSystem2DArray(
                     new int[,] { { 2, 3, 0 },
@@ -189,7 +189,7 @@ namespace Sztorm.Collections.Tests
                     .Returns(ItemRequestResult<int>.Failed);
             }
 
-            private static IEnumerable<TestCaseData> IndexIndex2DBounds2DTestCases()
+            private static IEnumerable<TestCaseData> PredicateIndex2DBounds2DTestCases()
             {
                 var array2x3 = Array2D<int>.FromSystem2DArray(
                     new int[,] { { 2, 3, 0 },
