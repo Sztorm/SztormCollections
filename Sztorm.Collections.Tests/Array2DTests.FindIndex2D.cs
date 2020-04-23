@@ -11,109 +11,109 @@ namespace Sztorm.Collections.Tests
 
     public partial class Array2DTests
     {
-        public static class FindIndex
+        public static class FindIndex2D
         {
             public static class Predicate
             {
                 [Test]
                 public static void ThrowsExceptionIfMatchIsNull()
                     => Assert.Throws<ArgumentNullException>(
-                        () => new Array2D<int>(0, 0).FindIndex(match: null));
+                        () => new Array2D<int>(0, 0).FindIndex2D(match: null));
 
-                [TestCaseSource(typeof(FindIndex), nameof(PredicateTestCases))]
-                public static ItemRequestResult<int> Test<T>(
+                [TestCaseSource(typeof(FindIndex2D), nameof(PredicateTestCases))]
+                public static ItemRequestResult<Index2D> Test<T>(
                     Array2D<T> array, Predicate<T> match)
-                    => array.FindIndex(match);
+                    => array.FindIndex2D(match);
 
                 [Test]
                 public static void Index2DIntThrowsExceptionIfMatchIsNull()
                     => Assert.Throws<ArgumentNullException>(
-                        () => new Array2D<int>(0, 0).FindIndex((0, 0), 0, match: null));
+                        () => new Array2D<int>(0, 0).FindIndex2D((0, 0), 0, match: null));
 
-                [TestCaseSource(typeof(FindIndex), nameof(InvalidStartIndexTestCases))]
+                [TestCaseSource(typeof(FindIndex2D), nameof(InvalidStartIndexTestCases))]
                 public static void Index2DIntThrowsExceptionIfStartIndexIsOutOfBounds<T>(
                     Array2D<T> array, Index2D startIndex)
                     => Assert.Throws<ArgumentOutOfRangeException>(
-                        () => array.FindIndex(startIndex, 0, o => true));
+                        () => array.FindIndex2D(startIndex, 0, o => true));
 
-                [TestCaseSource(typeof(FindIndex), nameof(InvalidCountTestCases))]
+                [TestCaseSource(typeof(FindIndex2D), nameof(InvalidCountTestCases))]
                 public static void Index2DIntThrowsExceptionIfCountExceedsArray2DCount<T>(
                     Array2D<T> array, Index2D startIndex, int count)
                     => Assert.Throws<ArgumentOutOfRangeException>(
-                        () => array.FindIndex(startIndex, count, o => true));
+                        () => array.FindIndex2D(startIndex, count, o => true));
 
-                [TestCaseSource(typeof(FindIndex), nameof(PredicateIndex2DIntTestCases))]
-                public static ItemRequestResult<int> Test<T>(
+                [TestCaseSource(typeof(FindIndex2D), nameof(PredicateIndex2DIntTestCases))]
+                public static ItemRequestResult<Index2D> Test<T>(
                     Array2D<T> array, Index2D startIndex, int count, Predicate<T> match)
-                    => array.FindIndex(startIndex, count, match);
+                    => array.FindIndex2D(startIndex, count, match);
 
                 [Test]
                 public static void Index2DBounds2DThrowsExceptionIfMatchIsNull()
                     => Assert.Throws<ArgumentNullException>(
-                        () => new Array2D<int>(0, 0).FindIndex(
+                        () => new Array2D<int>(0, 0).FindIndex2D(
                             (0, 0), new Bounds2D(), match: null));
 
-                [TestCaseSource(typeof(FindIndex), nameof(InvalidStartIndexTestCases))]
+                [TestCaseSource(typeof(FindIndex2D), nameof(InvalidStartIndexTestCases))]
                 public static void Index2DBounds2DThrowsExceptionIfStartIndexIsOutOfBounds<T>(
                     Array2D<T> array, Index2D startIndex)
                     => Assert.Throws<ArgumentOutOfRangeException>(
-                        () => array.FindIndex(startIndex, new Bounds2D(), o => true));
+                        () => array.FindIndex2D(startIndex, new Bounds2D(), o => true));
 
-                [TestCaseSource(typeof(FindIndex), nameof(InvalidSectorTestCases))]
+                [TestCaseSource(typeof(FindIndex2D), nameof(InvalidSectorTestCases))]
                 public static void Index2DBounds2DThrowsExceptionIfSectorIsOutOfBounds<T>(
                     Array2D<T> array, Index2D startIndex, Bounds2D sector)
                     => Assert.Throws<ArgumentOutOfRangeException>(
-                        () => array.FindIndex(startIndex, sector, o => true));
+                        () => array.FindIndex2D(startIndex, sector, o => true));
 
-                [TestCaseSource(typeof(FindIndex), nameof(PredicateIndex2DBounds2DTestCases))]
-                public static ItemRequestResult<int> Test<T>(
+                [TestCaseSource(typeof(FindIndex2D), nameof(PredicateIndex2DBounds2DTestCases))]
+                public static ItemRequestResult<Index2D> Test<T>(
                     Array2D<T> array, Index2D startIndex, Bounds2D sector, Predicate<T> match)
-                    => array.FindIndex(startIndex, sector, match);
+                    => array.FindIndex2D(startIndex, sector, match);
             }
 
             public static class IPredicate
             {
-                [TestCaseSource(typeof(FindIndex), nameof(IPredicateTestCases))]
-                public static ItemRequestResult<int> Test<T, TPredicate>(
+                [TestCaseSource(typeof(FindIndex2D), nameof(IPredicateTestCases))]
+                public static ItemRequestResult<Index2D> Test<T, TPredicate>(
                     Array2D<T> array, TPredicate match)
                     where TPredicate : struct, IPredicate<T>
-                    => array.FindIndex(match);
+                    => array.FindIndex2D(match);
 
-                [TestCaseSource(typeof(FindIndex), nameof(InvalidStartIndexTestCases))]
+                [TestCaseSource(typeof(FindIndex2D), nameof(InvalidStartIndexTestCases))]
                 public static void Index2DIntThrowsExceptionIfStartIndexIsOutOfBounds
                     <T>(Array2D<T> array, Index2D startIndex)
-                    => Assert.Throws<ArgumentOutOfRangeException>(() => array.FindIndex(
+                    => Assert.Throws<ArgumentOutOfRangeException>(() => array.FindIndex2D(
                         startIndex, 0, new AlwaysTruePredicate<T>()));
 
-                [TestCaseSource(typeof(FindIndex), nameof(InvalidCountTestCases))]
+                [TestCaseSource(typeof(FindIndex2D), nameof(InvalidCountTestCases))]
                 public static void Index2DIntThrowsExceptionIfCountExceedsArray2DCount
                     <T>(Array2D<T> array, Index2D startIndex, int count)
-                    => Assert.Throws<ArgumentOutOfRangeException>(() => array.FindIndex(
+                    => Assert.Throws<ArgumentOutOfRangeException>(() => array.FindIndex2D(
                         startIndex, count, new AlwaysTruePredicate<T>()));
 
-                [TestCaseSource(typeof(FindIndex), nameof(IPredicateIndex2DIntTestCases))]
-                public static ItemRequestResult<int> Test<T, TPredicate>(
+                [TestCaseSource(typeof(FindIndex2D), nameof(IPredicateIndex2DIntTestCases))]
+                public static ItemRequestResult<Index2D> Test<T, TPredicate>(
                     Array2D<T> array, Index2D startIndex, int count, TPredicate match)
                     where TPredicate : struct, IPredicate<T>
-                    => array.FindIndex(startIndex, count, match);
+                    => array.FindIndex2D(startIndex, count, match);
 
-                [TestCaseSource(typeof(FindIndex), nameof(InvalidStartIndexTestCases))]
+                [TestCaseSource(typeof(FindIndex2D), nameof(InvalidStartIndexTestCases))]
                 public static void Index2DBounds2DThrowsExceptionIfStartIndexIsOutOfBounds
                     <T>(Array2D<T> array, Index2D startIndex)
-                    => Assert.Throws<ArgumentOutOfRangeException>(() => array.FindIndex(
+                    => Assert.Throws<ArgumentOutOfRangeException>(() => array.FindIndex2D(
                         startIndex, new Bounds2D(), new AlwaysTruePredicate<T>()));
 
-                [TestCaseSource(typeof(FindIndex), nameof(InvalidSectorTestCases))]
+                [TestCaseSource(typeof(FindIndex2D), nameof(InvalidSectorTestCases))]
                 public static void Index2DBounds2DThrowsExceptionIfSectorIsOutOfBounds
                     <T>(Array2D<T> array, Index2D startIndex, Bounds2D sector)
-                    => Assert.Throws<ArgumentOutOfRangeException>(() => array.FindIndex(
+                    => Assert.Throws<ArgumentOutOfRangeException>(() => array.FindIndex2D(
                         startIndex, sector, new AlwaysTruePredicate<T>()));
 
-                [TestCaseSource(typeof(FindIndex), nameof(IPredicateIndex2DBounds2DTestCases))]
-                public static ItemRequestResult<int> Test<T, TPredicate>(
+                [TestCaseSource(typeof(FindIndex2D), nameof(IPredicateIndex2DBounds2DTestCases))]
+                public static ItemRequestResult<Index2D> Test<T, TPredicate>(
                     Array2D<T> array, Index2D startIndex, Bounds2D sector, TPredicate match)
                     where TPredicate : struct, IPredicate<T>
-                    => array.FindIndex(startIndex, sector, match);
+                    => array.FindIndex2D(startIndex, sector, match);
             }
 
             private static IEnumerable<TestCaseData> InvalidStartIndexTestCases()
@@ -155,9 +155,9 @@ namespace Sztorm.Collections.Tests
                                  { 8, 2, 3 } });
 
                 yield return new TestCaseData(array3x3, new Predicate<int>(o => o > 5))
-                    .Returns(new ItemRequestResult<int>(4));
+                    .Returns(new ItemRequestResult<Index2D>((1, 1)));
                 yield return new TestCaseData(array3x3, new Predicate<int>(o => o == 10))
-                    .Returns(ItemRequestResult<int>.Failed);
+                    .Returns(ItemRequestResult<Index2D>.Failed);
             }
 
             private static IEnumerable<TestCaseData> PredicateIndex2DIntTestCases()
@@ -168,13 +168,13 @@ namespace Sztorm.Collections.Tests
 
                 yield return new TestCaseData(
                     array2x3, new Index2D(0, 0), 6, new Predicate<int>(o => o > 5))
-                    .Returns(new ItemRequestResult<int>(3));
+                    .Returns(new ItemRequestResult<Index2D>((1, 0)));
                 yield return new TestCaseData(
                     array2x3, new Index2D(1, 2), 0, new Predicate<int>(o => true))
-                    .Returns(ItemRequestResult<int>.Failed);
+                    .Returns(ItemRequestResult<Index2D>.Failed);
                 yield return new TestCaseData(
                     array2x3, new Index2D(1, 1), 2, new Predicate<int>(o => o == 10))
-                    .Returns(ItemRequestResult<int>.Failed);
+                    .Returns(ItemRequestResult<Index2D>.Failed);
             }
 
             private static IEnumerable<TestCaseData> PredicateIndex2DBounds2DTestCases()
@@ -188,19 +188,19 @@ namespace Sztorm.Collections.Tests
                     new Index2D(0, 0),
                     new Bounds2D(2, 3),
                     new Predicate<int>(o => o > 5))
-                    .Returns(new ItemRequestResult<int>(3));
+                    .Returns(new ItemRequestResult<Index2D>((1, 0)));
                 yield return new TestCaseData(
                     array2x3,
                     new Index2D(0, 0),
                     new Bounds2D(0, 0),
                     new Predicate<int>(o => true))
-                    .Returns(ItemRequestResult<int>.Failed);
+                    .Returns(ItemRequestResult<Index2D>.Failed);
                 yield return new TestCaseData(
                     array2x3,
                     new Index2D(1, 1),
                     new Bounds2D(1, 2),
                     new Predicate<int>(o => o == 10))
-                    .Returns(ItemRequestResult<int>.Failed);
+                    .Returns(ItemRequestResult<Index2D>.Failed);
             }
 
             private static IEnumerable<TestCaseData> IPredicateTestCases()
@@ -211,9 +211,9 @@ namespace Sztorm.Collections.Tests
                                  { 8, 2, 3 } });
 
                 yield return new TestCaseData(array3x3, new GreaterThanPredicate<int>(5))
-                    .Returns(new ItemRequestResult<int>(4));
+                    .Returns(new ItemRequestResult<Index2D>((1, 1)));
                 yield return new TestCaseData(array3x3, new EqualsPredicate<int>(10))
-                    .Returns(ItemRequestResult<int>.Failed);
+                    .Returns(ItemRequestResult<Index2D>.Failed);
             }
 
             private static IEnumerable<TestCaseData> IPredicateIndex2DIntTestCases()
@@ -224,13 +224,13 @@ namespace Sztorm.Collections.Tests
 
                 yield return new TestCaseData(
                     array2x3, new Index2D(0, 0), 6, new GreaterThanPredicate<int>(5))
-                    .Returns(new ItemRequestResult<int>(3));
+                    .Returns(new ItemRequestResult<Index2D>((1, 0)));
                 yield return new TestCaseData(
                     array2x3, new Index2D(1, 2), 0, new AlwaysTruePredicate<int>())
-                    .Returns(ItemRequestResult<int>.Failed);
+                    .Returns(ItemRequestResult<Index2D>.Failed);
                 yield return new TestCaseData(
                     array2x3, new Index2D(1, 1), 2, new EqualsPredicate<int>(10))
-                    .Returns(ItemRequestResult<int>.Failed);
+                    .Returns(ItemRequestResult<Index2D>.Failed);
             }
 
             private static IEnumerable<TestCaseData> IPredicateIndex2DBounds2DTestCases()
@@ -244,20 +244,20 @@ namespace Sztorm.Collections.Tests
                     new Index2D(0, 0),
                     new Bounds2D(2, 3),
                     new GreaterThanPredicate<int>(5))
-                    .Returns(new ItemRequestResult<int>(3));
+                    .Returns(new ItemRequestResult<Index2D>((1, 0)));
                 yield return new TestCaseData(
                     array2x3,
                     new Index2D(0, 0),
                     new Bounds2D(0, 0),
                     new AlwaysTruePredicate<int>())
-                    .Returns(ItemRequestResult<int>.Failed);
+                    .Returns(ItemRequestResult<Index2D>.Failed);
                 yield return new TestCaseData(
                     array2x3,
                     new Index2D(1, 1),
                     new Bounds2D(1, 2),
                     new EqualsPredicate<int>(10))
-                    .Returns(ItemRequestResult<int>.Failed);
+                    .Returns(ItemRequestResult<Index2D>.Failed);
             }
-        }    
+        }
     }
 }
