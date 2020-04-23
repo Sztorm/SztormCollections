@@ -56,19 +56,6 @@ namespace Sztorm.Collections.Tests
             Assert.AreEqual(array.Boundaries, new Bounds2D(rows, columns));
         }
 
-        [TestCaseSource(typeof(Array2DTests), nameof(IndexerTestCases))]
-        public static void TestIndexer<T>(Array2D<T> array, Index2D index, T expected)
-            => Assert.AreEqual(array[index], expected);
-
-        [TestCaseSource(typeof(Array2DTests), nameof(IndexerInvalidTestCases))]
-        public static void IndexerThrowsExceptionIfIndexIsOutOfBounds<T>(
-            Array2D<T> array, Index2D index)
-        {
-            TestDelegate testMethod = () => { T value = array[index]; };
-
-            Assert.Throws<IndexOutOfRangeException>(testMethod);
-        }
-
         [TestCaseSource(typeof(Array2DTests), nameof(GetRowInvalidTestCases))]
         public static void GetRowThrowExceptionIfIndexExceedsRows<T>(Array2D<T> array, int index)
         {
@@ -84,53 +71,6 @@ namespace Sztorm.Collections.Tests
             TestDelegate testMethod = () => array.GetColumn(index);
 
             Assert.Throws<ArgumentOutOfRangeException>(testMethod);
-        }
-
-        private static IEnumerable<TestCaseData> IndexerTestCases()
-        {
-            yield return new TestCaseData(
-                Array2D<int>.FromSystem2DArray(new int[,] { { 2, 3, 5 },
-                                                            { 4, 9, 1 },
-                                                            { 8, 2, 3 } }),
-                                               new Index2D(1, 1),
-                                               9);
-            yield return new TestCaseData(
-                Array2D<int>.FromSystem2DArray(new int[,] { { 2, 3, 5, 8 },
-                                                            { 4, 9, 1, 5 },
-                                                            { 8, 2, 3, 0 } }),
-                                               new Index2D(2, 0),
-                                               8);
-        }
-
-        private static IEnumerable<TestCaseData> IndexerInvalidTestCases()
-        {
-            // Index has row component lesser than zero.
-            yield return new TestCaseData(
-                Array2D<int>.FromSystem2DArray(new int[,] { { 2, 3, 5 },
-                                                                { 4, 9, 1 },
-                                                                { 8, 2, 3 } }),
-                                               new Index2D(-1, 0));
-
-            // Index has column component lesser than zero.
-            yield return new TestCaseData(
-                Array2D<int>.FromSystem2DArray(new int[,] { { 2, 3, 5 },
-                                                                { 4, 9, 1 },
-                                                                { 8, 2, 3 } }),
-                                               new Index2D(0, -1));
-
-            // Index exceeding rows count.
-            yield return new TestCaseData(
-                Array2D<int>.FromSystem2DArray(new int[,] { { 2, 3, 5, 8 },
-                                                            { 4, 9, 1, 5 },
-                                                            { 8, 2, 3, 0 } }),
-                                               new Index2D(3, 0));
-
-            // Index exceeding column count.
-            yield return new TestCaseData(
-                Array2D<int>.FromSystem2DArray(new int[,] { { 2, 3, 5, 8 },
-                                                            { 4, 9, 1, 5 },
-                                                            { 8, 2, 3, 0 } }),
-                                               new Index2D(0, 4));
         }
 
         private static IEnumerable<TestCaseData> GetRowInvalidTestCases()
