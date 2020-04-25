@@ -44,7 +44,7 @@ namespace Sztorm.Collections
         private readonly Bounds2D bounds;
 
         /// <summary>
-        ///     Returns total amount of rows in this two-dimensional array instance. This
+        ///     Returns total number of rows in this two-dimensional array instance. This
         ///     property is equal to <see cref="Length1"/>.
         /// </summary>
         public int Rows
@@ -54,7 +54,7 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        ///     Returns total amount of columns in this two-dimensional array instance. This
+        ///     Returns total number of columns in this two-dimensional array instance. This
         ///     property is equal to <see cref="Length2"/>.
         /// </summary>
         public int Columns
@@ -323,49 +323,6 @@ namespace Sztorm.Collections
 
         /// <summary>
         ///     Copies all the elements of the current two-dimensional array to the specified
-        ///     two-dimensional array starting at the specified destination array index.
-        ///     <para>
-        ///         Exceptions:<br/>
-        ///         <see cref="ArgumentNullException"/>: Array is null.<br/>
-        ///         <see cref="ArgumentOutOfRangeException"/>: Index is less than the lower bound
-        ///         of array.<br/>
-        ///         <see cref="ArgumentException"/>: The number of elements in the source array is
-        ///         greater than the available number of elements from index to the end of the 
-        ///         destination array.<br/>
-        ///         <see cref="InvalidCastException"/>: All the elements in the source array must
-        ///         be able to be casted to the type of destination array.<br/>
-        ///     </para>
-        /// </summary>
-        /// <param name="destination"></param>
-        /// <param name="index">
-        /// A 32-bit integer that represents the index in array at which copying begins.
-        /// </param>
-        public void CopyTo(Array2D<T> destination, int index)
-        {
-            try
-            {
-                items.CopyTo(destination.items, index);
-            }
-            catch (ArgumentNullException)
-            {
-                throw;
-            }
-            catch (ArgumentOutOfRangeException)
-            {
-                throw;
-            }
-            catch (ArgumentException)
-            {
-                throw;
-            }
-            catch (InvalidCastException)
-            {
-                throw;
-            }
-        }
-
-        /// <summary>
-        ///     Copies all the elements of the current two-dimensional array to the specified
         ///     one-dimensional array starting at the specified destination array index.
         ///     <para>
         ///         Exceptions:<br/>
@@ -383,12 +340,12 @@ namespace Sztorm.Collections
         ///     </para>
         /// </summary>
         /// <param name="destination"></param>
-        /// <param name="index">Represents the index in array at which copying begins.</param>
-        public void CopyTo(Array destination, int index)
+        /// <param name="destIndex">Represents the index in array at which copying begins.</param>
+        public void CopyTo(Array destination, int destIndex)
         {
             try
             {
-                items.CopyTo(destination, index);
+                items.CopyTo(destination, destIndex);
             }
             catch (ArgumentNullException)
             {
@@ -416,247 +373,216 @@ namespace Sztorm.Collections
             }
         }
 
+        internal void CopyToInternal(
+            Index2D srcIndex, T[,] dest, Bounds2D sectorSize, Index2D destIndex)
+        {
+            int dr = destIndex.Row;
+            int sr = srcIndex.Row;
+            int totalRows = destIndex.Row + sectorSize.Rows;
+            int totalCols = destIndex.Column + sectorSize.Columns;
+            int srcCols = Columns;
+
+            for (; dr < totalRows; dr++, sr++)
+            {
+                int dc = destIndex.Column;
+                int sc = srcIndex.Column;
+                int srcIndex1D = RowMajorIndex2DToInt(new Index2D(sr, sc), srcCols);
+
+                for (; dc < totalCols; dc++, sc++, srcIndex1D++)
+                {
+                    dest[dr, dc] = items[srcIndex1D];
+                }
+            }
+        }
+
         /// <summary>
-        ///     Copies specified quantity of elements of the current <see cref="Array2D{T}"/>
-        ///     instance from the specified source index to the particular two-dimensional array at
-        ///     the exact destination index.
+        ///     Copies specified sector of the current instance to the particular two-dimensional
+        ///     array at the specified destination index.
         ///     <para>
         ///         Exceptions:<br/>
-        ///         <see cref="ArgumentNullException"/>: Destination array cannot be null.<br/>
-        ///         <see cref="ArgumentOutOfRangeException"/>: SourceIndex argument must consist of
-        ///         numbers remaining within this Array2D instance;<br/>
-        ///         DestIndex argument must consist of numbers remaining within destination
-        ///         array instance;<br/> 
-        ///         Quantity argument must remain within this and destination array boundaries
-        ///         including specified indices.<br/>
-        ///         <see cref="InvalidCastException"/>: All the elements in the source array must
-        ///         be able to be casted to the type of destination array.<br/>
+        ///         <see cref="ArgumentNullException"/>: <paramref name="destination"/> cannot be
+        ///         null.<br/>
+        ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="sourceIndex"/> must
+        ///         be within source array bounds;<br/>
+        ///         <paramref name="destIndex"/> must be within destination array bounds;<br/>
+        ///         <paramref name="sectorSize"/> must be within source and destination array
+        ///         bounds along with specified indices.
         ///     </para>
         /// </summary>
         /// <param name="sourceIndex">
-        ///     Index from which copying elements of source array start. Indexing is zero-based.   
+        ///     The zero-based index from which copying items of source array begin. 
         /// </param>
         /// <param name="destination">The array to which elements are copied.</param>
-        /// <param name="quantity">Total amount of elements copied.</param>
+        /// <param name="sectorSize">The size of the sector of items to be copied.</param>
         /// <param name="destIndex">
-        ///     Index of destination array into which the elements begin to be copied. Indexing is
-        ///     zero-based.
+        ///     The zero-based index of destination array from which items begin to be copied.
         /// </param>
         public void CopyTo(
-            Index2D sourceIndex, T[,] destination, Bounds2D quantity, Index2D destIndex)
+            Index2D sourceIndex, T[,] destination, Bounds2D sectorSize, Index2D destIndex)
         {
             if (destination == null)
             {
                 throw new ArgumentNullException(
-                    nameof(destination), "Destination array cannot be null.");
+                    nameof(destination), "destination cannot be null.");
             }
-            if (!this.IsValidIndex(sourceIndex))
+            if (!IsValidIndex(sourceIndex))
             {
                 throw new ArgumentOutOfRangeException(
-                    nameof(sourceIndex),
-                    "SourceIndex argument must consist of numbers remaining within this " +
-                    "Array2D instance.");
+                    nameof(sourceIndex),"sourceIndex must be within source array bounds.");
             }
-            int destRows = destination.GetLength(0);
-            int destCols = destination.GetLength(1);
-            var destBounds = new Bounds2D(new Box<int>(destRows), new Box<int>(destCols));
+            var destBounds = new Bounds2D(
+                new Box<int>(destination.GetLength(0)), new Box<int>(destination.GetLength(1)));
 
             if (!destBounds.IsValidIndex(destIndex))
             {
                 throw new ArgumentOutOfRangeException(
-                    nameof(destIndex),
-                    "DestIndex argument must consist of numbers remaining within destination " +
-                    "array instance.");
+                    nameof(destIndex), "destIndex must be within destination array bounds.");
             }
-            if (sourceIndex.Row + quantity.Rows > this.Rows ||
-                sourceIndex.Column + quantity.Columns > this.Columns ||
-                destIndex.Row + quantity.Rows > destRows ||
-                destIndex.Column + quantity.Columns > destCols)
+            if (sourceIndex.Row + sectorSize.Rows > this.Rows ||
+                sourceIndex.Column + sectorSize.Columns > this.Columns ||
+                destIndex.Row + sectorSize.Rows > destBounds.Rows ||
+                destIndex.Column + sectorSize.Columns > destBounds.Columns)
             {
                 throw new ArgumentOutOfRangeException(
-                    nameof(quantity),
-                    "Quantity argument must remain within this and destination array " +
-                    "boundaries including specified indices.");
+                    nameof(sectorSize),
+                    "sectorSize must be within source and destination array bounds along with " +
+                    "specified indices.");
             }
-            try
-            {
-                CopyToInternal(sourceIndex, destination, quantity, destIndex);
-            }
-            catch (InvalidCastException)
-            {
-                throw;
-            }
+            CopyToInternal(sourceIndex, destination, sectorSize, destIndex);
         }
 
         /// <summary>
-        ///     Copies specified quantity of elements of the current <see cref="Array2D{T}"/>
-        ///     instance from the beginning to the particular two-dimensional array at
-        ///     the exact destination index.
+        ///     Copies specified sector from the beginning index of the current instance to the
+        ///     particular two-dimensional array at the specified destination index.
         ///     <para>
         ///         Exceptions:<br/>
-        ///         <see cref="ArgumentNullException"/>: Destination array cannot be null.<br/>
-        ///         <see cref="ArgumentOutOfRangeException"/>: Index argument must consist of
-        ///         numbers remaining within destination array instance;<br/> 
-        ///         Quantity argument must remain within this and destination array boundaries
-        ///         including specified index.<br/>
-        ///         <see cref="InvalidCastException"/>: All the elements in the source array must
-        ///         be able to be casted to the type of destination array.<br/>
+        ///         <see cref="ArgumentNullException"/>: <paramref name="destination"/> cannot be
+        ///         null.<br/>
+        ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="destIndex"/> must be
+        ///         within destination array bounds;<br/>
+        ///         <paramref name="sectorSize"/> must be within source and destination array
+        ///         bounds along with specified <paramref name="destIndex"/>.
         ///     </para>
         /// </summary>
         /// <param name="destination">The array to which elements are copied.</param>
-        /// <param name="quantity">Total amount of elements copied.</param>
-        /// <param name="index">
-        ///     Index of destination array into which the elements begin to be copied. Indexing is
-        ///     zero-based.
+        /// <param name="sectorSize">The size of the sector of items to be copied.</param>
+        /// <param name="destIndex">
+        ///     The zero-based index of destination array from which items begin to be copied.
         /// </param>
-        public void CopyTo(T[,] destination, Bounds2D quantity, Index2D index)
+        public void CopyTo(T[,] destination, Bounds2D sectorSize, Index2D destIndex)
         {
             if (destination == null)
             {
                 throw new ArgumentNullException(
-                    nameof(destination), "Destination array cannot be null.");
+                    nameof(destination), "destination cannot be null.");
             }
-            int destRows = destination.GetLength(0);
-            int destCols = destination.GetLength(1);
-            var destBounds = new Bounds2D(new Box<int>(destRows), new Box<int>(destCols));
+            var destBounds = new Bounds2D(
+                new Box<int>(destination.GetLength(0)), new Box<int>(destination.GetLength(1)));
 
-            if (!destBounds.IsValidIndex(index))
+            if (!destBounds.IsValidIndex(destIndex))
             {
                 throw new ArgumentOutOfRangeException(
-                    nameof(index),
-                    "Index argument must consist of numbers remaining within destination " +
-                    "array instance.");
+                    nameof(destIndex), "destIndex must be within destination array bounds.");
             }
-            if (this.Rows < quantity.Rows ||
-                this.Columns < quantity.Columns ||
-                index.Row + quantity.Rows > destRows ||
-                index.Column + quantity.Columns > destCols)
+            if (sectorSize.Rows > this.Rows ||
+                sectorSize.Columns > this.Columns ||
+                destIndex.Row + sectorSize.Rows > destBounds.Rows ||
+                destIndex.Column + sectorSize.Columns > destBounds.Columns)
             {
                 throw new ArgumentOutOfRangeException(
-                    nameof(quantity),
-                    "Quantity argument must remain within this and destination array " +
-                    "boundaries including specified index.");
+                    nameof(sectorSize),
+                    "sectorSize must be within source and destination array bounds along with " +
+                    "specified destIndex.");
             }
-            try
-            {
-                CopyToInternal(new Index2D(0, 0), destination, quantity, index);
-            }
-            catch (InvalidCastException)
-            {
-                throw;
-            }
+            CopyToInternal(new Index2D(), destination, sectorSize, destIndex);
         }
 
         /// <summary>
-        ///     Copies specified quantity of elements of the current <see cref="Array2D{T}"/>
-        ///     instance from the beginning to the particular two-dimensional array at
-        ///     the start index.
+        ///     Copies specified sector from the beginning index of the current instance to the
+        ///     particular two-dimensional array at the starting index.
         ///     <para>
         ///         Exceptions:<br/>
-        ///         <see cref="ArgumentNullException"/>: Destination array cannot be null.<br/>
-        ///         <see cref="ArgumentOutOfRangeException"/>: Quantity argument must remain within
-        ///         this and destination array boundaries.<br/>
-        ///         <see cref="InvalidCastException"/>: All the elements in the source array must
-        ///         be able to be casted to the type of destination array.<br/>
+        ///         <see cref="ArgumentNullException"/>: <paramref name="destination"/> cannot be
+        ///         null.<br/>
+        ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="sectorSize"/> must
+        ///         be within source and destination array bounds.
         ///     </para>
         /// </summary>
         /// <param name="destination">The array to which elements are copied.</param>
-        /// <param name="quantity">Total amount of elements copied.</param>
-        public void CopyTo(T[,] destination, Bounds2D quantity)
+        /// <param name="sectorSize">The size of the sector of items to be copied.</param>
+        public void CopyTo(T[,] destination, Bounds2D sectorSize)
         {
             if (destination == null)
             {
                 throw new ArgumentNullException(
-                    nameof(destination), "Destination array cannot be null.");
+                        nameof(destination), "destination cannot be null.");
             }
-            int destRows = destination.GetLength(0);
-            int destCols = destination.GetLength(1);
+            var destBounds = new Bounds2D(
+                new Box<int>(destination.GetLength(0)), new Box<int>(destination.GetLength(1)));
 
-            if (this.Rows < quantity.Rows ||
-                this.Columns < quantity.Columns ||
-                destRows < quantity.Rows ||
-                destCols < quantity.Columns)
+            if (sectorSize.Rows > this.Rows || sectorSize.Columns > this.Columns ||
+                sectorSize.Rows > destBounds.Rows || sectorSize.Columns > destBounds.Columns)
             {
                 throw new ArgumentOutOfRangeException(
-                    nameof(quantity),
-                    "Quantity argument must remain within this and destination array " +
-                    "boundaries.");
+                    nameof(sectorSize),
+                    "sectorSize must be within source and destination array bounds.");
             }
-            try
-            {
-                CopyToInternal(new Index2D(0, 0), destination, quantity, new Index2D(0, 0));
-            }
-            catch (InvalidCastException)
-            {
-                throw;
-            }
+            CopyToInternal(new Index2D(), destination, sectorSize, new Index2D());
         }
 
         /// <summary>
-        ///     Copies all elements of the current <see cref="Array2D{T}"/> instance from the
-        ///     beginning to the particular two-dimensional array at the exact destination index.
+        ///     Copies all elements of the current instance from the beginning index to the
+        ///     particular two-dimensional array at the specified destination index.
         ///     <para>
         ///         Exceptions:<br/>
-        ///         <see cref="ArgumentNullException"/>: Destination array cannot be null.<br/>
-        ///         <see cref="ArgumentOutOfRangeException"/>: Index argument must consist of
-        ///         numbers remaining within destination array instance.<br/>
-        ///         <see cref="ArgumentException"/>: Destination array boundaries components must
-        ///         be greater or equal to ones in the source array.<br/>
-        ///         <see cref="InvalidCastException"/>: All the elements in the source array must
-        ///         be able to be casted to the type of destination array.<br/>
+        ///         <see cref="ArgumentNullException"/>: <paramref name="destination"/> cannot be
+        ///         null.<br/>
+        ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="destIndex"/> must be
+        ///         within destination array bounds.<br/>
+        ///         <see cref="ArgumentException"/>: <paramref name="destination"/> must be able to
+        ///         accommodate all source array elements along with specified
+        ///         <paramref name="destIndex"/>.
         ///     </para>
         /// </summary>
         /// <param name="destination">The array to which elements are copied.</param>
-        /// <param name="index">
-        ///     Index of destination array into which the elements begin to be copied. Indexing is
-        ///     zero-based.
+        /// <param name="destIndex">
+        ///     The zero-based index of destination array from which items begin to be copied.
         /// </param>
-        public void CopyTo(T[,] destination, Index2D index)
+        public void CopyTo(T[,] destination, Index2D destIndex)
         {
             if (destination == null)
             {
                 throw new ArgumentNullException(
-                    nameof(destination), "Destination array cannot be null.");
+                        nameof(destination), "destination cannot be null.");
             }
-            int destRows = destination.GetLength(0);
-            int destCols = destination.GetLength(1);
-            var destBounds = new Bounds2D(new Box<int>(destRows), new Box<int>(destCols));
+            var destBounds = new Bounds2D(
+                new Box<int>(destination.GetLength(0)), new Box<int>(destination.GetLength(1)));
 
-            if (!destBounds.IsValidIndex(index))
+            if (!destBounds.IsValidIndex(destIndex))
             {
                 throw new ArgumentOutOfRangeException(
-                    nameof(index),
-                    "Index argument must consist of numbers remaining within destination " +
-                    "array instance.");
+                    nameof(destIndex), "destIndex must be within destination array bounds.");
             }
-            if (this.Rows + index.Row > destRows ||
-                this.Columns + index.Column > destCols)
+            if (this.Rows + destIndex.Row > destBounds.Rows ||
+                this.Columns + destIndex.Column > destBounds.Columns)
             {
                 throw new ArgumentException(
-                    "Destination array boundaries components must be greater or equal to ones " +
-                    "in the source array.",
+                    "destination must be able to accommodate all source array elements along " +
+                    "with specified destIndex.",
                     nameof(destination));
             }
-            try
-            {
-                CopyToInternal(new Index2D(0, 0), destination, this.bounds, index);
-            }
-            catch (InvalidCastException)
-            {
-                throw;
-            }
+            CopyToInternal(new Index2D(), destination, this.bounds, destIndex);
         }
 
         /// <summary>
-        ///     Copies all elements of the current <see cref="Array2D{T}"/> instance from the
-        ///     beginning to the particular two-dimensional array at the start index.
+        ///     Copies all elements of the current instance beginning index to the beginning to the
+        ///     particular two-dimensional array at the starting index.
         ///     <para>
         ///         Exceptions:<br/>
-        ///         <see cref="ArgumentNullException"/>: Destination array cannot be null.<br/>
-        ///         <see cref="ArgumentException"/>: Destination array boundaries components must
-        ///         be greater or equal to ones in the source array.<br/>
-        ///         <see cref="InvalidCastException"/>: All the elements in the source array must
-        ///         be able to be casted to the type of destination array.<br/>
+        ///         <see cref="ArgumentNullException"/>: <paramref name="destination"/> cannot be
+        ///         null.<br/>
+        ///         <see cref="ArgumentException"/>: <paramref name="destination"/> must be able to
+        ///         accommodate all source array elements.
         ///     </para>
         /// </summary>
         /// <param name="destination">The array to which elements are copied.</param>
@@ -665,46 +591,18 @@ namespace Sztorm.Collections
             if (destination == null)
             {
                 throw new ArgumentNullException(
-                    nameof(destination), "Destination array cannot be null.");
+                        nameof(destination), "destination cannot be null.");
             }
-            int rows = destination.GetLength(0);
-            int columns = destination.GetLength(1);
+            var destBounds = new Bounds2D(
+                new Box<int>(destination.GetLength(0)), new Box<int>(destination.GetLength(1)));
 
-            if (rows < this.Rows || columns < this.Columns)
+            if (this.Rows > destBounds.Rows || this.Columns > destBounds.Columns)
             {
                 throw new ArgumentException(
-                    "Destination array boundaries components must be greater or equal to ones " +
-                    "in the source array.",
+                    "destination must be able to accommodate all source array elements.",
                     nameof(destination));
             }
-            try
-            {
-                CopyToInternal(new Index2D(0, 0), destination, this.bounds, new Index2D(0, 0));
-            }
-            catch (InvalidCastException)
-            {
-                throw;
-            }
-        }
-
-        internal void CopyToInternal(
-            Index2D sourceIndex, T[,] destination, Bounds2D quantity, Index2D destIndex)
-        {
-            int dr = destIndex.Row;
-            int sr = sourceIndex.Row;
-            int totalRows = destIndex.Row + quantity.Rows;
-            int totalCols = destIndex.Column + quantity.Columns;
-
-            for (; dr < totalRows; dr++, sr++)
-            {
-                int dc = destIndex.Column;
-                int sc = sourceIndex.Column;
-
-                for (; dc < totalCols; dc++, sc++)
-                {
-                    destination[dr, dc] = this[sr, sc];
-                }
-            }
+            CopyToInternal(new Index2D(), destination, destBounds, new Index2D());
         }
 
         /// <summary>
@@ -713,7 +611,7 @@ namespace Sztorm.Collections
         /// <returns></returns>
         public IEnumerator<T> GetEnumerator()
         {
-            for (int i = 0; i < items.Length; i++)
+            for (int i = 0, length = items.Length; i < length; i++)
             {
                 yield return items[i];
             }
@@ -3441,9 +3339,8 @@ namespace Sztorm.Collections
         public T[,] ToSystem2DArray()
         {
             var result = new T[Rows, Columns];
-            var zero = new Index2D(0, 0);
 
-            CopyToInternal(zero, result, bounds, zero);
+            CopyToInternal(new Index2D(), result, bounds, new Index2D());
             return result;
         }
 
