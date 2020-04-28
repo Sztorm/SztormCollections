@@ -30,6 +30,8 @@ using System.Diagnostics;
 
 namespace Sztorm.Collections
 {
+    using static RectangularCollectionUtils;
+
     /// <summary>
     /// Represents two-dimensional row-major ordered rectangular list of specific type allocated
     /// within single contiguous block of memory.
@@ -477,17 +479,6 @@ namespace Sztorm.Collections
             => EnsuredCapacity(newBounds.Rows, newBounds.Columns);
 
         /// <summary>
-        /// Maps two-dimensional index into one-dimensional integer with row-major order.
-        /// </summary>
-        /// <param name="row"></param>
-        /// <param name="column"></param>
-        /// <param name="columns"></param>
-        /// <returns></returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static int Index2DMappedToInt(int row, int column, int columns)
-            => row * columns + column;
-
-        /// <summary>
         ///     Reallocates internal buffer for items. Contents of newCapacity must be greater or 
         ///     equal to current bounds as all current items are copied to a new array. Arguments
         ///     are not checked on release build.
@@ -517,7 +508,7 @@ namespace Sztorm.Collections
             {
                 for (int j = 0; j < cols; j++)
                 {
-                    newItems[Index2DMappedToInt(i, j, newCapacity.Columns)] =
+                    newItems[RowMajorIndex2DToInt(new Index2D(i, j), newCapacity.Columns)] =
                         GetItemInternal(i, j);
                 }
             }
@@ -667,7 +658,8 @@ namespace Sztorm.Collections
 
             for (int i = 0; i < rows; i++)
             {
-                Array.Clear(items, Index2DMappedToInt(i, startIndex, capCols), count);
+                Array.Clear(items, RowMajorIndex2DToInt(
+                    new Index2D(i, startIndex), capCols), count);
             }
         }
 
@@ -871,7 +863,7 @@ namespace Sztorm.Collections
             {
                 for (int j = 0; j < newBounds.Columns; j++)
                 {
-                    newItems[Index2DMappedToInt(i, j, newCapacity.Columns)] =
+                    newItems[RowMajorIndex2DToInt(new Index2D(i, j), newCapacity.Columns)] =
                         GetItemInternal(i, j);
                 }
             }
@@ -879,7 +871,7 @@ namespace Sztorm.Collections
             {
                 for (int j = 0; j < newBounds.Columns; j++)
                 {
-                    newItems[Index2DMappedToInt(i1, j, newCapacity.Columns)] =
+                    newItems[RowMajorIndex2DToInt(new Index2D(i1, j), newCapacity.Columns)] =
                         GetItemInternal(i0, j);
                 }
             }
@@ -984,7 +976,7 @@ namespace Sztorm.Collections
                 {
                     GetItemInternal(i, j0) = GetItemInternal(i, j1);
                 }
-                Array.Clear(items, Index2DMappedToInt(i, startIndex, capCols), count);
+                Array.Clear(items, RowMajorIndex2DToInt(new Index2D(i, startIndex), capCols), count);
             }
         }
 
@@ -1021,7 +1013,7 @@ namespace Sztorm.Collections
             {
                 for (int j = 0; j < startIndex; j++)
                 {
-                    newItems[Index2DMappedToInt(i, j, newCapacity.Columns)] =
+                    newItems[RowMajorIndex2DToInt(new Index2D(i, j), newCapacity.Columns)] =
                         GetItemInternal(i, j);
                 }
             }
@@ -1029,7 +1021,7 @@ namespace Sztorm.Collections
             {
                 for (int j0 = startIndex, j1 = j0 + count; j1 < newBounds.Columns; j0++, j1++)
                 {
-                    newItems[Index2DMappedToInt(i, j1, newCapacity.Columns)] =
+                    newItems[RowMajorIndex2DToInt(new Index2D(i, j1), newCapacity.Columns)] =
                         GetItemInternal(i, j0);
                 }
             }
@@ -1150,20 +1142,20 @@ namespace Sztorm.Collections
         }
 
         internal void CopyToInternal(
-            Index2D sourceIndex, Array2D<T> destination, Bounds2D quantity, Index2D destIndex)
+            Index2D sourceIndex, Array2D<T> destination, Bounds2D sectorSize, Index2D destIndex)
         {
             Debug.Assert(destination != null);
             Debug.Assert(IsValidIndex(sourceIndex));
             Debug.Assert(destination.IsValidIndex(destIndex));
-            Debug.Assert(sourceIndex.Row + quantity.Rows <= this.Rows);
-            Debug.Assert(sourceIndex.Column + quantity.Columns <= this.Columns);
-            Debug.Assert(destIndex.Row + quantity.Rows <= destination.Rows);
-            Debug.Assert(destIndex.Column + quantity.Columns <= destination.Columns);
+            Debug.Assert(sourceIndex.Row + sectorSize.Rows <= this.Rows);
+            Debug.Assert(sourceIndex.Column + sectorSize.Columns <= this.Columns);
+            Debug.Assert(destIndex.Row + sectorSize.Rows <= destination.Rows);
+            Debug.Assert(destIndex.Column + sectorSize.Columns <= destination.Columns);
 
             int dr = destIndex.Row;
             int sr = sourceIndex.Row;
-            int totalRows = destIndex.Row + quantity.Rows;
-            int totalCols = destIndex.Column + quantity.Columns;
+            int totalRows = destIndex.Row + sectorSize.Rows;
+            int totalCols = destIndex.Column + sectorSize.Columns;
 
             for (; dr < totalRows; dr++, sr++)
             {
@@ -1174,6 +1166,269 @@ namespace Sztorm.Collections
                 {
                     destination[dr, dc] = this[sr, sc];
                 }
+            }
+        }
+
+        internal ItemRequestResult<Index2D> FindIndex2DInternal<TPredicate>(
+            int startIndex, int count, TPredicate match)
+            where TPredicate : struct, IPredicate<T>
+        {
+            Debug.Assert(startIndex >= 0);
+            Debug.Assert(startIndex + count <= Count);
+
+            int capCols = capacity.Columns;
+            int stepsToNextRow = Capacity.Rows - Rows;
+
+            for (int i = startIndex, iter = 0; iter < count; i += stepsToNextRow)
+            {
+                Index2D i2D = IntToRowMajorIndex2D(i, capCols);
+
+                for (int j = i2D.Column; j < Columns && iter < count; j++, i++, iter++)
+                {
+                    if (match.Invoke(items[i]))
+                    {
+                        return new ItemRequestResult<Index2D>(IntToRowMajorIndex2D(i, capCols));
+                    }
+                }
+            }
+            return ItemRequestResult<Index2D>.Failed;
+        }
+
+        /// <summary>
+        ///     Searches for an item that matches the conditions defined by the specified
+        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying index
+        ///     of the first occurrence searched within the entire <see cref="List2D{T}"/> if
+        ///     found. Otherwise returns <see cref="ItemRequestResult{T}.Failed"/>
+        /// </summary>
+        /// <typeparam name="TPredicate">
+        ///     <typeparamref name = "TPredicate"/> is <see cref="IPredicate{T}"/> and
+        ///     <see langword="struct"/>
+        /// </typeparam>
+        /// <param name="match">
+        ///     A <see langword="struct"/> implementing <see cref="IPredicate{T}"/> that defines
+        ///     the conditions of the element to search for.
+        /// </param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public ItemRequestResult<Index2D> FindIndex2D<TPredicate>(TPredicate match)
+            where TPredicate : struct, IPredicate<T>
+            => FindIndex2DInternal(0, Count, match);
+
+        /// <summary>
+        ///     Searches for an item that matches the conditions defined by the specified
+        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying index
+        ///     of the first occurrence searched row by row within the specified range of items if
+        ///     found. Otherwise returns <see cref="ItemRequestResult{T}.Failed"/>
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="startIndex"/> must
+        ///         be within array bounds;<br/>
+        ///         <paramref name="count"/> must be greater or equal to zero;<br/>
+        ///         <paramref name="startIndex"/> together with <paramref name="count"/> must not
+        ///         exceed <see cref="Count"/>
+        ///     </para>
+        /// </summary>
+        /// <typeparam name="TPredicate">
+        ///     <typeparamref name = "TPredicate"/> is <see cref="IPredicate{T}"/> and
+        ///     <see langword="struct"/>
+        /// </typeparam>
+        /// <param name="startIndex">Zero-based index from which searching starts.</param>
+        /// <param name="count">Number of items to search.</param>
+        /// <param name="match">
+        ///     A <see langword="struct"/> implementing <see cref="IPredicate{T}"/> that defines
+        ///     the conditions of the element to search for.
+        /// </param>
+        /// <returns></returns>
+        public ItemRequestResult<Index2D> FindIndex2D<TPredicate>(
+            Index2D startIndex, int count, TPredicate match)
+            where TPredicate : struct, IPredicate<T>
+        {
+            if (!IsValidIndex(startIndex))
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(startIndex), "startIndex must be within array bounds.");
+            }
+            if (count < 0)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(count), "count must be greater or equal to zero.");
+            }
+            int startIndex1D = RowMajorIndex2DToInt(startIndex, capacity.Columns);
+
+            if (startIndex1D + count > Count)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(count), "startIndex together with count must not exceed Array2D.Count");
+            }
+            return FindIndex2DInternal(startIndex1D, count, match);
+        }
+
+        /// <summary>
+        ///     Searches for an item that matches the conditions defined by the specified
+        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying index
+        ///     of the first occurrence searched within the specified sector. Otherwise returns
+        ///     <see cref="ItemRequestResult{T}.Failed"/>
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="startIndex"/> must
+        ///         be within array bounds;<br/>
+        ///         <paramref name="sectorSize"/> must be within array bounds, beginning from
+        ///         <paramref name="startIndex"/>.
+        ///     </para>   
+        /// </summary>
+        /// <typeparam name="TPredicate">
+        ///     <typeparamref name = "TPredicate"/> is <see cref="IPredicate{T}"/> and
+        ///     <see langword="struct"/>
+        /// </typeparam>
+        /// <param name="startIndex">Zero-based index from which searching starts.</param>
+        /// <param name="sectorSize">The rectangular sector size to be searched.</param>
+        /// <param name="match">
+        ///     A <see langword="struct"/> implementing <see cref="IPredicate{T}"/> that defines
+        ///     the conditions of the element to search for.
+        /// </param>
+        /// <returns></returns>
+        public ItemRequestResult<Index2D> FindIndex2D<TPredicate>(
+            Index2D startIndex, Bounds2D sectorSize, TPredicate match)
+            where TPredicate : struct, IPredicate<T>
+        {
+            if (!IsValidIndex(startIndex))
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(startIndex), "startIndex must be within array bounds.");
+            }
+            var indexAfterEnd = new Index2D(
+                startIndex.Row + sectorSize.Rows,
+                startIndex.Column + sectorSize.Columns);
+
+            if (indexAfterEnd.Row > Rows || indexAfterEnd.Column > Columns)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(sectorSize),
+                    "sectorSize must be within array bounds, beginning from startIndex.");
+            }
+            int capCols = capacity.Columns;
+
+            for (int i = startIndex.Row; i < indexAfterEnd.Row; i++)
+            {
+                int index1D = RowMajorIndex2DToInt(new Index2D(i, startIndex.Column), capCols);
+
+                for (int j = startIndex.Column; j < indexAfterEnd.Column; j++, index1D++)
+                {
+                    if (match.Invoke(items[index1D]))
+                    {
+                        return new ItemRequestResult<Index2D>(new Index2D(i, j));
+                    }
+                }
+            }
+            return ItemRequestResult<Index2D>.Failed;
+        }
+
+        /// <summary>
+        ///     Searches for an item that matches the conditions defined by the specified
+        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying index
+        ///     of the first occurrence searched within the entire <see cref="List2D{T}"/> if
+        ///     found. Otherwise returns <see cref="ItemRequestResult{T}.Failed"/><br/>
+        ///     Use <see cref="FindIndex2D{TPredicate}(TPredicate)"/> to avoid virtual call.
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentNullException"/> <paramref name="match"/> cannot be
+        ///         <see langword="null"/>.
+        ///     </para>
+        /// </summary>
+        /// <param name="match">
+        ///     The <see cref="Predicate{T}"/> delegate that defines the conditions of the element
+        ///     to search for.
+        /// </param>
+        /// <returns></returns>
+        public ItemRequestResult<Index2D> FindIndex2D(Predicate<T> match)
+        {
+            if (match == null)
+            {
+                throw new ArgumentNullException(nameof(match), "Match cannot be null.");
+            }
+            return FindIndex2D(new BoxedPredicate<T>(match));
+        }
+
+        /// <summary>
+        ///     Searches for an item that matches the conditions defined by the specified
+        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying index
+        ///     of the first occurrence searched row by row within the specified range of items if
+        ///     found. Otherwise returns <see cref="ItemRequestResult{T}.Failed"/><br/>
+        ///     Use <see cref="FindIndex2D{TPredicate}(Index2D, int, TPredicate)"/> to avoid
+        ///     virtual call.
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentNullException"/>: <paramref name="match"/> cannot be
+        ///         <see langword="null"/>.<br/>
+        ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="startIndex"/> must
+        ///         be within array bounds;<br/>
+        ///         <paramref name="count"/> must be greater or equal to zero;<br/>
+        ///         <paramref name="startIndex"/> together with <paramref name="count"/> must not
+        ///         exceed <see cref="Count"/>
+        ///     </para>
+        /// </summary>
+        /// <param name="startIndex">Zero-based index from which searching starts.</param>
+        /// <param name="count">Number of items to search.</param>
+        /// <param name="match">
+        ///     The <see cref="Predicate{T}"/> delegate that defines the conditions of the element
+        ///     to search for.
+        /// </param>
+        /// <returns></returns>
+        public ItemRequestResult<Index2D> FindIndex2D(
+            Index2D startIndex, int count, Predicate<T> match)
+        {
+            if (match == null)
+            {
+                throw new ArgumentNullException(nameof(match), "match cannot be null.");
+            }
+            try
+            {
+                return FindIndex2D(startIndex, count, new BoxedPredicate<T>(match));
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        ///     Searches for an item that matches the conditions defined by the specified
+        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying index
+        ///     of the first occurrence searched within the specified sector. Otherwise returns
+        ///     <see cref="ItemRequestResult{T}.Failed"/><br/>
+        ///     Use <see cref="FindIndex2D{TPredicate}(Index2D, Bounds2D, TPredicate)"/> to avoid
+        ///     virtual call.
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentNullException"/>: <paramref name="match"/> cannot be
+        ///         <see langword="null"/>.<br/>
+        ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="startIndex"/> must
+        ///         be within array bounds;<br/>
+        ///         <paramref name="sectorSize"/> must be within array bounds, beginning from
+        ///         <paramref name="startIndex"/>.
+        ///     </para>
+        /// </summary>
+        /// <param name="startIndex">Zero-based index from which searching starts.</param>
+        /// <param name="sectorSize">The rectangular sector size to be searched.</param>
+        /// <param name="match">
+        ///     The <see cref="Predicate{T}"/> delegate that defines the conditions of the element
+        ///     to search for.
+        /// </param>
+        /// <returns></returns>
+        public ItemRequestResult<Index2D> FindIndex2D(
+            Index2D startIndex, Bounds2D sectorSize, Predicate<T> match)
+        {
+            if (match == null)
+            {
+                throw new ArgumentNullException(nameof(match), "match cannot be null.");
+            }
+            try
+            {
+                return FindIndex2D(startIndex, sectorSize, new BoxedPredicate<T>(match));
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                throw;
             }
         }
 
