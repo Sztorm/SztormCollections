@@ -736,6 +736,52 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
+        ///     Determines whether any item that match the conditions defined by the specified
+        ///     predicate exists in the current instance.
+        /// </summary>
+        /// <typeparam name="TPredicate">
+        ///     <typeparamref name = "TPredicate"/> is <see cref="IPredicate{T}"/> and
+        ///     <see langword="struct"/>
+        /// </typeparam>
+        /// <param name="match">
+        ///     A <see langword="struct"/> implementing <see cref="IPredicate{T}"/> that defines
+        ///     the conditions of the element to search for.
+        /// </param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool Exists<TPredicate>(TPredicate match)
+            where TPredicate : struct, IPredicate<T>
+            => FindIndex2D(match).IsSuccess;
+
+        /// <summary>
+        ///     Determines whether any item that match the conditions defined by the specified
+        ///     predicate exists in the current instance.<br/>  
+        ///     Use <see cref="Exists{TPredicate}(TPredicate)"/> to avoid virtual call.
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentNullException"/> <paramref name="match"/> cannot be
+        ///         <see langword="null"/>.
+        ///     </para>
+        /// </summary>
+        /// <param name="match">
+        ///     The <see cref="Predicate{T}"/> delegate that defines the conditions of the element
+        ///     to search for.
+        /// </param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool Exists(Predicate<T> match)
+        {
+            try
+            {
+                return FindIndex2D(match).IsSuccess;
+            }
+            catch (ArgumentNullException)
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
         ///     Searches for an item that matches the conditions defined by the specified
         ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying index
         ///     of the first occurrence.<br/>
