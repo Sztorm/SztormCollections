@@ -114,6 +114,15 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
+        ///     Determines whether current <see cref="List2D{T}"/> instance has any items in it.
+        /// </summary>
+        public bool IsEmpty
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => bounds.Rows == 0 || bounds.Columns == 0;
+        }
+
+        /// <summary>
         ///     This collection is not synchronized. To synchronize access use
         ///     <see langword="lock"/> statement with <see cref="SyncRoot"/> property.
         /// </summary>
@@ -121,15 +130,6 @@ namespace Sztorm.Collections
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get => false;
-        }
-
-        /// <summary>
-        ///     Determines whether current <see cref="List2D{T}"/> instance has any items in it.
-        /// </summary>
-        public bool IsEmpty
-        {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => bounds.Rows == 0 || bounds.Columns == 0;
         }
 
         /// <summary>
@@ -279,25 +279,24 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        ///     Returns true if specified index exists in this <see cref="List2D{T}"/> instance,
-        ///     false otherwise.
+        ///     Returns an enumerator for all elements of the <see cref="List2D{T}"/>.
         /// </summary>
-        /// <param name="row"></param>
-        /// <param name="column"></param>
         /// <returns></returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool IsValidIndex(int row, int column)
-            => bounds.IsValidIndex(row, column);
+        public IEnumerator<T> GetEnumerator()
+        {
+            int rows = Rows;
+            int columns = Columns;
 
-        /// <summary>
-        ///     Returns true if specified index exists in this <see cref="List2D{T}"/> instance,
-        ///     false otherwise.
-        /// </summary>
-        /// <param name="index"></param>
-        /// <returns></returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool IsValidIndex(Index2D index)
-            => bounds.IsValidIndex(index);
+            for (int i = 0; i < rows; i++)
+            {
+                for (int j = 0; j < columns; j++)
+                {
+                    yield return GetItemInternal(i, j);
+                }
+            }
+        }
+
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
         /// <summary>
         ///     Constructs a new instance of <see cref="List2D{T}"/> class that is empty and has
@@ -366,66 +365,6 @@ namespace Sztorm.Collections
 
             array.CopyTo(items, 0);
         }
-
-        /// <summary>
-        /// Increases current instance capacity with specified quantity.
-        ///     <para>
-        ///         Exceptions:<br/>
-        ///         <see cref="OutOfMemoryException"/>: Insufficient memory to continue the
-        ///         execution of the program.
-        ///     </para>
-        /// </summary>
-        /// <param name="quantity"></param>
-        public void IncreaseCapacity(Bounds2D quantity)
-        {
-            int newRows;
-            int newCols;
-
-            try
-            {
-                newRows = checked(quantity.Rows + capacity.Rows);
-            }
-            catch (OverflowException)
-            {
-                newRows = int.MaxValue;
-            }
-            try
-            {
-                newCols = checked(quantity.Columns + capacity.Columns);
-            }
-            catch (OverflowException)
-            {
-                newCols = int.MaxValue;
-            }
-            try
-            {
-                Reallocate(new Bounds2D(new Box<int>(newRows), new Box<int>(newCols)));
-            }
-            catch (OutOfMemoryException)
-            {
-                throw;
-            }
-        }
-
-        /// <summary>
-        /// Determines whether current instance capacity can accommodate specified count of rows
-        /// and columns.
-        /// </summary>
-        /// <param name="newRows"></param>
-        /// <param name="newCols"></param>
-        /// <returns></returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private bool IsReallocationNeeded(int newRows, int newCols)
-            => newRows > capacity.Rows || newCols > capacity.Columns;
-
-        /// <summary>
-        /// Determines whether current instance capacity can accommodate specified boundaries.
-        /// </summary>
-        /// <param name="newBounds"></param>
-        /// <returns></returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private bool IsReallocationNeeded(Bounds2D newBounds)
-            => IsReallocationNeeded(newBounds.Rows, newBounds.Columns);
 
         /// <summary>
         ///     Returns a capacity that can accommodate at least number of rows and columns passed
@@ -531,6 +470,59 @@ namespace Sztorm.Collections
         public void AddColumn() => AddColumns(1);
 
         /// <summary>
+        /// Determines whether current instance capacity can accommodate specified count of rows
+        /// and columns.
+        /// </summary>
+        /// <param name="newRows"></param>
+        /// <param name="newCols"></param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private bool IsReallocationNeeded(int newRows, int newCols)
+            => newRows > capacity.Rows || newCols > capacity.Columns;
+
+        /// <summary>
+        /// Determines whether current instance capacity can accommodate specified boundaries.
+        /// </summary>
+        /// <param name="newBounds"></param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private bool IsReallocationNeeded(Bounds2D newBounds)
+            => IsReallocationNeeded(newBounds.Rows, newBounds.Columns);
+
+        /// <summary>
+        ///     Adds specified count of columns to the end of the <see cref="List2D{T}"/>. This
+        ///     method does the same as <see cref="AddLength2(int)"/>.
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentOutOfRangeException"/>: Count argument must greater or equal
+        ///         to zero.
+        ///     </para>
+        /// </summary>
+        public void AddColumns(int count)
+        {
+            if (count < 0)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(count), "Count argument must greater or equal to zero.");
+            }
+            int newRows = Rows;
+            int newCols = Columns + count;
+
+            if (IsReallocationNeeded(newRows, newCols))
+            {
+                try
+                {
+                    Reallocate(newCapacity: EnsuredCapacity(newRows, newCols));
+                }
+                catch (OutOfMemoryException)
+                {
+                    throw;
+                }
+            }
+            bounds = new Bounds2D(new Box<int>(newRows), new Box<int>(newCols));
+        }
+
+        /// <summary>
         ///     Adds specified count of rows to the end of the <see cref="List2D{T}"/>. This
         ///     method does the same as <see cref="AddLength1(int)"/>.
         ///     <para>
@@ -577,39 +569,6 @@ namespace Sztorm.Collections
 
         /// <summary>
         ///     Adds specified count of columns to the end of the <see cref="List2D{T}"/>. This
-        ///     method does the same as <see cref="AddLength2(int)"/>.
-        ///     <para>
-        ///         Exceptions:<br/>
-        ///         <see cref="ArgumentOutOfRangeException"/>: Count argument must greater or equal
-        ///         to zero.
-        ///     </para>
-        /// </summary>
-        public void AddColumns(int count)
-        {
-            if (count < 0)
-            {
-                throw new ArgumentOutOfRangeException(
-                    nameof(count), "Count argument must greater or equal to zero.");
-            }
-            int newRows = Rows;
-            int newCols = Columns + count;
-
-            if (IsReallocationNeeded(newRows, newCols))
-            {
-                try
-                {
-                    Reallocate(newCapacity: EnsuredCapacity(newRows, newCols));
-                }
-                catch (OutOfMemoryException)
-                {
-                    throw;
-                }
-            }
-            bounds = new Bounds2D(new Box<int>(newRows), new Box<int>(newCols));
-        }
-
-        /// <summary>
-        ///     Adds specified count of columns to the end of the <see cref="List2D{T}"/>. This
         ///     method does the same as <see cref="AddColumns(int)"/>.
         ///     <para>
         ///         Exceptions:<br/>
@@ -619,6 +578,75 @@ namespace Sztorm.Collections
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void AddLength2(int count) => AddColumns(count);
+
+        /// <summary>
+        ///     Removes all elements from the <see cref="List2D{T}"/>. Any stored references are
+        ///     released.
+        /// </summary>
+        public void Clear()
+        {
+            if (Count > 0)
+            {
+                Array.Clear(items, 0, items.Length);
+                bounds = new Bounds2D();
+            }
+        }
+
+        /// <summary>
+        ///     Determines whether specified item exists in the current instance.
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        public bool Contains(T item)
+        {
+            int rows = Rows;
+            int cols = Columns;
+
+            for (int i = 0; i < rows; i++)
+            {
+                for (int j = 0; j < cols; j++)
+                {
+                    if (GetItemInternal(i, j).Equals(item))
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        internal void CopyToInternal(
+            Index2D sourceIndex, Array2D<T> destination, Bounds2D sectorSize, Index2D destIndex)
+        {
+            Debug.Assert(destination != null);
+            Debug.Assert(IsValidIndex(sourceIndex));
+            Debug.Assert(destination.IsValidIndex(destIndex));
+            Debug.Assert(sourceIndex.Row + sectorSize.Rows <= this.Rows);
+            Debug.Assert(sourceIndex.Column + sectorSize.Columns <= this.Columns);
+            Debug.Assert(destIndex.Row + sectorSize.Rows <= destination.Rows);
+            Debug.Assert(destIndex.Column + sectorSize.Columns <= destination.Columns);
+
+            int dr = destIndex.Row;
+            int sr = sourceIndex.Row;
+            int totalRows = destIndex.Row + sectorSize.Rows;
+            int totalCols = destIndex.Column + sectorSize.Columns;
+
+            for (; dr < totalRows; dr++, sr++)
+            {
+                int dc = destIndex.Column;
+                int sc = sourceIndex.Column;
+
+                for (; dc < totalCols; dc++, sc++)
+                {
+                    destination[dr, dc] = this[sr, sc];
+                }
+            }
+        }
+
+        public void CopyTo(Array array, int index)
+        {
+            throw new NotImplementedException();
+        }
 
         /// <summary>
         /// Sets items of specified count of rows at given starting index to default values.
@@ -664,526 +692,34 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        ///     Removes specified count of rows from this instance starting at the given index.
-        ///     <para>
-        ///         Exceptions:<br/>
-        ///         <see cref="ArgumentOutOfRangeException"/>: 
-        ///             StartIndex must be a number in the range of (<see cref="Rows"/> - 1);<br/>
-        ///             Count must be a number in the range of (<see cref="Rows"/> - startIndex).
-        ///     </para>
+        ///     Searches for an item that matches the conditions defined by the specified
+        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying index
+        ///     of the first occurrence.<br/>
+        ///     Arguments are not validated on release builds.
         /// </summary>
-        /// <param name="startIndex">
-        ///     Index from which removing starts. Indexing is zero-based.
+        /// <typeparam name="TPredicate"></typeparam>
+        /// <param name="startIndex"> &gt;= 0</param>
+        /// <param name="count">
+        ///     <paramref name="count"/> + <paramref name="startIndex"/> &lt;= capacity.Rows *
+        ///     capacity.Columns
         /// </param>
-        /// <param name="count">Number of rows to remove.</param>
-        public void RemoveRows(int startIndex, int count)
-        {
-            bool isInvalidRowIndex = unchecked((uint)startIndex >= (uint)Rows);
-            bool isInvalidCount = unchecked((uint)count > (uint)(Rows - startIndex));
-
-            if (isInvalidRowIndex)
-            {
-                throw new ArgumentOutOfRangeException(
-                    nameof(startIndex), "StartIndex must be a number in the range of (Rows - 1).");
-            }
-            if (isInvalidCount)
-            {
-                throw new ArgumentOutOfRangeException(
-                    nameof(count), "Count must be a number in the range of (Rows - startIndex).");
-            }
-            int rows = bounds.Rows;
-            int cols = bounds.Columns;
-            int newRows = rows - count;
-
-            for (int i0 = startIndex, i1 = i0 + count; i0 < newRows; i0++, i1++)
-            {
-                for (int j = 0; j < cols; j++)
-                {
-                    GetItemInternal(i0, j) = GetItemInternal(i1, j);
-                }
-            }
-            ClearRows(newRows, count);
-
-            bounds = new Bounds2D(new Box<int>(newRows), new Box<int>(cols));
-        }
-
-        /// <summary>
-        ///     Removes specified row from this instance.
-        ///     <para>
-        ///         Exceptions:<br/>
-        ///         <see cref="ArgumentOutOfRangeException"/>:
-        ///         Index must be a number in the range of (<see cref="Rows"/> - 1).
-        ///     </para>
-        /// </summary>
-        /// <param name="index">
-        ///     Index indicating which row to remove. Indexing is zero-based.
-        /// </param>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void RemoveRow(int index)
-        {
-            try
-            {
-                RemoveRows(index, 1);
-            }
-            catch (ArgumentOutOfRangeException)
-            {
-                throw new ArgumentOutOfRangeException(
-                    "Index must be a number in the range of (Rows - 1)");
-            }
-        }
-
-        /// <summary>
-        ///     Removes specified count of columns from this instance starting at the given index.
-        ///     <para>
-        ///         Exceptions:<br/>
-        ///         <see cref="ArgumentOutOfRangeException"/>: 
-        ///             StartIndex must be a number in the range of (<see cref="Columns"/> - 1);<br/>
-        ///             Count must be a number in the range of (<see cref="Columns"/> - startIndex).
-        ///     </para>
-        /// </summary>
-        /// <param name="startIndex">
-        ///     Index from which removing starts. Indexing is zero-based.
-        /// </param>
-        /// <param name="count">Number of columns to remove.</param>
-        public void RemoveColumns(int startIndex, int count)
-        {
-            bool isInvalidColumnIndex = unchecked((uint)startIndex >= (uint)Columns);
-            bool isInvalidCount = unchecked((uint)count > (uint)(Columns - startIndex));
-
-            if (isInvalidColumnIndex)
-            {
-                throw new ArgumentOutOfRangeException(
-                    nameof(startIndex),
-                    "StartIndex must be a number in the range of (Columns - 1).");
-            }
-            if (isInvalidCount)
-            {
-                throw new ArgumentOutOfRangeException(
-                    nameof(count),
-                    "Count must be a number in the range of (Columns - startIndex).");
-            }
-            int rows = bounds.Rows;
-            int cols = bounds.Columns;
-            int newCols = cols - count;
-
-            for (int i = 0; i < rows; i++)
-            {
-                for (int j0 = startIndex, j1 = j0 + count; j0 < newCols; j0++, j1++)
-                {
-                    GetItemInternal(i, j0) = GetItemInternal(i, j1);
-                }
-            }
-            ClearColumns(newCols, count);
-
-            bounds = new Bounds2D(new Box<int>(rows), new Box<int>(newCols));
-        }
-
-        /// <summary>
-        ///     Removes specified column from this instance.
-        ///     <para>
-        ///         Exceptions:<br/>
-        ///         <see cref="ArgumentOutOfRangeException"/>:
-        ///         Index must be a number in the range of (<see cref="Columns"/> - 1).
-        ///     </para>
-        /// </summary>
-        /// <param name="index">
-        ///     Index indicating which column to remove. Indexing is zero-based.
-        /// </param>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void RemoveColumn(int index)
-        {
-            try
-            {
-                RemoveColumns(index, 1);
-            }
-            catch (ArgumentOutOfRangeException)
-            {
-                throw new ArgumentOutOfRangeException(
-                   "Index must be a number in the range of (Columns - 1)");
-            }
-        }
-
-        /// <summary>
-        ///     Inserts specified count of rows into this instance starting at the given index by 
-        ///     copying. Inserted rows are initialized with default value. newBounds should be a
-        ///     cached value equal to (<see cref="Rows"/> + count, <see cref="Columns"/>).
-        ///     Arguments are not checked on release build.
-        /// </summary>
-        /// <param name="startIndex">Range: [0, <see cref="Rows"/>]</param>
-        /// <param name="count">Range: [0, (<see cref="capacity"/>.Rows - startIndex)]</param>
-        /// <param name="newBounds">newBounds.Columns &lt;= <see cref="Columns"/>
-        /// </param>
-        internal void InsertRowsNotAlloc(int startIndex, int count, Bounds2D newBounds)
-        {
-            Debug.Assert(startIndex >= 0);
-            Debug.Assert(startIndex <= Rows);
-            Debug.Assert(count >= 0);
-            Debug.Assert(count <= capacity.Rows - startIndex);
-            Debug.Assert(newBounds.Columns <= Columns);
-
-            for (int i0 = newBounds.Rows - 1, i1 = i0 - count; i1 >= startIndex; i0--, i1--)
-            {
-                for (int j = 0; j < newBounds.Columns; j++)
-                {
-                    GetItemInternal(i0, j) = GetItemInternal(i1, j);
-                }
-            }
-            ClearRows(startIndex, count);
-        }
-
-        /// <summary>
-        ///     Inserts specified count of rows into this instance starting at the given index by 
-        ///     allocating. Inserted rows are initialized with default value. newBounds should be a
-        ///     cached value equal to (<see cref="Rows"/> + count, <see cref="Columns"/>).
-        ///     Arguments are not checked on release build.
-        /// </summary>
-        /// <param name="startIndex">Range: [0, <see cref="Rows"/>]</param>
-        /// <param name="count">Must be &gt;= 0</param>
-        /// <param name="newBounds">newBounds.Columns &gt;= <see cref="Columns"/>
-        /// </param>
-        internal void InsertRowsAlloc(int startIndex, int count, Bounds2D newBounds)
-        {
-            Debug.Assert(startIndex >= 0);
-            Debug.Assert(startIndex <= Rows);
-            Debug.Assert(count >= 0);
-            Debug.Assert(newBounds.Columns >= Columns);
-
-            T[] newItems;
-            Bounds2D newCapacity = EnsuredCapacity(newBounds);
-
-            try
-            {
-                newItems = new T[Math.BigMul(newCapacity.Rows, newCapacity.Columns)];
-            }
-            catch (OutOfMemoryException)
-            {
-                throw;
-            }
-            for (int i = 0; i < startIndex; i++)
-            {
-                for (int j = 0; j < newBounds.Columns; j++)
-                {
-                    newItems[RowMajorIndex2DToInt(new Index2D(i, j), newCapacity.Columns)] =
-                        GetItemInternal(i, j);
-                }
-            }
-            for (int i0 = startIndex, i1 = i0 + count; i1 < newBounds.Rows; i0++, i1++)
-            {
-                for (int j = 0; j < newBounds.Columns; j++)
-                {
-                    newItems[RowMajorIndex2DToInt(new Index2D(i1, j), newCapacity.Columns)] =
-                        GetItemInternal(i0, j);
-                }
-            }
-            capacity = newCapacity;
-            items = newItems;
-        }
-
-        /// <summary>
-        ///     Inserts specified count of rows into this instance starting at the given index.
-        ///     Inserted rows are initialized with default value.
-        ///     <para>
-        ///         Exceptions:<br/>
-        ///         <see cref="ArgumentOutOfRangeException"/>: 
-        ///             StartIndex must be a number in the range of <see cref="Rows"/>;<br/>
-        ///             Count must be greater or equal to zero.
-        ///     </para>
-        /// </summary>
-        /// <param name="startIndex">The zero-based index at which inserting starts.</param>
-        /// <param name="count">Number of rows to insert.</param>
-        public void InsertRows(int startIndex, int count)
-        {
-            bool isInvalidRowIndex = unchecked((uint)startIndex > (uint)Rows);
-
-            if (isInvalidRowIndex)
-            {
-                throw new ArgumentOutOfRangeException(
-                    nameof(startIndex), "StartIndex must be a number in the range of Rows.");
-            }
-            if (count < 0)
-            {
-                throw new ArgumentOutOfRangeException(
-                    nameof(count), "Count must be greater or equal to zero.");
-            }
-            Bounds2D newBounds = new Bounds2D(new Box<int>(Rows + count), new Box<int>(Columns));
-
-            if (IsReallocationNeeded(newBounds))
-            {
-                try
-                {
-                    InsertRowsAlloc(startIndex, count, newBounds);
-                }
-                catch (OutOfMemoryException)
-                {
-                    throw;
-                }
-            }
-            else
-            {
-                InsertRowsNotAlloc(startIndex, count, newBounds);
-            }
-            bounds = newBounds;
-        }
-
-        /// <summary>
-        ///     Inserts row at given index into this instance. Inserted row is initialized with
-        ///     default values.
-        ///     <para>
-        ///         Exceptions:<br/>
-        ///         <see cref="ArgumentOutOfRangeException"/>:
-        ///         Index must be a number in the range of <see cref="Rows"/>.
-        ///     </para>
-        /// </summary>
-        /// <param name="index">
-        ///     Index indicating where the row is inserted. Indexing is zero-based.
-        /// </param>
-        public void InsertRow(int index)
-        {
-            try
-            {
-                InsertRows(index, 1);
-            }
-            catch (ArgumentOutOfRangeException)
-            {
-                throw new ArgumentOutOfRangeException(
-                    "Index must be a number in the range of Rows.");
-            }
-        }
-
-        /// <summary>
-        ///     Inserts specified count of columns into this instance starting at the given index by 
-        ///     copying. Inserted rows are initialized with default value. newBounds should be a
-        ///     cached value equal to (<see cref="Rows"/>, <see cref="Columns"/> + count).
-        ///     Arguments are not checked on release build.
-        /// </summary>
-        /// <param name="startIndex">Range: [0, <see cref="Columns"/>]</param>
-        /// <param name="count">Range: [0, (<see cref="capacity"/>.Columns - startIndex)]</param>
-        /// <param name="newBounds">newBounds.Rows &lt;= <see cref="Rows"/>
-        /// </param>
-        internal void InsertColumnsNotAlloc(int startIndex, int count, Bounds2D newBounds)
-        {
-            Debug.Assert(startIndex >= 0);
-            Debug.Assert(startIndex <= Columns);
-            Debug.Assert(count >= 0);
-            Debug.Assert(count <= capacity.Columns - startIndex);
-            Debug.Assert(newBounds.Rows <= Rows);
-
-            int capCols = capacity.Columns;
-
-            for (int i = 0; i < newBounds.Rows; i++)
-            {
-                for (int j0 = newBounds.Columns - 1, j1 = j0 - count; j1 >= startIndex; j0--, j1--)
-                {
-                    GetItemInternal(i, j0) = GetItemInternal(i, j1);
-                }
-                Array.Clear(items, RowMajorIndex2DToInt(new Index2D(i, startIndex), capCols), count);
-            }
-        }
-
-        /// <summary>
-        ///     Inserts specified count of columns into this instance starting at the given index
-        ///     by allocating. Inserted columns are initialized with default value. newBounds
-        ///     should be a cached value equal to
-        ///     (<see cref="Rows"/>, <see cref="Columns"/> + count). Arguments are not checked on
-        ///     release build.
-        /// </summary>
-        /// <param name="startIndex">Range: [0, <see cref="Columns"/>]</param>
-        /// <param name="count">Must be &gt;= 0</param>
-        /// <param name="newBounds">newBounds.Rows &gt;= <see cref="Rows"/>
-        /// </param>
-        internal void InsertColumnsAlloc(int startIndex, int count, Bounds2D newBounds)
-        {
-            Debug.Assert(startIndex >= 0);
-            Debug.Assert(startIndex <= Columns);
-            Debug.Assert(count >= 0);
-            Debug.Assert(newBounds.Rows >= Rows);
-
-            T[] newItems;
-            Bounds2D newCapacity = EnsuredCapacity(newBounds);
-
-            try
-            {
-                newItems = new T[Math.BigMul(newCapacity.Rows, newCapacity.Columns)];
-            }
-            catch (OutOfMemoryException)
-            {
-                throw;
-            }
-            for (int i = 0; i < newBounds.Rows; i++)
-            {
-                for (int j = 0; j < startIndex; j++)
-                {
-                    newItems[RowMajorIndex2DToInt(new Index2D(i, j), newCapacity.Columns)] =
-                        GetItemInternal(i, j);
-                }
-            }
-            for (int i = 0; i < newBounds.Rows; i++)
-            {
-                for (int j0 = startIndex, j1 = j0 + count; j1 < newBounds.Columns; j0++, j1++)
-                {
-                    newItems[RowMajorIndex2DToInt(new Index2D(i, j1), newCapacity.Columns)] =
-                        GetItemInternal(i, j0);
-                }
-            }
-            capacity = newCapacity;
-            items = newItems;
-        }
-
-        /// <summary>
-        ///     Inserts specified count of columns into this instance starting at the given index.
-        ///     Inserted columns are initialized with default value.
-        ///     <para>
-        ///         Exceptions:<br/>
-        ///         <see cref="ArgumentOutOfRangeException"/>: 
-        ///             StartIndex must be a number in the range of <see cref="Columns"/>;<br/>
-        ///             Count must be greater or equal to zero.
-        ///     </para>
-        /// </summary>
-        /// <param name="startIndex">The zero-based index at which inserting starts.</param>
-        /// <param name="count">Number of columns to insert.</param>
-        public void InsertColumns(int startIndex, int count)
-        {
-            bool isInvalidColumnIndex = unchecked((uint)startIndex > (uint)Columns);
-
-            if (isInvalidColumnIndex)
-            {
-                throw new ArgumentOutOfRangeException(
-                    nameof(startIndex), "StartIndex must be a number in the range of Columns.");
-            }
-            if (count < 0)
-            {
-                throw new ArgumentOutOfRangeException(
-                    nameof(count), "Count must be greater or equal to zero.");
-            }
-            Bounds2D newBounds = new Bounds2D(new Box<int>(Rows), new Box<int>(Columns + count));
-
-            if (IsReallocationNeeded(newBounds))
-            {
-                try
-                {
-                    InsertColumnsAlloc(startIndex, count, newBounds);
-                }
-                catch (OutOfMemoryException)
-                {
-                    throw;
-                }
-            }
-            else
-            {
-                InsertColumnsNotAlloc(startIndex, count, newBounds);
-            }
-            bounds = newBounds;
-        }
-
-        /// <summary>
-        ///     Inserts column at given index into this instance. Inserted column is initialized
-        ///     with default values.
-        ///     <para>
-        ///         Exceptions:<br/>
-        ///         <see cref="ArgumentOutOfRangeException"/>:
-        ///         Index must be a number in the range of <see cref="Columns"/>.
-        ///     </para>
-        /// </summary>
-        /// <param name="index">
-        ///     Index indicating where the column is inserted. Indexing is zero-based.
-        /// </param>
-        public void InsertColumn(int index)
-        {
-            try
-            {
-                InsertColumns(index, 1);
-            }
-            catch (ArgumentOutOfRangeException)
-            {
-                throw new ArgumentOutOfRangeException(
-                    "Index must be a number in the range of Columns.");
-            }
-        }
-
-        /// <summary>
-        ///     Removes all elements from the <see cref="List2D{T}"/>. Any stored references are
-        ///     released.
-        /// </summary>
-        public void Clear()
-        {
-            if (Count > 0)
-            {
-                Array.Clear(items, 0, items.Length);
-                bounds = new Bounds2D();
-            }
-        }
-
-        /// <summary>
-        ///     Determines whether specified item exists in the current instance.
-        /// </summary>
-        /// <param name="item"></param>
+        /// <param name="match"></param>
         /// <returns></returns>
-        public bool Contains(T item)
-        {
-            int rows = Rows;
-            int cols = Columns;
-
-            for (int i = 0; i < rows; i++)
-            {
-                for (int j = 0; j < cols; j++)
-                {
-                    if (GetItemInternal(i, j).Equals(item))
-                    {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
-
-        public void CopyTo(Array array, int index)
-        {
-            throw new NotImplementedException();
-        }
-
-        internal void CopyToInternal(
-            Index2D sourceIndex, Array2D<T> destination, Bounds2D sectorSize, Index2D destIndex)
-        {
-            Debug.Assert(destination != null);
-            Debug.Assert(IsValidIndex(sourceIndex));
-            Debug.Assert(destination.IsValidIndex(destIndex));
-            Debug.Assert(sourceIndex.Row + sectorSize.Rows <= this.Rows);
-            Debug.Assert(sourceIndex.Column + sectorSize.Columns <= this.Columns);
-            Debug.Assert(destIndex.Row + sectorSize.Rows <= destination.Rows);
-            Debug.Assert(destIndex.Column + sectorSize.Columns <= destination.Columns);
-
-            int dr = destIndex.Row;
-            int sr = sourceIndex.Row;
-            int totalRows = destIndex.Row + sectorSize.Rows;
-            int totalCols = destIndex.Column + sectorSize.Columns;
-
-            for (; dr < totalRows; dr++, sr++)
-            {
-                int dc = destIndex.Column;
-                int sc = sourceIndex.Column;
-
-                for (; dc < totalCols; dc++, sc++)
-                {
-                    destination[dr, dc] = this[sr, sc];
-                }
-            }
-        }
-
         internal ItemRequestResult<Index2D> FindIndex2DInternal<TPredicate>(
-            int startIndex, int count, TPredicate match)
-            where TPredicate : struct, IPredicate<T>
+           int startIndex, int count, TPredicate match)
+           where TPredicate : struct, IPredicate<T>
         {
             Debug.Assert(startIndex >= 0);
-            Debug.Assert(startIndex + count <= Count);
+            Debug.Assert(startIndex + count <= capacity.Rows * capacity.Columns);
 
             int capCols = capacity.Columns;
-            int stepsToNextRow = Capacity.Rows - Rows;
+            int gapPerRow = capCols - Columns;
 
-            for (int i = startIndex, iter = 0; iter < count; i += stepsToNextRow)
+            for (int i = startIndex, iter = 0; iter < count; i += gapPerRow)
             {
-                Index2D i2D = IntToRowMajorIndex2D(i, capCols);
+                int index2DColumn = i % capCols;
 
-                for (int j = i2D.Column; j < Columns && iter < count; j++, i++, iter++)
+                for (int j = index2DColumn; j < Columns && iter < count; j++, i++, iter++)
                 {
                     if (match.Invoke(items[i]))
                     {
@@ -1254,8 +790,9 @@ namespace Sztorm.Collections
                     nameof(count), "count must be greater or equal to zero.");
             }
             int startIndex1D = RowMajorIndex2DToInt(startIndex, capacity.Columns);
+            int startIndex1DWithoutGap = RowMajorIndex2DToInt(startIndex, Columns);
 
-            if (startIndex1D + count > Count)
+            if (startIndex1DWithoutGap + count > Count)
             {
                 throw new ArgumentOutOfRangeException(
                     nameof(count), "startIndex together with count must not exceed Array2D.Count");
@@ -1433,35 +970,288 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        ///     Returns an enumerator for all elements of the <see cref="List2D{T}"/>.
+        ///     Searches for an item that matches the conditions defined by the specified
+        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying index
+        ///     of the last occurrence.<br/>
+        ///     Arguments are not validated on release builds.
         /// </summary>
+        /// <typeparam name="TPredicate"></typeparam>
+        /// <param name="startIndex"> &lt; capacity.Rows * capacity.Columns</param>
+        /// <param name="count"> &gt;= 0</param>
+        /// <param name="match"></param>
         /// <returns></returns>
-        public IEnumerator<T> GetEnumerator()
+        internal ItemRequestResult<Index2D> FindLastIndex2DInternal<TPredicate>(
+            int startIndex, int count, TPredicate match)
+            where TPredicate : struct, IPredicate<T>
         {
-            int rows = Rows;
-            int columns = Columns;
+            Debug.Assert(startIndex < capacity.Rows * capacity.Columns);
+            Debug.Assert(count >= 0);
 
-            for (int i = 0; i < rows; i++)
+            int capCols = capacity.Columns;
+            int gapPerRow = capCols - Columns;
+
+            for (int i = startIndex, iter = 0; iter < count; i -= gapPerRow)
             {
-                for (int j = 0; j < columns; j++)
+                int index2DColumn = i % capCols;
+
+                for (int j = index2DColumn; j >= 0 && iter < count; j--, i--, iter++)
                 {
-                    yield return GetItemInternal(i, j);
+                    if (match.Invoke(items[i]))
+                    {
+                        return new ItemRequestResult<Index2D>(IntToRowMajorIndex2D(i, capCols));
+                    }
                 }
+            }
+            return ItemRequestResult<Index2D>.Failed;   
+        }
+
+        /// <summary>
+        ///     Searches from the beginning for an item that matches the conditions defined by the
+        ///     specified predicate, and returns the <see cref="ItemRequestResult{T}"/> with
+        ///     underlying index of the last occurrence searched within the entire
+        ///     <see cref="List2D{T}"/> if found. Otherwise returns
+        ///     <see cref="ItemRequestResult{T}.Failed"/>
+        /// </summary>
+        /// <typeparam name="TPredicate">
+        ///     <typeparamref name = "TPredicate"/> is <see cref="IPredicate{T}"/> and
+        ///     <see langword="struct"/>
+        /// </typeparam>
+        /// <param name="match">
+        ///     A <see langword="struct"/> implementing <see cref="IPredicate{T}"/> that defines
+        ///     the conditions of the element to search for.
+        /// </param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public ItemRequestResult<Index2D> FindLastIndex2D<TPredicate>(TPredicate match)
+            where TPredicate : struct, IPredicate<T>
+            => FindLastIndex2DInternal(
+                RowMajorIndex2DToInt(
+                    new Index2D(bounds.Rows - 1, bounds.Columns - 1), capacity.Columns),
+                Count,
+                match);
+
+        /// <summary>
+        ///     Searches for an item that matches the conditions defined by the specified
+        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying index
+        ///     of the last occurrence searched row by row within the specified range of items if
+        ///     found. Otherwise returns <see cref="ItemRequestResult{T}.Failed"/>
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="startIndex"/> must
+        ///         be within array bounds;<br/>
+        ///         <paramref name="count"/> must be greater or equal to zero;<br/>
+        ///         <paramref name="startIndex"/> together with <paramref name="count"/> must not
+        ///         exceed <see cref="Count"/>
+        ///     </para>
+        /// </summary>
+        /// <typeparam name="TPredicate">
+        ///     <typeparamref name = "TPredicate"/> is <see cref="IPredicate{T}"/> and
+        ///     <see langword="struct"/>
+        /// </typeparam>
+        /// <param name="startIndex">Zero-based starting index of the backward search.</param>
+        /// <param name="count">Number of items to search.</param>
+        /// <param name="match">
+        ///     A <see langword="struct"/> implementing <see cref="IPredicate{T}"/> that defines
+        ///     the conditions of the element to search for.
+        /// </param>
+        /// <returns></returns>
+        public ItemRequestResult<Index2D> FindLastIndex2D<TPredicate>(
+            Index2D startIndex, int count, TPredicate match)
+            where TPredicate : struct, IPredicate<T>
+        {
+            if (!IsValidIndex(startIndex))
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(startIndex), "startIndex must be within array bounds.");
+            }
+            if (count < 0)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(count), "count must be greater or equal to zero.");
+            }
+            int startIndex1D = RowMajorIndex2DToInt(startIndex, capacity.Columns);
+            int startIndex1DWithoutGap = RowMajorIndex2DToInt(startIndex, Columns);
+
+            if (startIndex1DWithoutGap - count < -1)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(count), "startIndex together with count must not exceed Array2D.Count");
+            }
+            return FindLastIndex2DInternal(startIndex1D, count, match);
+        }
+
+        /// <summary>
+        ///     Searches for an item that matches the conditions defined by the specified
+        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying index
+        ///     of the last occurrence searched within the specified sector. Otherwise returns
+        ///     <see cref="ItemRequestResult{T}.Failed"/>
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="startIndex"/> must
+        ///         be within array bounds;<br/>
+        ///         <paramref name="sectorSize"/> must be within array bounds, beginning backwardly
+        ///         from <paramref name="startIndex"/>.
+        ///     </para>   
+        /// </summary>
+        /// <typeparam name="TPredicate">
+        ///     <typeparamref name = "TPredicate"/> is <see cref="IPredicate{T}"/> and
+        ///     <see langword="struct"/>
+        /// </typeparam>
+        /// <param name="startIndex">Zero-based starting index of the backward search.</param>
+        /// <param name="sectorSize">The rectangular sector size to be searched.</param>
+        /// <param name="match">
+        ///     A <see langword="struct"/> implementing <see cref="IPredicate{T}"/> that defines
+        ///     the conditions of the element to search for.
+        /// </param>
+        /// <returns></returns>
+        public ItemRequestResult<Index2D> FindLastIndex2D<TPredicate>(
+            Index2D startIndex, Bounds2D sectorSize, TPredicate match)
+            where TPredicate : struct, IPredicate<T>
+        {
+            if (!IsValidIndex(startIndex))
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(startIndex), "startIndex must be within array bounds.");
+            }
+            var indexAfterEnd = new Index2D(
+                startIndex.Row - sectorSize.Rows,
+                startIndex.Column - sectorSize.Columns);
+
+            if (indexAfterEnd.Row < -1 || indexAfterEnd.Column < -1)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(sectorSize),
+                    "sectorSize must be within array bounds, beginning backwardly from " +
+                    "startIndex.");
+            }
+            int capCols = capacity.Columns;
+
+            for (int i = startIndex.Row; i > indexAfterEnd.Row; i--)
+            {
+                int index1D = RowMajorIndex2DToInt(new Index2D(i, startIndex.Column), capCols);
+
+                for (int j = startIndex.Column; j > indexAfterEnd.Column; j--, index1D--)
+                {
+                    if (match.Invoke(items[index1D]))
+                    {
+                        return new ItemRequestResult<Index2D>(new Index2D(i, j));
+                    }
+                }
+            }
+            return ItemRequestResult<Index2D>.Failed;
+        }
+
+        /// <summary>
+        ///     Searches for an item that matches the conditions defined by the specified
+        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying index
+        ///     of the last occurrence searched within the entire <see cref="List2D{T}"/> if found.
+        ///     Otherwise returns <see cref="ItemRequestResult{T}.Failed"/><br/>
+        ///     Use <see cref="FindLastIndex2D{TPredicate}(TPredicate)"/> to avoid virtual call.
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentNullException"/>: <paramref name="match"/> cannot be
+        ///         <see langword="null"/>.
+        ///     </para>
+        /// </summary>
+        /// <param name="match">
+        ///     The <see cref="Predicate{T}"/> delegate that defines the conditions of the element
+        ///     to search for.
+        /// </param>
+        /// <returns></returns>
+        public ItemRequestResult<Index2D> FindLastIndex2D(Predicate<T> match)
+        {
+            if (match == null)
+            {
+                throw new ArgumentNullException(nameof(match), "Match cannot be null.");
+            }
+            return FindLastIndex2DInternal(
+                RowMajorIndex2DToInt(
+                    new Index2D(bounds.Rows - 1, bounds.Columns - 1), capacity.Columns),
+                    Count,
+                    new BoxedPredicate<T>(match));
+        }
+
+        /// <summary>
+        ///     Searches for an item that matches the conditions defined by the specified
+        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying index
+        ///     of the last occurrence searched row by row within the specified range of items if
+        ///     found. Otherwise returns <see cref="ItemRequestResult{T}.Failed"/><br/>
+        ///     Use <see cref="FindLastIndex2D{TPredicate}(Index2D, int, TPredicate)"/> to avoid
+        ///     virtual call.
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentNullException"/>: <paramref name="match"/> cannot be
+        ///         <see langword="null"/>.<br/>
+        ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="startIndex"/> must
+        ///         be within array bounds;<br/>
+        ///         <paramref name="count"/> must be greater or equal to zero;<br/>
+        ///         <paramref name="startIndex"/> together with <paramref name="count"/> must not
+        ///         exceed <see cref="Count"/>
+        ///     </para>
+        /// </summary>
+        /// <param name="startIndex">Zero-based starting index of the backward search.</param>
+        /// <param name="count">Number of items to search.</param>
+        /// <param name="match">
+        ///     The <see cref="Predicate{T}"/> delegate that defines the conditions of the element
+        ///     to search for.
+        /// </param>
+        /// <returns></returns>
+        public ItemRequestResult<Index2D> FindLastIndex2D(
+            Index2D startIndex, int count, Predicate<T> match)
+        {
+            if (match == null)
+            {
+                throw new ArgumentNullException(nameof(match), "match cannot be null.");
+            }
+            try
+            {
+                return FindLastIndex2D(startIndex, count, new BoxedPredicate<T>(match));
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                throw;
             }
         }
 
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-
         /// <summary>
-        ///     Creates an <see cref="Array2D{T}"/> from this <see cref="List2D{T}"/> instance.
+        ///     Searches for an item that matches the conditions defined by the specified
+        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying index
+        ///     of the last occurrence searched within the specified sector. Otherwise returns
+        ///     <see cref="ItemRequestResult{T}.Failed"/><br/>
+        ///     Use <see cref="FindLastIndex2D{TPredicate}(Index2D, Bounds2D, TPredicate)"/> to avoid
+        ///     virtual call.
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentNullException"/>: <paramref name="match"/> cannot be
+        ///         <see langword="null"/>.<br/>
+        ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="startIndex"/> must
+        ///         be within array bounds;<br/>
+        ///         <paramref name="sectorSize"/> must be within array bounds, beginning backwardly
+        ///         from <paramref name="startIndex"/>.
+        ///     </para>
         /// </summary>
+        /// <param name="startIndex">Zero-based starting index of the backward search.</param>
+        /// <param name="sectorSize">The rectangular sector size to be searched.</param>
+        /// <param name="match">
+        ///     The <see cref="Predicate{T}"/> delegate that defines the conditions of the element
+        ///     to search for.
+        /// </param>
         /// <returns></returns>
-        public Array2D<T> ToArray2D()
+        public ItemRequestResult<Index2D> FindLastIndex2D(
+            Index2D startIndex, Bounds2D sectorSize, Predicate<T> match)
         {
-            var result = new Array2D<T>(bounds);
-
-            CopyToInternal(new Index2D(), result, bounds, new Index2D());
-            return result;
+            if (match == null)
+            {
+                throw new ArgumentNullException(nameof(match), "match cannot be null.");
+            }
+            try
+            {
+                return FindLastIndex2D(startIndex, sectorSize, new BoxedPredicate<T>(match));
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                throw;
+            }
         }
 
         /// <summary>
@@ -1495,6 +1285,516 @@ namespace Sztorm.Collections
                     result[i, j] = array[i, j];
                 }
             }
+            return result;
+        }
+
+        /// <summary>
+        /// Increases current instance capacity with specified quantity.
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="OutOfMemoryException"/>: Insufficient memory to continue the
+        ///         execution of the program.
+        ///     </para>
+        /// </summary>
+        /// <param name="quantity"></param>
+        public void IncreaseCapacity(Bounds2D quantity)
+        {
+            int newRows;
+            int newCols;
+
+            try
+            {
+                newRows = checked(quantity.Rows + capacity.Rows);
+            }
+            catch (OverflowException)
+            {
+                newRows = int.MaxValue;
+            }
+            try
+            {
+                newCols = checked(quantity.Columns + capacity.Columns);
+            }
+            catch (OverflowException)
+            {
+                newCols = int.MaxValue;
+            }
+            try
+            {
+                Reallocate(new Bounds2D(new Box<int>(newRows), new Box<int>(newCols)));
+            }
+            catch (OutOfMemoryException)
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        ///     Inserts specified count of columns into this instance starting at the given index by 
+        ///     copying. Inserted rows are initialized with default value. newBounds should be a
+        ///     cached value equal to (<see cref="Rows"/>, <see cref="Columns"/> + count).
+        ///     Arguments are not checked on release build.
+        /// </summary>
+        /// <param name="startIndex">Range: [0, <see cref="Columns"/>]</param>
+        /// <param name="count">Range: [0, (<see cref="capacity"/>.Columns - startIndex)]</param>
+        /// <param name="newBounds">newBounds.Rows &lt;= <see cref="Rows"/>
+        /// </param>
+        private void InsertColumnsNotAlloc(int startIndex, int count, Bounds2D newBounds)
+        {
+            Debug.Assert(startIndex >= 0);
+            Debug.Assert(startIndex <= Columns);
+            Debug.Assert(count >= 0);
+            Debug.Assert(count <= capacity.Columns - startIndex);
+            Debug.Assert(newBounds.Rows <= Rows);
+
+            int capCols = capacity.Columns;
+
+            for (int i = 0; i < newBounds.Rows; i++)
+            {
+                for (int j0 = newBounds.Columns - 1, j1 = j0 - count; j1 >= startIndex; j0--, j1--)
+                {
+                    GetItemInternal(i, j0) = GetItemInternal(i, j1);
+                }
+                Array.Clear(items, RowMajorIndex2DToInt(new Index2D(i, startIndex), capCols), count);
+            }
+        }
+
+        /// <summary>
+        ///     Inserts specified count of columns into this instance starting at the given index
+        ///     by allocating. Inserted columns are initialized with default value. newBounds
+        ///     should be a cached value equal to
+        ///     (<see cref="Rows"/>, <see cref="Columns"/> + count). Arguments are not checked on
+        ///     release build.
+        /// </summary>
+        /// <param name="startIndex">Range: [0, <see cref="Columns"/>]</param>
+        /// <param name="count">Must be &gt;= 0</param>
+        /// <param name="newBounds">newBounds.Rows &gt;= <see cref="Rows"/>
+        /// </param>
+        private void InsertColumnsAlloc(int startIndex, int count, Bounds2D newBounds)
+        {
+            Debug.Assert(startIndex >= 0);
+            Debug.Assert(startIndex <= Columns);
+            Debug.Assert(count >= 0);
+            Debug.Assert(newBounds.Rows >= Rows);
+
+            T[] newItems;
+            Bounds2D newCapacity = EnsuredCapacity(newBounds);
+
+            try
+            {
+                newItems = new T[Math.BigMul(newCapacity.Rows, newCapacity.Columns)];
+            }
+            catch (OutOfMemoryException)
+            {
+                throw;
+            }
+            for (int i = 0; i < newBounds.Rows; i++)
+            {
+                for (int j = 0; j < startIndex; j++)
+                {
+                    newItems[RowMajorIndex2DToInt(new Index2D(i, j), newCapacity.Columns)] =
+                        GetItemInternal(i, j);
+                }
+            }
+            for (int i = 0; i < newBounds.Rows; i++)
+            {
+                for (int j0 = startIndex, j1 = j0 + count; j1 < newBounds.Columns; j0++, j1++)
+                {
+                    newItems[RowMajorIndex2DToInt(new Index2D(i, j1), newCapacity.Columns)] =
+                        GetItemInternal(i, j0);
+                }
+            }
+            capacity = newCapacity;
+            items = newItems;
+        }
+
+        /// <summary>
+        ///     Inserts specified count of columns into this instance starting at the given index.
+        ///     Inserted columns are initialized with default value.
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentOutOfRangeException"/>: 
+        ///             StartIndex must be a number in the range of <see cref="Columns"/>;<br/>
+        ///             Count must be greater or equal to zero.
+        ///     </para>
+        /// </summary>
+        /// <param name="startIndex">The zero-based index at which inserting starts.</param>
+        /// <param name="count">Number of columns to insert.</param>
+        public void InsertColumns(int startIndex, int count)
+        {
+            bool isInvalidColumnIndex = unchecked((uint)startIndex > (uint)Columns);
+
+            if (isInvalidColumnIndex)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(startIndex), "StartIndex must be a number in the range of Columns.");
+            }
+            if (count < 0)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(count), "Count must be greater or equal to zero.");
+            }
+            Bounds2D newBounds = new Bounds2D(new Box<int>(Rows), new Box<int>(Columns + count));
+
+            if (IsReallocationNeeded(newBounds))
+            {
+                try
+                {
+                    InsertColumnsAlloc(startIndex, count, newBounds);
+                }
+                catch (OutOfMemoryException)
+                {
+                    throw;
+                }
+            }
+            else
+            {
+                InsertColumnsNotAlloc(startIndex, count, newBounds);
+            }
+            bounds = newBounds;
+        }
+
+        /// <summary>
+        ///     Inserts specified count of rows into this instance starting at the given index by 
+        ///     copying. Inserted rows are initialized with default value. newBounds should be a
+        ///     cached value equal to (<see cref="Rows"/> + count, <see cref="Columns"/>).
+        ///     Arguments are not checked on release build.
+        /// </summary>
+        /// <param name="startIndex">Range: [0, <see cref="Rows"/>]</param>
+        /// <param name="count">Range: [0, (<see cref="capacity"/>.Rows - startIndex)]</param>
+        /// <param name="newBounds">newBounds.Columns &lt;= <see cref="Columns"/>
+        /// </param>
+        private void InsertRowsNotAlloc(int startIndex, int count, Bounds2D newBounds)
+        {
+            Debug.Assert(startIndex >= 0);
+            Debug.Assert(startIndex <= Rows);
+            Debug.Assert(count >= 0);
+            Debug.Assert(count <= capacity.Rows - startIndex);
+            Debug.Assert(newBounds.Columns <= Columns);
+
+            for (int i0 = newBounds.Rows - 1, i1 = i0 - count; i1 >= startIndex; i0--, i1--)
+            {
+                for (int j = 0; j < newBounds.Columns; j++)
+                {
+                    GetItemInternal(i0, j) = GetItemInternal(i1, j);
+                }
+            }
+            ClearRows(startIndex, count);
+        }
+
+        /// <summary>
+        ///     Inserts specified count of rows into this instance starting at the given index by 
+        ///     allocating. Inserted rows are initialized with default value. newBounds should be a
+        ///     cached value equal to (<see cref="Rows"/> + count, <see cref="Columns"/>).
+        ///     Arguments are not checked on release build.
+        /// </summary>
+        /// <param name="startIndex">Range: [0, <see cref="Rows"/>]</param>
+        /// <param name="count">Must be &gt;= 0</param>
+        /// <param name="newBounds">newBounds.Columns &gt;= <see cref="Columns"/>
+        /// </param>
+        private void InsertRowsAlloc(int startIndex, int count, Bounds2D newBounds)
+        {
+            Debug.Assert(startIndex >= 0);
+            Debug.Assert(startIndex <= Rows);
+            Debug.Assert(count >= 0);
+            Debug.Assert(newBounds.Columns >= Columns);
+
+            T[] newItems;
+            Bounds2D newCapacity = EnsuredCapacity(newBounds);
+
+            try
+            {
+                newItems = new T[Math.BigMul(newCapacity.Rows, newCapacity.Columns)];
+            }
+            catch (OutOfMemoryException)
+            {
+                throw;
+            }
+            for (int i = 0; i < startIndex; i++)
+            {
+                for (int j = 0; j < newBounds.Columns; j++)
+                {
+                    newItems[RowMajorIndex2DToInt(new Index2D(i, j), newCapacity.Columns)] =
+                        GetItemInternal(i, j);
+                }
+            }
+            for (int i0 = startIndex, i1 = i0 + count; i1 < newBounds.Rows; i0++, i1++)
+            {
+                for (int j = 0; j < newBounds.Columns; j++)
+                {
+                    newItems[RowMajorIndex2DToInt(new Index2D(i1, j), newCapacity.Columns)] =
+                        GetItemInternal(i0, j);
+                }
+            }
+            capacity = newCapacity;
+            items = newItems;
+        }
+
+        /// <summary>
+        ///     Inserts specified count of rows into this instance starting at the given index.
+        ///     Inserted rows are initialized with default value.
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentOutOfRangeException"/>: 
+        ///             StartIndex must be a number in the range of <see cref="Rows"/>;<br/>
+        ///             Count must be greater or equal to zero.
+        ///     </para>
+        /// </summary>
+        /// <param name="startIndex">The zero-based index at which inserting starts.</param>
+        /// <param name="count">Number of rows to insert.</param>
+        public void InsertRows(int startIndex, int count)
+        {
+            bool isInvalidRowIndex = unchecked((uint)startIndex > (uint)Rows);
+
+            if (isInvalidRowIndex)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(startIndex), "StartIndex must be a number in the range of Rows.");
+            }
+            if (count < 0)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(count), "Count must be greater or equal to zero.");
+            }
+            Bounds2D newBounds = new Bounds2D(new Box<int>(Rows + count), new Box<int>(Columns));
+
+            if (IsReallocationNeeded(newBounds))
+            {
+                try
+                {
+                    InsertRowsAlloc(startIndex, count, newBounds);
+                }
+                catch (OutOfMemoryException)
+                {
+                    throw;
+                }
+            }
+            else
+            {
+                InsertRowsNotAlloc(startIndex, count, newBounds);
+            }
+            bounds = newBounds;
+        }
+
+        /// <summary>
+        ///     Inserts row at given index into this instance. Inserted row is initialized with
+        ///     default values.
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentOutOfRangeException"/>:
+        ///         Index must be a number in the range of <see cref="Rows"/>.
+        ///     </para>
+        /// </summary>
+        /// <param name="index">
+        ///     Index indicating where the row is inserted. Indexing is zero-based.
+        /// </param>
+        public void InsertRow(int index)
+        {
+            try
+            {
+                InsertRows(index, 1);
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                throw new ArgumentOutOfRangeException(
+                    "Index must be a number in the range of Rows.");
+            }
+        }
+
+        /// <summary>
+        ///     Inserts column at given index into this instance. Inserted column is initialized
+        ///     with default values.
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentOutOfRangeException"/>:
+        ///         Index must be a number in the range of <see cref="Columns"/>.
+        ///     </para>
+        /// </summary>
+        /// <param name="index">
+        ///     Index indicating where the column is inserted. Indexing is zero-based.
+        /// </param>
+        public void InsertColumn(int index)
+        {
+            try
+            {
+                InsertColumns(index, 1);
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                throw new ArgumentOutOfRangeException(
+                    "Index must be a number in the range of Columns.");
+            }
+        }
+
+        /// <summary>
+        ///     Returns true if specified index exists in this <see cref="List2D{T}"/> instance,
+        ///     false otherwise.
+        /// </summary>
+        /// <param name="row"></param>
+        /// <param name="column"></param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool IsValidIndex(int row, int column)
+            => bounds.IsValidIndex(row, column);
+
+        /// <summary>
+        ///     Returns true if specified index exists in this <see cref="List2D{T}"/> instance,
+        ///     false otherwise.
+        /// </summary>
+        /// <param name="index"></param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool IsValidIndex(Index2D index)
+            => bounds.IsValidIndex(index);
+
+        /// <summary>
+        ///     Removes specified count of rows from this instance starting at the given index.
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentOutOfRangeException"/>: 
+        ///             StartIndex must be a number in the range of (<see cref="Rows"/> - 1);<br/>
+        ///             Count must be a number in the range of (<see cref="Rows"/> - startIndex).
+        ///     </para>
+        /// </summary>
+        /// <param name="startIndex">
+        ///     Index from which removing starts. Indexing is zero-based.
+        /// </param>
+        /// <param name="count">Number of rows to remove.</param>
+        public void RemoveRows(int startIndex, int count)
+        {
+            bool isInvalidRowIndex = unchecked((uint)startIndex >= (uint)Rows);
+            bool isInvalidCount = unchecked((uint)count > (uint)(Rows - startIndex));
+
+            if (isInvalidRowIndex)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(startIndex), "StartIndex must be a number in the range of (Rows - 1).");
+            }
+            if (isInvalidCount)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(count), "Count must be a number in the range of (Rows - startIndex).");
+            }
+            int rows = bounds.Rows;
+            int cols = bounds.Columns;
+            int newRows = rows - count;
+
+            for (int i0 = startIndex, i1 = i0 + count; i0 < newRows; i0++, i1++)
+            {
+                for (int j = 0; j < cols; j++)
+                {
+                    GetItemInternal(i0, j) = GetItemInternal(i1, j);
+                }
+            }
+            ClearRows(newRows, count);
+
+            bounds = new Bounds2D(new Box<int>(newRows), new Box<int>(cols));
+        }
+
+        /// <summary>
+        ///     Removes specified row from this instance.
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentOutOfRangeException"/>:
+        ///         Index must be a number in the range of (<see cref="Rows"/> - 1).
+        ///     </para>
+        /// </summary>
+        /// <param name="index">
+        ///     Index indicating which row to remove. Indexing is zero-based.
+        /// </param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void RemoveRow(int index)
+        {
+            try
+            {
+                RemoveRows(index, 1);
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                throw new ArgumentOutOfRangeException(
+                    "Index must be a number in the range of (Rows - 1)");
+            }
+        }
+
+        /// <summary>
+        ///     Removes specified count of columns from this instance starting at the given index.
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentOutOfRangeException"/>: 
+        ///             StartIndex must be a number in the range of (<see cref="Columns"/> - 1);<br/>
+        ///             Count must be a number in the range of (<see cref="Columns"/> - startIndex).
+        ///     </para>
+        /// </summary>
+        /// <param name="startIndex">
+        ///     Index from which removing starts. Indexing is zero-based.
+        /// </param>
+        /// <param name="count">Number of columns to remove.</param>
+        public void RemoveColumns(int startIndex, int count)
+        {
+            bool isInvalidColumnIndex = unchecked((uint)startIndex >= (uint)Columns);
+            bool isInvalidCount = unchecked((uint)count > (uint)(Columns - startIndex));
+
+            if (isInvalidColumnIndex)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(startIndex),
+                    "StartIndex must be a number in the range of (Columns - 1).");
+            }
+            if (isInvalidCount)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(count),
+                    "Count must be a number in the range of (Columns - startIndex).");
+            }
+            int rows = bounds.Rows;
+            int cols = bounds.Columns;
+            int newCols = cols - count;
+
+            for (int i = 0; i < rows; i++)
+            {
+                for (int j0 = startIndex, j1 = j0 + count; j0 < newCols; j0++, j1++)
+                {
+                    GetItemInternal(i, j0) = GetItemInternal(i, j1);
+                }
+            }
+            ClearColumns(newCols, count);
+
+            bounds = new Bounds2D(new Box<int>(rows), new Box<int>(newCols));
+        }
+
+        /// <summary>
+        ///     Removes specified column from this instance.
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentOutOfRangeException"/>:
+        ///         Index must be a number in the range of (<see cref="Columns"/> - 1).
+        ///     </para>
+        /// </summary>
+        /// <param name="index">
+        ///     Index indicating which column to remove. Indexing is zero-based.
+        /// </param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void RemoveColumn(int index)
+        {
+            try
+            {
+                RemoveColumns(index, 1);
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                throw new ArgumentOutOfRangeException(
+                   "Index must be a number in the range of (Columns - 1)");
+            }
+        }
+
+        /// <summary>
+        ///     Creates an <see cref="Array2D{T}"/> from this <see cref="List2D{T}"/> instance.
+        /// </summary>
+        /// <returns></returns>
+        public Array2D<T> ToArray2D()
+        {
+            var result = new Array2D<T>(bounds);
+
+            CopyToInternal(new Index2D(), result, bounds, new Index2D());
             return result;
         }
     }
