@@ -593,26 +593,70 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        ///     Determines whether specified item exists in the current instance.
+        ///     Determines whether specified item exists in the current instance.<br/>
+        ///     Use <see cref="ContainsEquatable{U}(U)"/> or <see cref="ContainsComparable{U}(U)"/>
+        ///     to avoid unnecessary boxing if stored type is <see cref="IEquatable{T}"/> or
+        ///     <see cref="IComparable{T}"/>.
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
-        public bool Contains(T item)
-        {
-            int rows = Rows;
-            int cols = Columns;
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool Contains(T item) => Index2DOf(item).IsSuccess;
 
-            for (int i = 0; i < rows; i++)
+        /// <summary>
+        ///     Determines whether specified item exists in the current instance.<br/>
+        ///     To search for <see langword="null"/> use <see cref="Contains(T)"/>
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentNullException"/>: <paramref name="item"/> cannot be
+        ///         <see langword="null"/>.
+        ///     </para>
+        /// </summary>
+        /// <typeparam name="U">
+        ///     <typeparamref name = "U"/> is <see cref="IEquatable{T}"/> and
+        ///     <typeparamref name = "T"/>
+        /// </typeparam>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool ContainsEquatable<U>(U item) where U : T, IEquatable<T>
+        {
+            try
             {
-                for (int j = 0; j < cols; j++)
-                {
-                    if (GetItemInternal(i, j).Equals(item))
-                    {
-                        return true;
-                    }
-                }
+                return Index2DOfEquatable(item).IsSuccess;
             }
-            return false;
+            catch (ArgumentNullException)
+            {
+                throw new ArgumentNullException("item cannot be null.");
+            }
+        }
+
+        /// <summary>
+        ///     Determines whether specified item exists in the current instance.<br/>
+        ///     To search for <see langword="null"/> use <see cref="Contains(T)"/>
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentNullException"/>: <paramref name="item"/> cannot be
+        ///         <see langword="null"/>.
+        ///     </para>
+        /// </summary>
+        /// <typeparam name="U">
+        ///     <typeparamref name = "U"/> is <see cref="IComparable{T}"/> and
+        ///     <typeparamref name = "T"/>
+        /// </typeparam>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool ContainsComparable<U>(U item) where U : T, IComparable<T>
+        {
+            try
+            {
+                return Index2DOfComparable(item).IsSuccess;
+            }
+            catch (ArgumentNullException)
+            {
+                throw new ArgumentNullException("item cannot be null.");
+            }
         }
 
         internal void CopyToInternal(
