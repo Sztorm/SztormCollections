@@ -833,6 +833,193 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
+        ///     Returns <see cref="ICollection{T}"/> containing all the elements that match the
+        ///     conditions defined by the specified predicate.
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="NotSupportedException"/>: Provided type must support 
+        ///         <see cref="ICollection{T}.Add(T)"/> method.
+        ///     </para>
+        /// </summary>
+        /// <typeparam name="TCollection">
+        ///     <typeparamref name = "TCollection"/> is <see cref="ICollection{T}"/> and has a
+        ///     parameterless constructor.
+        /// </typeparam>
+        /// <typeparam name="TPredicate">
+        ///     <typeparamref name = "TPredicate"/> is <see cref="IPredicate{T}"/> and
+        ///     <see langword="struct"/>
+        /// </typeparam>
+        /// <param name="match">
+        ///     A <see langword="struct"/> implementing <see cref="IPredicate{T}"/> that defines
+        ///     the conditions of the element to search for.
+        /// </param>
+        /// <returns></returns>
+        public TCollection FindAll<TCollection, TPredicate>(TPredicate match)
+            where TCollection : ICollection<T>, new()
+            where TPredicate : struct, IPredicate<T>
+        {
+            var resizableCollection = new TCollection();
+            try
+            {
+                int count = Count;
+                int capCols = capacity.Columns;
+                int gapPerRow = capCols - Columns;
+
+                for (int i = 0, iter = 0; iter < count; i += gapPerRow)
+                {
+                    int index2DColumn = i % capCols;
+
+                    for (int j = index2DColumn; j < Columns && iter < count; j++, i++, iter++)
+                    {
+                        ref readonly T item = ref items[i];
+
+                        if (match.Invoke(item))
+                        {
+                            resizableCollection.Add(item);
+                        }
+                    }
+                }
+            }
+            catch (NotSupportedException)
+            {
+                throw new NotSupportedException("Provided type must support Add(T) method.");
+            }
+            return resizableCollection;
+        }
+
+        /// <summary>
+        ///     Returns <see cref="ICollection{T}"/> containing all the elements that match the
+        ///     conditions defined by the specified predicate.<br/>
+        ///     Use <see cref="FindAll{TCollection, TPredicate}(TPredicate)"/> to avoid virtual
+        ///     call.
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentNullException"/>: <paramref name="match"/> cannot be
+        ///         <see langword="null"/>.<br/>
+        ///         <see cref="NotSupportedException"/>: Provided type must support
+        ///         <see cref="ICollection{T}.Add(T)"/> method.
+        ///     </para>
+        /// </summary>
+        /// <typeparam name="TCollection">
+        ///     <typeparamref name = "TCollection"/> is <see cref="ICollection{T}"/> and has a
+        ///     parameterless constructor.
+        /// </typeparam>
+        /// <param name="match">
+        ///     The <see cref="Predicate{T}"/> delegate that defines the conditions of the element
+        ///     to search for.
+        /// </param>
+        /// <returns></returns>
+        public TCollection FindAll<TCollection>(Predicate<T> match)
+            where TCollection : ICollection<T>, new()
+        {
+            if (match == null)
+            {
+                throw new ArgumentNullException(nameof(match), "Match cannot be null.");
+            }
+            try
+            {
+                return FindAll<TCollection, BoxedPredicate<T>>(new BoxedPredicate<T>(match));
+            }
+            catch (NotSupportedException)
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        ///     Returns <see cref="ICollection{T}"/> containing all the indices of which items
+        ///     match the conditions defined by the specified predicate.<br/>
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="NotSupportedException"/>: Provided type must support 
+        ///         <see cref="ICollection{T}.Add(T)"/> method.
+        ///     </para>
+        /// </summary>
+        /// <typeparam name="Index2DCollection">
+        ///     <typeparamref name = "Index2DCollection"/> is <see cref="ICollection{T}"/> and has a
+        ///     parameterless constructor.
+        /// </typeparam>
+        /// <typeparam name="TPredicate">
+        ///     <typeparamref name = "TPredicate"/> is <see cref="IPredicate{T}"/> and
+        ///     <see langword="struct"/>
+        /// </typeparam>
+        /// <param name="match">
+        ///     A <see langword="struct"/> implementing <see cref="IPredicate{T}"/> that defines
+        ///     the conditions of the element to search for.
+        /// </param>
+        /// <returns></returns>
+        public Index2DCollection FindAllIndices<Index2DCollection, TPredicate>(TPredicate match)
+            where Index2DCollection : ICollection<Index2D>, new()
+            where TPredicate : struct, IPredicate<T>
+        {
+            var resizableCollection = new Index2DCollection();
+            try
+            {
+                int count = Count;
+                int capCols = capacity.Columns;
+                int gapPerRow = capCols - Columns;
+
+                for (int i = 0, iter = 0; iter < count; i += gapPerRow)
+                {
+                    int index2DColumn = i % capCols;
+
+                    for (int j = index2DColumn; j < Columns && iter < count; j++, i++, iter++)
+                    {
+                        if (match.Invoke(items[i]))
+                        {
+                            resizableCollection.Add(IntToRowMajorIndex2D(i, capCols));
+                        }
+                    }
+                }
+            }
+            catch (NotSupportedException)
+            {
+                throw new NotSupportedException("Provided type must support Add(T) method.");
+            }
+            return resizableCollection;
+        }
+
+        /// <summary>
+        ///     Returns <see cref="ICollection{T}"/> containing all the indices of which items
+        ///     match the conditions defined by the specified predicate.<br/>
+        ///     Use <see cref="FindAll{TCollection, TPredicate}(TPredicate)"/> to avoid virtual
+        ///     call.
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentNullException"/>: <paramref name="match"/> cannot be
+        ///         <see langword="null"/>.<br/>
+        ///         <see cref="NotSupportedException"/>: Provided type must support
+        ///         <see cref="ICollection{T}.Add(T)"/> method.
+        ///     </para>
+        /// </summary>
+        /// <typeparam name="Index2DCollection">
+        ///     <typeparamref name = "Index2DCollection"/> is <see cref="ICollection{T}"/> and has a
+        ///     parameterless constructor.
+        /// </typeparam>
+        /// <param name="match">
+        ///     The <see cref="Predicate{T}"/> delegate that defines the conditions of the element
+        ///     to search for.
+        /// </param>
+        /// <returns></returns>
+        public Index2DCollection FindAllIndices<Index2DCollection>(Predicate<T> match)
+            where Index2DCollection : ICollection<Index2D>, new()
+        {
+            if (match == null)
+            {
+                throw new ArgumentNullException(nameof(match), "Match cannot be null.");
+            }
+            try
+            {
+                return FindAllIndices<Index2DCollection, BoxedPredicate<T>>(
+                    new BoxedPredicate<T>(match));
+            }
+            catch (NotSupportedException)
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
         ///     Searches for an item that matches the conditions defined by the specified
         ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying last
         ///     occurrence searched row by row within the entire <see cref="List2D{T}"/> if found.
