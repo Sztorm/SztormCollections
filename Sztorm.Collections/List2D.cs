@@ -284,14 +284,17 @@ namespace Sztorm.Collections
         /// <returns></returns>
         public IEnumerator<T> GetEnumerator()
         {
-            int rows = Rows;
-            int columns = Columns;
+            int capCols = capacity.Columns;
+            int count = Count;
+            int gapPerRow = capCols - Columns;
 
-            for (int i = 0; i < rows; i++)
+            for (int i = 0, iter = 0; iter < count; i += gapPerRow)
             {
-                for (int j = 0; j < columns; j++)
+                int index2DColumn = i % capCols;
+
+                for (int j = index2DColumn; j < Columns && iter < count; j++, i++, iter++)
                 {
-                    yield return GetItemInternal(i, j);
+                    yield return items[i];
                 }
             }
         }
