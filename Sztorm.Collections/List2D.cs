@@ -44,6 +44,7 @@ namespace Sztorm.Collections
         private T[] items;
         private Bounds2D bounds;
         private Bounds2D capacity;
+        private int version;
 
         /// <summary>
         ///     Returns total count of rows in this <see cref="List2D{T}"/> instance. This
@@ -310,6 +311,7 @@ namespace Sztorm.Collections
             bounds = new Bounds2D();
             capacity = DefaultInitialCapacity;
             items = new T[capacity.Length1 * capacity.Length2];
+            version = 0;
         }
 
         /// <summary>
@@ -340,6 +342,7 @@ namespace Sztorm.Collections
             }
             bounds = new Bounds2D();
             items = new T[initRowsCap * initColsCap];
+            version = 0;
         }
 
         /// <summary>
@@ -352,6 +355,7 @@ namespace Sztorm.Collections
             items = new T[initialCapacity.Length1 * initialCapacity.Length2];
             bounds = new Bounds2D();
             capacity = initialCapacity;
+            version = 0;
         }
 
         /// <summary>
@@ -365,6 +369,7 @@ namespace Sztorm.Collections
             items = new T[array.Count];
             bounds = array.Boundaries;
             capacity = array.Boundaries;
+            version = 0;
 
             array.CopyTo(items, 0);
         }
@@ -523,6 +528,7 @@ namespace Sztorm.Collections
                 }
             }
             bounds = new Bounds2D(new Box<int>(newRows), new Box<int>(newCols));
+            version++;
         }
 
         /// <summary>
@@ -556,6 +562,7 @@ namespace Sztorm.Collections
                 }
             }
             bounds = new Bounds2D(new Box<int>(newRows), new Box<int>(newCols));
+            version++;
         }
 
         /// <summary>
@@ -592,6 +599,7 @@ namespace Sztorm.Collections
             {
                 Array.Clear(items, 0, items.Length);
                 bounds = new Bounds2D();
+                version++;
             }
         }
 
@@ -693,49 +701,6 @@ namespace Sztorm.Collections
         public void CopyTo(Array array, int index)
         {
             throw new NotImplementedException();
-        }
-
-        /// <summary>
-        /// Sets items of specified count of rows at given starting index to default values.
-        /// Arguments are not checked on release build.
-        /// </summary>
-        /// <param name="startIndex">Range: [0, <see cref="capacity"/>.Rows]</param>
-        /// <param name="count">Range: [0, <see cref="capacity"/> - startIndex.Rows)</param>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal void ClearRows(int startIndex, int count)
-        {
-            Debug.Assert(startIndex >= 0);
-            Debug.Assert(startIndex <= capacity.Rows);
-            Debug.Assert(count >= 0);
-            Debug.Assert(count <= (capacity.Rows - startIndex));
-
-            int capCols = capacity.Columns;
-
-            Array.Clear(items, startIndex * capCols, count * capCols);
-        }
-
-        /// <summary>
-        /// Sets items of specified count of columns at given starting index to default values.
-        /// Arguments are not checked on release build.
-        /// </summary>
-        /// <param name="startIndex">Range: [0, <see cref="capacity"/>.Columns]</param>
-        /// <param name="count">Range: [0, <see cref="capacity"/>.Columns - startIndex)</param>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal void ClearColumns(int startIndex, int count)
-        {
-            Debug.Assert(startIndex >= 0);
-            Debug.Assert(startIndex <= capacity.Columns);
-            Debug.Assert(count >= 0);
-            Debug.Assert(count <= (capacity.Columns - startIndex));
-
-            int rows = bounds.Rows;
-            int capCols = capacity.Columns;
-
-            for (int i = 0; i < rows; i++)
-            {
-                Array.Clear(items, RowMajorIndex2DToInt(
-                    new Index2D(i, startIndex), capCols), count);
-            }
         }
 
         /// <summary>
@@ -1708,6 +1673,7 @@ namespace Sztorm.Collections
             {
                 throw;
             }
+            version++;
         }
 
         /// <summary>
@@ -2101,7 +2067,7 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        ///     Inserts specified count of columns into this instance starting at the given index.
+        ///     Inserts specified number of columns into this instance starting at the given index.
         ///     Inserted columns are initialized with default value.
         ///     <para>
         ///         Exceptions:<br/>
@@ -2144,6 +2110,26 @@ namespace Sztorm.Collections
                 InsertColumnsNotAlloc(startIndex, count, newBounds);
             }
             bounds = newBounds;
+            version++;
+        }
+
+        /// <summary>
+        /// Sets items of specified count of rows at given starting index to default values.
+        /// Arguments are not checked on release build.
+        /// </summary>
+        /// <param name="startIndex">Range: [0, <see cref="capacity"/>.Rows]</param>
+        /// <param name="count">Range: [0, <see cref="capacity"/> - startIndex.Rows)</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void ClearRows(int startIndex, int count)
+        {
+            Debug.Assert(startIndex >= 0);
+            Debug.Assert(startIndex <= capacity.Rows);
+            Debug.Assert(count >= 0);
+            Debug.Assert(count <= (capacity.Rows - startIndex));
+
+            int capCols = capacity.Columns;
+
+            Array.Clear(items, startIndex * capCols, count * capCols);
         }
 
         /// <summary>
@@ -2266,6 +2252,7 @@ namespace Sztorm.Collections
                 InsertRowsNotAlloc(startIndex, count, newBounds);
             }
             bounds = newBounds;
+            version++;
         }
 
         /// <summary>
@@ -2694,6 +2681,7 @@ namespace Sztorm.Collections
             ClearRows(newRows, count);
 
             bounds = new Bounds2D(new Box<int>(newRows), new Box<int>(cols));
+            version++;
         }
 
         /// <summary>
@@ -2718,6 +2706,30 @@ namespace Sztorm.Collections
             {
                 throw new ArgumentOutOfRangeException(
                     "Index must be a number in the range of (Rows - 1)");
+            }
+        }
+
+        /// <summary>
+        /// Sets items of specified count of columns at given starting index to default values.
+        /// Arguments are not checked on release build.
+        /// </summary>
+        /// <param name="startIndex">Range: [0, <see cref="capacity"/>.Columns]</param>
+        /// <param name="count">Range: [0, <see cref="capacity"/>.Columns - startIndex)</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void ClearColumns(int startIndex, int count)
+        {
+            Debug.Assert(startIndex >= 0);
+            Debug.Assert(startIndex <= capacity.Columns);
+            Debug.Assert(count >= 0);
+            Debug.Assert(count <= (capacity.Columns - startIndex));
+
+            int rows = bounds.Rows;
+            int capCols = capacity.Columns;
+
+            for (int i = 0; i < rows; i++)
+            {
+                Array.Clear(items, RowMajorIndex2DToInt(
+                    new Index2D(i, startIndex), capCols), count);
             }
         }
 
@@ -2765,6 +2777,7 @@ namespace Sztorm.Collections
             ClearColumns(newCols, count);
 
             bounds = new Bounds2D(new Box<int>(rows), new Box<int>(newCols));
+            version++;
         }
 
         /// <summary>
