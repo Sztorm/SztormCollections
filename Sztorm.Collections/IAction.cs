@@ -22,43 +22,22 @@
  * SOFTWARE.
  */
 
-using System;
-using System.Runtime.CompilerServices;
-
 namespace Sztorm.Collections
 {
     /// <summary>
-    ///     Represents a predicate which uses another predicate to determine criteria.
+    ///     Represents interface which defines a method that has a single parameter and does not
+    ///     return a value.<br/>
+    ///     This interface mimics <see cref="System.Action{T}"/> behavior. If the interface is
+    ///     implemented by a <see langword="struct"/> and is used as constraint in generic method,
+    ///     the implemented method call is direct and the garbage collector's work is avoided.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    internal readonly struct BoxedPredicate<T> : IPredicate<T>
+    public interface IAction<in T>
     {
-        private readonly Predicate<T> predicate;
-
         /// <summary>
-        ///     The predicate which defines specific criteria.
-        /// </summary>
-        public Predicate<T> InnerPredicate
-        {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => predicate;
-        }
-
-        /// <summary>
-        ///     Constructs a predicate that takes another predicate which may be used to determine
-        ///     criteria.
-        /// </summary>
-        /// <param name="predicate">The predicate which may be used to determine criteria.</param>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public BoxedPredicate(Predicate<T> predicate) => this.predicate = predicate;
-
-        /// <summary>
-        ///     Returns a value indicating whether specified object meets criteria defined by
-        ///     <see cref="InnerPredicate"/>.
+        ///     Represents a method that has a single parameter and does not return a value.
         /// </summary>
         /// <param name="obj"></param>
-        /// <returns></returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool Invoke(T obj) => predicate(obj);
+        void Invoke(T obj);
     }
 }

@@ -28,7 +28,7 @@ namespace Sztorm.Collections
     ///     Represents interface which defines a method that converts an object from one type to
     ///     another type.<br/>
     ///     This interface mimics <see cref="System.Converter{TInput, TOutput}"/> behavior. If the
-    ///     interface implemented by a <see langword="struct"/> and is used as constraint in
+    ///     interface is implemented by a <see langword="struct"/> and is used as constraint in
     ///     generic method, the implemented method call is direct and the garbage collector's work
     ///     is avoided.
     /// </summary>

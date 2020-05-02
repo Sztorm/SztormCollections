@@ -28,37 +28,35 @@ using System.Runtime.CompilerServices;
 namespace Sztorm.Collections
 {
     /// <summary>
-    ///     Represents a predicate which uses another predicate to determine criteria.
+    ///     Represents an action which uses another action to define specific operation.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    internal readonly struct BoxedPredicate<T> : IPredicate<T>
+    internal readonly struct BoxedAction<T> : IAction<T>
     {
-        private readonly Predicate<T> predicate;
+        private readonly Action<T> action;
 
         /// <summary>
-        ///     The predicate which defines specific criteria.
+        ///     The action which defines specific operation.
         /// </summary>
-        public Predicate<T> InnerPredicate
+        public Action<T> InnerAction
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => predicate;
+            get => action;
         }
 
         /// <summary>
-        ///     Constructs a predicate that takes another predicate which may be used to determine
-        ///     criteria.
+        ///     Constructs an action that takes another action to define specific operation.
         /// </summary>
-        /// <param name="predicate">The predicate which may be used to determine criteria.</param>
+        /// <param name="Action">The Action defining specific operation.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public BoxedPredicate(Predicate<T> predicate) => this.predicate = predicate;
+        public BoxedAction(Action<T> action) => this.action = action;
 
         /// <summary>
-        ///     Returns a value indicating whether specified object meets criteria defined by
-        ///     <see cref="InnerPredicate"/>.
+        ///     Invokes an action defined by <see cref="InnerAction"/>.
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool Invoke(T obj) => predicate(obj);
+        public void Invoke(T obj) => action(obj);
     }
 }
