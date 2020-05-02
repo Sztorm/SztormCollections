@@ -47,7 +47,7 @@ namespace Sztorm.Collections
         private int version;
 
         /// <summary>
-        ///     Returns total count of rows in this <see cref="List2D{T}"/> instance. This
+        ///     Returns total number of rows in this <see cref="List2D{T}"/> instance. This
         ///     property is equal to <see cref="Length1"/>
         /// </summary>
         public int Rows
@@ -57,7 +57,7 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        ///     Returns total count of columns in this <see cref="List2D{T}"/> instance. This
+        ///     Returns total number of columns in this <see cref="List2D{T}"/> instance. This
         ///     property is equal to <see cref="Length2"/>
         /// </summary>
         public int Columns
@@ -106,7 +106,7 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        ///     Returns total count of elements in all the dimensions.
+        ///     Returns total number of elements in all the dimensions.
         /// </summary>
         public int Count
         {
@@ -478,7 +478,7 @@ namespace Sztorm.Collections
         public void AddColumn() => AddColumns(1);
 
         /// <summary>
-        /// Determines whether current instance capacity can accommodate specified count of rows
+        /// Determines whether current instance capacity can accommodate specified number of rows
         /// and columns.
         /// </summary>
         /// <param name="newRows"></param>
@@ -498,7 +498,7 @@ namespace Sztorm.Collections
             => IsReallocationNeeded(newBounds.Rows, newBounds.Columns);
 
         /// <summary>
-        ///     Adds specified count of columns to the end of the <see cref="List2D{T}"/>. This
+        ///     Adds specified number of columns to the end of the <see cref="List2D{T}"/>. This
         ///     method does the same as <see cref="AddLength2(int)"/>.
         ///     <para>
         ///         Exceptions:<br/>
@@ -532,7 +532,7 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        ///     Adds specified count of rows to the end of the <see cref="List2D{T}"/>. This
+        ///     Adds specified number of rows to the end of the <see cref="List2D{T}"/>. This
         ///     method does the same as <see cref="AddLength1(int)"/>.
         ///     <para>
         ///         Exceptions:<br/>
@@ -566,7 +566,7 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        ///     Adds specified count of rows to the end of the <see cref="List2D{T}"/>. This
+        ///     Adds specified number of rows to the end of the <see cref="List2D{T}"/>. This
         ///     method does the same as <see cref="AddRows(int)"/>.
         ///     <para>
         ///         Exceptions:<br/>
@@ -578,7 +578,7 @@ namespace Sztorm.Collections
         public void AddLength1(int count) => AddRows(count);
 
         /// <summary>
-        ///     Adds specified count of columns to the end of the <see cref="List2D{T}"/>. This
+        ///     Adds specified number of columns to the end of the <see cref="List2D{T}"/>. This
         ///     method does the same as <see cref="AddColumns(int)"/>.
         ///     <para>
         ///         Exceptions:<br/>
@@ -1988,8 +1988,8 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        ///     Inserts specified count of columns into this instance starting at the given index by 
-        ///     copying. Inserted rows are initialized with default value. newBounds should be a
+        ///     Inserts specified number of columns into this instance starting at the given index
+        ///     by copying. Inserted rows are initialized with default value. newBounds should be a
         ///     cached value equal to (<see cref="Rows"/>, <see cref="Columns"/> + count).
         ///     Arguments are not checked on release build.
         /// </summary>
@@ -2018,7 +2018,7 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        ///     Inserts specified count of columns into this instance starting at the given index
+        ///     Inserts specified number of columns into this instance starting at the given index
         ///     by allocating. Inserted columns are initialized with default value. newBounds
         ///     should be a cached value equal to
         ///     (<see cref="Rows"/>, <see cref="Columns"/> + count). Arguments are not checked on
@@ -2114,7 +2114,7 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        /// Sets items of specified count of rows at given starting index to default values.
+        /// Sets items of specified number of rows at given starting index to default values.
         /// Arguments are not checked on release build.
         /// </summary>
         /// <param name="startIndex">Range: [0, <see cref="capacity"/>.Rows]</param>
@@ -2133,7 +2133,7 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        ///     Inserts specified count of rows into this instance starting at the given index by 
+        ///     Inserts specified number of rows into this instance starting at the given index by
         ///     copying. Inserted rows are initialized with default value. newBounds should be a
         ///     cached value equal to (<see cref="Rows"/> + count, <see cref="Columns"/>).
         ///     Arguments are not checked on release build.
@@ -2161,7 +2161,7 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        ///     Inserts specified count of rows into this instance starting at the given index by 
+        ///     Inserts specified number of rows into this instance starting at the given index by 
         ///     allocating. Inserted rows are initialized with default value. newBounds should be a
         ///     cached value equal to (<see cref="Rows"/> + count, <see cref="Columns"/>).
         ///     Arguments are not checked on release build.
@@ -2209,7 +2209,7 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        ///     Inserts specified count of rows into this instance starting at the given index.
+        ///     Inserts specified number of rows into this instance starting at the given index.
         ///     Inserted rows are initialized with default value.
         ///     <para>
         ///         Exceptions:<br/>
@@ -2640,7 +2640,7 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        ///     Removes specified count of rows from this instance starting at the given index.
+        ///     Removes specified number of rows from this instance starting at the given index.
         ///     <para>
         ///         Exceptions:<br/>
         ///         <see cref="ArgumentOutOfRangeException"/>: 
@@ -2710,7 +2710,7 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        /// Sets items of specified count of columns at given starting index to default values.
+        /// Sets items of specified number of columns at given starting index to default values.
         /// Arguments are not checked on release build.
         /// </summary>
         /// <param name="startIndex">Range: [0, <see cref="capacity"/>.Columns]</param>
@@ -2734,12 +2734,14 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        ///     Removes specified count of columns from this instance starting at the given index.
+        ///     Removes specified number of columns from this instance starting at the given index.
         ///     <para>
         ///         Exceptions:<br/>
         ///         <see cref="ArgumentOutOfRangeException"/>: 
-        ///             StartIndex must be a number in the range of (<see cref="Columns"/> - 1);<br/>
-        ///             Count must be a number in the range of (<see cref="Columns"/> - startIndex).
+        ///             StartIndex must be a number in the range of
+        ///             (<see cref="Columns"/> - 1);<br/>
+        ///             Count must be a number in the range of
+        ///             (<see cref="Columns"/> - startIndex).
         ///     </para>
         /// </summary>
         /// <param name="startIndex">
