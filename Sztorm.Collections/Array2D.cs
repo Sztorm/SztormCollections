@@ -2288,7 +2288,7 @@ namespace Sztorm.Collections
         ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying last
         ///     occurrence searched row by row within the entire <see cref="Array2D{T}"/> if found.
         ///     Otherwise returns <see cref="ItemRequestResult{T}.Failed"/><br/>
-        ///     Use <see cref="Find{TPredicate}(TPredicate)"/> to avoid virtual call.
+        ///     Use <see cref="FindLast{TPredicate}(TPredicate)"/> to avoid virtual call.
         ///     <para>
         ///         Exceptions:<br/>
         ///         <see cref="ArgumentNullException"/>: <paramref name="match"/> cannot be
@@ -2441,8 +2441,8 @@ namespace Sztorm.Collections
         /// <summary>
         ///     Returns <see cref="ICollection{T}"/> containing all the indices of which items
         ///     match the conditions defined by the specified predicate.<br/>
-        ///     Use <see cref="FindAll{TCollection, TPredicate}(TPredicate)"/> to avoid virtual
-        ///     call.
+        ///     Use <see cref="FindAllIndices{TCollection, TPredicate}(TPredicate)"/> to avoid
+        ///     virtual call.
         ///     <para>
         ///         Exceptions:<br/>
         ///         <see cref="ArgumentNullException"/>: <paramref name="match"/> cannot be
