@@ -280,27 +280,18 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        ///     Returns an enumerator for all elements of the <see cref="List2D{T}"/>.
+        ///     Returns an enumerator for all elements of the <see cref="List2D{T}"/>, which
+        ///     enumerates row by row from the (0, 0) position.
         /// </summary>
         /// <returns></returns>
-        public IEnumerator<T> GetEnumerator()
-        {
-            int capCols = capacity.Columns;
-            int count = Count;
-            int gapPerRow = capCols - Columns;
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public Enumerator GetEnumerator() => new Enumerator(this);
 
-            for (int i = 0, iter = 0; iter < count; i += gapPerRow)
-            {
-                int index2DColumn = i % capCols;
-
-                for (int j = index2DColumn; j < Columns && iter < count; j++, i++, iter++)
-                {
-                    yield return items[i];
-                }
-            }
-        }
-
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        IEnumerator<T> IEnumerable<T>.GetEnumerator() => GetEnumerator();
 
         /// <summary>
         ///     Constructs a new instance of <see cref="List2D{T}"/> class that is empty and has
