@@ -51,27 +51,27 @@ namespace Sztorm.Collections.Tests
 
             private static IEnumerable<TestCaseData> MoveNextTestCases()
             {
-                var list3x2Int = List2D<int>.FromSystem2DArray(
+                var list2x3Int = List2D<int>.FromSystem2DArray(
                     new int[,] { { 2, 3, 5 },
                                  { 4, 9, 1 }});
-                list3x2Int.IncreaseCapacity(list3x2Int.Boundaries);
+                list2x3Int.IncreaseCapacity(list2x3Int.Boundaries);
 
-                var list2x3String = List2D<string>.FromSystem2DArray(
+                var list3x2String = List2D<string>.FromSystem2DArray(
                    new string[,] { { "2", "3" },
                                    { "5", "4" },
                                    { "9", "1" }});
-                list2x3String.IncreaseCapacity(list2x3String.Boundaries);
+                list3x2String.IncreaseCapacity(list3x2String.Boundaries);
 
-                yield return new TestCaseData(list3x2Int, new int[] { 2, 3, 5, 4, 9, 1 })
+                yield return new TestCaseData(list2x3Int, new int[] { 2, 3, 5, 4, 9, 1 })
                     .Returns(true);
                 yield return new TestCaseData(
-                    list2x3String, new string[] { "2", "3", "5", "4", "9", "1" })
+                    list3x2String, new string[] { "2", "3", "5", "4", "9", "1" })
                     .Returns(true);
                 yield return new TestCaseData(new List2D<byte>(), new byte[0])
                     .Returns(true);
-                yield return new TestCaseData(list3x2Int, new int[] { 2, 4, 3, 9, 5, 1 })
+                yield return new TestCaseData(list2x3Int, new int[] { 2, 4, 3, 9, 5, 1 })
                     .Returns(false);
-                yield return new TestCaseData(list3x2Int, new int[] { 2, 3, 5 })
+                yield return new TestCaseData(list2x3Int, new int[] { 2, 3, 5 })
                     .Returns(false);
             }
         }     

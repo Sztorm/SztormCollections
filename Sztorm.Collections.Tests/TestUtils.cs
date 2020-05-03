@@ -115,5 +115,24 @@ namespace Sztorm.Collections.Tests
         {
             public bool Invoke(T obj) => false;
         }
+
+        public struct SumIntAction : IAction<int>
+        {
+            public int Sum { get; private set; }
+
+            public void Invoke(int number) => Sum += number;
+        }
+
+        public struct ConcatStringsAction : IAction<string>
+        {
+            private StringBuilder sb;
+
+            public ConcatStringsAction(int approximateLength)
+                => sb = new StringBuilder(approximateLength);
+
+            public string Result => sb.ToString();
+
+            public void Invoke(string text) => sb.Append(text);
+        }
     }
 }

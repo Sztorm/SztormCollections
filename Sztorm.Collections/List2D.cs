@@ -1593,6 +1593,87 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
+        ///     Performs the specified action on each element of the <see cref="List2D{T}"/>.
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="InvalidOperationException"/>: List cannot be modified
+        ///         during enumeration.
+        ///     </para>
+        /// </summary>
+        /// <typeparam name="TAction">
+        ///     <typeparamref name="TAction"/> is <see cref="IAction{T}"/> and
+        ///     <see langword="struct"/>
+        /// </typeparam>
+        /// <param name="action">
+        ///     A <see langword="struct"/> implementing <see cref="IAction{T}"/> that defines
+        ///     an action to perform on each element.
+        /// </param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void ForEach<TAction>(TAction action) where TAction : IAction<T>
+            => ForEach(ref action);
+
+        /// <summary>
+        ///     Performs the specified action on each element of the <see cref="List2D{T}"/>.
+        ///     <paramref name="action"/> modifications are reflected to the caller as it is passed
+        ///     by <see langword="ref"/>.
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="InvalidOperationException"/>: List cannot be modified
+        ///         during enumeration.
+        ///     </para>
+        /// </summary>
+        /// <typeparam name="TAction">
+        ///     <typeparamref name="TAction"/> is <see cref="IAction{T}"/> and
+        ///     <see langword="struct"/>
+        /// </typeparam>
+        /// <param name="action">
+        ///     A <see langword="struct"/> implementing <see cref="IAction{T}"/> that defines
+        ///     an action to perform on each element.
+        /// </param>
+        public void ForEach<TAction>(ref TAction action) where TAction : IAction<T>
+        {
+            int cols = Columns;
+            int gapPerRow = capacity.Columns - cols;
+            int indexAfterEnd = Rows * (cols + gapPerRow) - gapPerRow;
+            int version = this.version;
+
+            for (int i = 0; i < indexAfterEnd; i += gapPerRow)
+            {
+                for (int j = 0; j < cols; j++, i++)
+                {
+                    action.Invoke(items[i]);
+
+                    if (this.version != version)
+                    {
+                        throw new InvalidOperationException(
+                            "List cannot be modified during enumeration.");
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        ///     Performs the specified action on each element of the <see cref="List2D{T}"/>.<br/>
+        ///     Use <see cref="ForEach{TAction}(TAction)"/> to avoid virtual call.
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentNullException"/>: <paramref name="action"/> cannot be
+        ///         <see langword="null"/>.<br/>
+        ///         <see cref="InvalidOperationException"/>: List cannot be modified
+        ///         during enumeration.
+        ///     </para>
+        /// </summary>
+        /// <param name="action"></param>
+        public void ForEach(Action<T> action)
+        {
+            if (action == null)
+            {
+                throw new ArgumentNullException("action cannot be null.");
+            }
+            ForEach(new BoxedAction<T>(action));
+        }
+
+        /// <summary>
         ///     Constructs a new <see cref="List2D{T}"/> object that contains elements copied from
         ///     specified <typeparamref name = "T"/>[,] instance and has capacity equal to number
         ///     of elements stored in given array.
@@ -2386,7 +2467,8 @@ namespace Sztorm.Collections
         /// <param name="sectorSize">The rectangular sector size to be searched.</param>
         /// <returns></returns>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ItemRequestResult<Index2D> LastIndex2DOf(T item, Index2D startIndex, Bounds2D sectorSize)
+        public ItemRequestResult<Index2D> LastIndex2DOf(
+            T item, Index2D startIndex, Bounds2D sectorSize)
         {
             try
             {
