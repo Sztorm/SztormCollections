@@ -116,6 +116,11 @@ namespace Sztorm.Collections.Tests
             public bool Invoke(T obj) => false;
         }
 
+        public struct IntToBoolConverter : IConverter<int, bool>
+        {
+            public bool Invoke(int input) => input != 0;
+        }
+
         public struct SumIntAction : IAction<int>
         {
             public int Sum { get; private set; }

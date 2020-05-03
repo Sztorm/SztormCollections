@@ -661,6 +661,73 @@ namespace Sztorm.Collections
             }
         }
 
+        /// <summary>
+        ///     Returns a new <see cref="List2D{TOutput}"/> instance with minimal required capacity
+        ///     to contain items from this instance converted to another type.
+        /// </summary>
+        /// <typeparam name="TOutput">
+        ///     Target type of resulting <see cref="List2D{T}"/>.
+        /// </typeparam>
+        /// <typeparam name="TConverter">
+        ///     <typeparamref name = "TConverter"/> is <see cref="IConverter{T, TOutput}"/> and
+        ///     <see langword="struct"/>
+        /// </typeparam>
+        /// <param name="converter">
+        ///     An <see langword="struct"/> implementing <see cref="IConverter{T, TOutput}"/> that
+        ///     converts each element from one type to another type.
+        /// </param>
+        /// <returns></returns>
+        public List2D<TOutput> ConvertAll<TOutput, TConverter>(TConverter converter)
+            where TConverter : struct, IConverter<T, TOutput>
+        {
+            Bounds2D bounds = this.bounds;
+            var result = new List2D<TOutput>(bounds);
+            result.AddRows(bounds.Rows);
+            result.AddColumns(bounds.Columns);
+
+            int gapPerRow = capacity.Columns - bounds.Columns;
+            int indexAfterEnd = bounds.Rows * (bounds.Columns + gapPerRow) - gapPerRow;
+            int resultIndex = 0;
+
+            for (int i = 0; i < indexAfterEnd; i += gapPerRow)
+            {
+                for (int j = 0; j < bounds.Columns; j++, i++, resultIndex++)
+                {
+                    result.items[resultIndex] = converter.Invoke(items[i]);
+                }
+            }
+            return result;
+        }
+
+        /// <summary>
+        ///     Returns a new <see cref="List2D{TOutput}"/> instance with minimal required capacity
+        ///     to contain items from this instance converted to another type.<br/>
+        ///     Use <see cref="ConvertAll{TOutput, TConverter}(TConverter)"/> to avoid virtual
+        ///     call.
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentNullException"/>: <paramref name="converter"/> cannot be
+        ///         <see langword="null"/>.<br/>
+        ///     </para>
+        /// </summary>
+        /// <typeparam name="TOutput">
+        ///     Target type of resulting <see cref="List2D{T}"/>.
+        /// </typeparam>
+        /// <param name="converter">
+        ///    A <see cref="Converter{TInput, TOutput}"/> delegate that converts each element from
+        ///    one type to another type.
+        /// </param>
+        /// <returns></returns>
+        public List2D<TOutput> ConvertAll<TOutput>(Converter<T, TOutput> converter)
+        {
+            if (converter == null)
+            {
+                throw new ArgumentNullException(nameof(converter), "converter cannot be null.");
+            }
+            return ConvertAll<TOutput, BoxedConverter<T, TOutput>>(
+                new BoxedConverter<T, TOutput>(converter));
+        }
+
         internal void CopyToInternal(
             Index2D sourceIndex, Array2D<T> destination, Bounds2D sectorSize, Index2D destIndex)
         {
