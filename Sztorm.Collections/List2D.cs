@@ -756,9 +756,85 @@ namespace Sztorm.Collections
             }
         }
 
-        public void CopyTo(Array array, int index)
+        /// <summary>
+        ///     Copies all the elements of the current two-dimensional list to the specified
+        ///     one-dimensional array starting at the specified destination array index.
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentNullException"/>: <paramref name="destination"/> cannot be
+        ///         <see langword="null"/>.<br/>
+        ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="destIndex"/> must be
+        ///         within <paramref name="destination"/> array bounds.<br/>
+        ///         <see cref="ArgumentException"/>: <paramref name="destination"/> must be able to
+        ///         accommodate all source array elements along with specified
+        ///         <paramref name="destIndex"/>;<br/>
+        ///         array is multidimensional.<br/>   
+        ///         <see cref="ArrayTypeMismatchException"/>: The type of the source array cannot
+        ///         be cast automatically to the type of the destination array.<br/>
+        ///         <see cref="RankException"/>: <paramref name="destination"/> must be
+        ///         one-dimensional.<br/>
+        ///         <see cref="InvalidCastException"/>: All elements of the source array must be
+        ///         able to be casted to the type of <paramref name="destination"/> array.
+        ///     </para>
+        /// </summary>
+        /// <param name="destination">
+        ///     The one-dimensional array to which elements are copied.
+        /// </param>
+        /// <param name="destIndex">
+        ///     Represents the index from which items begin to be copied.
+        /// </param>
+        public void CopyTo(Array destination, int destIndex)
         {
-            throw new NotImplementedException();
+            if (destination == null)
+            {
+                throw new ArgumentNullException(
+                    nameof(destination), "destination cannot be null.");
+            }
+            if (destIndex < 0 || destIndex >= destination.Length)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(destIndex), "destIndex must be within destination array bounds.");
+            }
+            if (Count + destIndex > destination.Length)
+            {
+                throw new ArgumentException(
+                    "destination must be able to accommodate all source array elements along " +
+                    "with specified destIndex.",
+                    nameof(destination));
+            }
+            try
+            {
+                int cols = Columns;
+                int itersPerRow = capacity.Columns;
+                int indexAfterEnd = Rows * (cols + itersPerRow) - itersPerRow;
+
+                for (int i = 0, j = destIndex; i < indexAfterEnd; i += itersPerRow, j += cols)
+                {
+                    Array.Copy(items, i, destination, j, cols);
+                }
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                throw;
+            }
+            catch (ArgumentException)
+            {
+                throw;
+            }
+            catch (ArrayTypeMismatchException)
+            {
+                throw;
+            }
+            catch (RankException)
+            {
+                throw new RankException("destination must be one-dimensional");
+            }
+            catch (InvalidCastException)
+            {
+                throw new InvalidCastException(
+                    "All elements of the source array must be able " +
+                    "to be casted to the type of destination array.");
+            }
         }
 
         /// <summary>
