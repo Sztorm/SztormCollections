@@ -729,15 +729,9 @@ namespace Sztorm.Collections
         }
 
         internal void CopyToInternal(
-            Index2D sourceIndex, Array2D<T> destination, Bounds2D sectorSize, Index2D destIndex)
+            Index2D sourceIndex, Array2D<T> dest, Bounds2D sectorSize, Index2D destIndex)
         {
-            Debug.Assert(destination != null);
-            Debug.Assert(IsValidIndex(sourceIndex));
-            Debug.Assert(destination.IsValidIndex(destIndex));
-            Debug.Assert(sourceIndex.Row + sectorSize.Rows <= this.Rows);
-            Debug.Assert(sourceIndex.Column + sectorSize.Columns <= this.Columns);
-            Debug.Assert(destIndex.Row + sectorSize.Rows <= destination.Rows);
-            Debug.Assert(destIndex.Column + sectorSize.Columns <= destination.Columns);
+            Debug.Assert(dest != null);
 
             int dr = destIndex.Row;
             int sr = sourceIndex.Row;
@@ -751,14 +745,211 @@ namespace Sztorm.Collections
 
                 for (; dc < totalCols; dc++, sc++)
                 {
-                    destination[dr, dc] = this[sr, sc];
+                    dest[dr, dc] = this[sr, sc];
                 }
             }
+        }
+
+        /// <summary>
+        ///     Copies specified sector of the current instance to the particular
+        ///     <see cref="Array2D{T}"/> at the specified destination index.
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentNullException"/>: <paramref name="destination"/> cannot be
+        ///         null.<br/>
+        ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="sourceIndex"/> must
+        ///         be within source list bounds;<br/>
+        ///         <paramref name="destIndex"/> must be within destination array bounds;<br/>
+        ///         <paramref name="sectorSize"/> must be within source and destination array
+        ///         bounds along with specified indices.
+        ///     </para>
+        /// </summary>
+        /// <param name="sourceIndex">
+        ///     The zero-based index from which copying items of source list begin. 
+        /// </param>
+        /// <param name="destination">The array to which elements are copied.</param>
+        /// <param name="sectorSize">The size of the sector of items to be copied.</param>
+        /// <param name="destIndex">
+        ///     The zero-based index of destination array from which items begin to be copied.
+        /// </param>
+        public void CopyTo(
+            Index2D sourceIndex, Array2D<T> destination, Bounds2D sectorSize, Index2D destIndex)
+        {
+            if (destination == null)
+            {
+                throw new ArgumentNullException(
+                    nameof(destination), "destination cannot be null.");
+            }
+            if (!IsValidIndex(sourceIndex))
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(sourceIndex), "sourceIndex must be within source list bounds.");
+            }
+            if (!destination.IsValidIndex(destIndex))
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(destIndex), "destIndex must be within destination array bounds.");
+            }
+            if (sourceIndex.Row + sectorSize.Rows > this.Rows ||
+                sourceIndex.Column + sectorSize.Columns > this.Columns ||
+                destIndex.Row + sectorSize.Rows > destination.Rows ||
+                destIndex.Column + sectorSize.Columns > destination.Columns)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(sectorSize),
+                    "sectorSize must be within source and destination array bounds along with " +
+                    "specified indices.");
+            }
+            CopyToInternal(sourceIndex, destination, sectorSize, destIndex);
+        }
+
+        /// <summary>
+        ///     Copies specified sector from the beginning index of the current instance to the
+        ///     particular <see cref="Array2D{T}"/> at the specified destination index.
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentNullException"/>: <paramref name="destination"/> cannot be
+        ///         null.<br/>
+        ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="destIndex"/> must be
+        ///         within destination array bounds;<br/>
+        ///         <paramref name="sectorSize"/> must be within source and destination array
+        ///         bounds along with specified <paramref name="destIndex"/>.
+        ///     </para>
+        /// </summary>
+        /// <param name="destination">The array to which elements are copied.</param>
+        /// <param name="sectorSize">The size of the sector of items to be copied.</param>
+        /// <param name="destIndex">
+        ///     The zero-based index of destination array from which items begin to be copied.
+        /// </param>
+        public void CopyTo(Array2D<T> destination, Bounds2D sectorSize, Index2D destIndex)
+        {
+            if (destination == null)
+            {
+                throw new ArgumentNullException(
+                    nameof(destination), "destination cannot be null.");
+            }
+            if (!destination.IsValidIndex(destIndex))
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(destIndex), "destIndex must be within destination array bounds.");
+            }
+            if (sectorSize.Rows > this.Rows ||
+                sectorSize.Columns > this.Columns ||
+                destIndex.Row + sectorSize.Rows > destination.Rows ||
+                destIndex.Column + sectorSize.Columns > destination.Columns)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(sectorSize),
+                    "sectorSize must be within source and destination array bounds along with " +
+                    "specified destIndex.");
+            }
+            CopyToInternal(new Index2D(), destination, sectorSize, destIndex);
+        }
+
+        /// <summary>
+        ///     Copies specified sector from the beginning index of the current instance to the
+        ///     particular <see cref="Array2D{T}"/> at the starting index.
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentNullException"/>: <paramref name="destination"/> cannot be
+        ///         null.<br/>
+        ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="sectorSize"/> must
+        ///         be within source and destination array bounds.
+        ///     </para>
+        /// </summary>
+        /// <param name="destination">The array to which elements are copied.</param>
+        /// <param name="sectorSize">The size of the sector of items to be copied.</param>
+        public void CopyTo(Array2D<T> destination, Bounds2D sectorSize)
+        {
+            if (destination == null)
+            {
+                throw new ArgumentNullException(
+                        nameof(destination), "destination cannot be null.");
+            }
+            if (sectorSize.Rows > this.Rows || sectorSize.Columns > this.Columns ||
+                sectorSize.Rows > destination.Rows || sectorSize.Columns > destination.Columns)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(sectorSize),
+                    "sectorSize must be within source and destination array bounds.");
+            }
+            CopyToInternal(new Index2D(), destination, sectorSize, new Index2D());
+        }
+
+        /// <summary>
+        ///     Copies all elements of the current instance from the beginning index to the
+        ///     particular <see cref="Array2D{T}"/> at the specified destination index.
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentNullException"/>: <paramref name="destination"/> cannot be
+        ///         null.<br/>
+        ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="destIndex"/> must be
+        ///         within destination array bounds.<br/>
+        ///         <see cref="ArgumentException"/>: <paramref name="destination"/> must be able to
+        ///         accommodate all source list elements along with specified
+        ///         <paramref name="destIndex"/>.
+        ///     </para>
+        /// </summary>
+        /// <param name="destination">The array to which elements are copied.</param>
+        /// <param name="destIndex">
+        ///     The zero-based index of destination array from which items begin to be copied.
+        /// </param>
+        public void CopyTo(Array2D<T> destination, Index2D destIndex)
+        {
+            if (destination == null)
+            {
+                throw new ArgumentNullException(
+                        nameof(destination), "destination cannot be null.");
+            }
+            if (!destination.IsValidIndex(destIndex))
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(destIndex), "destIndex must be within destination array bounds.");
+            }
+            if (this.Rows + destIndex.Row > destination.Rows ||
+                this.Columns + destIndex.Column > destination.Columns)
+            {
+                throw new ArgumentException(
+                    "destination must be able to accommodate all source list elements along " +
+                    "with specified destIndex.",
+                    nameof(destination));
+            }
+            CopyToInternal(new Index2D(), destination, this.bounds, destIndex);
+        }
+
+        /// <summary>
+        ///     Copies all elements of the current instance beginning index to the beginning to the
+        ///     particular <see cref="Array2D{T}"/> at the starting index.
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentNullException"/>: <paramref name="destination"/> cannot be
+        ///         null.<br/>
+        ///         <see cref="ArgumentException"/>: <paramref name="destination"/> must be able to
+        ///         accommodate all source list elements.
+        ///     </para>
+        /// </summary>
+        /// <param name="destination">The array to which elements are copied.</param>
+        public void CopyTo(Array2D<T> destination)
+        {
+            if (destination == null)
+            {
+                throw new ArgumentNullException(
+                        nameof(destination), "destination cannot be null.");
+            }
+            if (this.Rows > destination.Rows || this.Columns > destination.Columns)
+            {
+                throw new ArgumentException(
+                    "destination must be able to accommodate all source list elements.",
+                    nameof(destination));
+            }
+            CopyToInternal(new Index2D(), destination, destination.Boundaries, new Index2D());
         }
 
         internal void CopyToInternal(
             Index2D srcIndex, T[,] dest, Bounds2D sectorSize, Index2D destIndex)
         {
+            Debug.Assert(dest != null);
+
             int dr = destIndex.Row;
             int sr = srcIndex.Row;
             int totalRows = destIndex.Row + sectorSize.Rows;
