@@ -76,6 +76,18 @@ namespace Sztorm.Collections.Tests
             }
         }
 
+        public static List2D<T> CreateList2DWithBounds<T>(int rows, int columns)
+        {
+            var result = new List2D<T>(rows, columns);
+            result.AddRows(rows);
+            result.AddColumns(columns);
+
+            return result;
+        }
+
+        public static List2D<T> CreateList2DWithBounds<T>(Bounds2D bounds)
+            => CreateList2DWithBounds<T>(bounds.Rows, bounds.Columns);
+
         public static int[,] IncrementedSystemInt2DArray(int rows, int columns)
         {
             var result = new int[rows, columns];

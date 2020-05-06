@@ -3285,30 +3285,31 @@ namespace Sztorm.Collections
         /// <summary>
         ///     Removes specified number of rows from this instance starting at the given index.
         ///     <para>
-        ///         Exceptions:<br/>
-        ///         <see cref="ArgumentOutOfRangeException"/>: 
-        ///             StartIndex must be a number in the range of (<see cref="Rows"/> - 1);<br/>
-        ///             Count must be a number in the range of (<see cref="Rows"/> - startIndex).
+        ///         Exceptions:<br/> 
+        ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="startIndex"/> must
+        ///         be a number in the range of (<see cref="Rows"/> - 1);<br/>
+        ///         <paramref name="count"/> together with <paramref name="startIndex"/> must
+        ///         not exceed <see cref="Rows"/>
         ///     </para>
         /// </summary>
-        /// <param name="startIndex">
-        ///     Index from which removing starts. Indexing is zero-based.
-        /// </param>
+        /// <param name="startIndex">The zero-based index from which removing starts.</param>
         /// <param name="count">Number of rows to remove.</param>
         public void RemoveRows(int startIndex, int count)
         {
             bool isInvalidRowIndex = unchecked((uint)startIndex >= (uint)Rows);
-            bool isInvalidCount = unchecked((uint)count > (uint)(Rows - startIndex));
+            bool isInvalidCount = unchecked((uint)(count + startIndex) > (uint)Rows);
 
             if (isInvalidRowIndex)
             {
                 throw new ArgumentOutOfRangeException(
-                    nameof(startIndex), "StartIndex must be a number in the range of (Rows - 1).");
+                    nameof(startIndex),
+                    "startIndex must be a number in the range of (List2D<T>.Rows - 1)");
             }
             if (isInvalidCount)
             {
                 throw new ArgumentOutOfRangeException(
-                    nameof(count), "Count must be a number in the range of (Rows - startIndex).");
+                    nameof(count),
+                    "count together with startIndex must not exceed List2D<T>.Rows");
             }
             int rows = bounds.Rows;
             int cols = bounds.Columns;
@@ -3331,13 +3332,11 @@ namespace Sztorm.Collections
         ///     Removes specified row from this instance.
         ///     <para>
         ///         Exceptions:<br/>
-        ///         <see cref="ArgumentOutOfRangeException"/>:
-        ///         Index must be a number in the range of (<see cref="Rows"/> - 1).
+        ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="index"/> must be a
+        ///         number in the range of (<see cref="Rows"/> - 1)
         ///     </para>
         /// </summary>
-        /// <param name="index">
-        ///     Index indicating which row to remove. Indexing is zero-based.
-        /// </param>
+        /// <param name="index">The zero-based index indicating which row to remove.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void RemoveRow(int index)
         {
@@ -3348,7 +3347,7 @@ namespace Sztorm.Collections
             catch (ArgumentOutOfRangeException)
             {
                 throw new ArgumentOutOfRangeException(
-                    "Index must be a number in the range of (Rows - 1)");
+                    "Index must be a number in the range of (List2D<T>.Rows - 1)");
             }
         }
 
@@ -3380,33 +3379,30 @@ namespace Sztorm.Collections
         ///     Removes specified number of columns from this instance starting at the given index.
         ///     <para>
         ///         Exceptions:<br/>
-        ///         <see cref="ArgumentOutOfRangeException"/>: 
-        ///             StartIndex must be a number in the range of
-        ///             (<see cref="Columns"/> - 1);<br/>
-        ///             Count must be a number in the range of
-        ///             (<see cref="Columns"/> - startIndex).
+        ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="startIndex"/> must
+        ///         be a number in the range of (<see cref="Columns"/> - 1);<br/>
+        ///         <paramref name="count"/> together with <paramref name="startIndex"/> must
+        ///         not exceed <see cref="Columns"/>
         ///     </para>
         /// </summary>
-        /// <param name="startIndex">
-        ///     Index from which removing starts. Indexing is zero-based.
-        /// </param>
+        /// <param name="startIndex">The zero-based index from which removing starts.</param>
         /// <param name="count">Number of columns to remove.</param>
         public void RemoveColumns(int startIndex, int count)
         {
             bool isInvalidColumnIndex = unchecked((uint)startIndex >= (uint)Columns);
-            bool isInvalidCount = unchecked((uint)count > (uint)(Columns - startIndex));
+            bool isInvalidCount = unchecked((uint)(count + startIndex) > (uint)Columns);
 
             if (isInvalidColumnIndex)
             {
                 throw new ArgumentOutOfRangeException(
                     nameof(startIndex),
-                    "StartIndex must be a number in the range of (Columns - 1).");
+                    "StartIndex must be a number in the range of (Columns - 1)");
             }
             if (isInvalidCount)
             {
                 throw new ArgumentOutOfRangeException(
                     nameof(count),
-                    "Count must be a number in the range of (Columns - startIndex).");
+                    "count together with startIndex must not exceed List2D<T>.Rows");
             }
             int rows = bounds.Rows;
             int cols = bounds.Columns;
@@ -3429,13 +3425,11 @@ namespace Sztorm.Collections
         ///     Removes specified column from this instance.
         ///     <para>
         ///         Exceptions:<br/>
-        ///         <see cref="ArgumentOutOfRangeException"/>:
-        ///         Index must be a number in the range of (<see cref="Columns"/> - 1).
+        ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="index"/> must be a
+        ///         number in the range of (<see cref="Columns"/> - 1)
         ///     </para>
         /// </summary>
-        /// <param name="index">
-        ///     Index indicating which column to remove. Indexing is zero-based.
-        /// </param>
+        /// <param name="index">The zero-based index indicating which column to remove.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void RemoveColumn(int index)
         {
@@ -3446,7 +3440,7 @@ namespace Sztorm.Collections
             catch (ArgumentOutOfRangeException)
             {
                 throw new ArgumentOutOfRangeException(
-                   "Index must be a number in the range of (Columns - 1)");
+                   "Index must be a number in the range of (List2D<T>.Columns - 1)");
             }
         }
 
