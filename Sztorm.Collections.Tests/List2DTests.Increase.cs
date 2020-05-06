@@ -58,6 +58,48 @@ namespace Sztorm.Collections.Tests
                 }
             }
 
+            public static class Capacity
+            {
+                [TestCaseSource(typeof(Increase), nameof(InvalidSizeTestCases))]
+                public static void ThrowsExceptionIfSizeIsInvalid<T>(
+                    List2D<T> list, int rows, int columns)
+                    => Assert.Throws<ArgumentOutOfRangeException>(
+                        () => list.IncreaseCapacity(rows, columns));
+
+                [TestCaseSource(typeof(Bounds), nameof(Bounds2DTestCases))]
+                public static void Test<T>(List2D<T> list, Bounds2D size, Bounds2D expected)
+                {
+                    list.IncreaseCapacity(size);
+                    Assert.AreEqual(expected, list.Capacity,
+                        $"Expected: {expected.ToValueTuple()}\n" +
+                        $"But was:  {list.Capacity.ToValueTuple()}");
+                }
+
+                [TestCaseSource(typeof(Bounds), nameof(IntIntTestCases))]
+                public static void Test<T>(
+                    List2D<T> list, int rows, int columns, Bounds2D expected)
+                {
+                    list.IncreaseCapacity(rows, columns);
+                    Assert.AreEqual(expected, list.Capacity,
+                        $"Expected: {expected.ToValueTuple()}\n" +
+                        $"But was:  {list.Capacity.ToValueTuple()}");
+                }
+
+                private static IEnumerable<TestCaseData> Bounds2DTestCases()
+                {
+                    yield return new TestCaseData(
+                        new List2D<int>(0, 0), new Bounds2D(2, 3), new Bounds2D(2, 3));
+                    yield return new TestCaseData(
+                        new List2D<int>(1, 6), new Bounds2D(4, 2), new Bounds2D(5, 8));
+                }
+
+                private static IEnumerable<TestCaseData> IntIntTestCases()
+                {
+                    yield return new TestCaseData(new List2D<int>(0, 0), 2, 3, new Bounds2D(2, 3));
+                    yield return new TestCaseData(new List2D<int>(1, 6), 4, 2, new Bounds2D(5, 8));
+                }
+            }
+
             private static IEnumerable<TestCaseData> InvalidSizeTestCases()
             {
                 yield return new TestCaseData(new List2D<byte>(0, 0), -1, 0);

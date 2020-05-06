@@ -2316,6 +2316,38 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
+        ///     Increases current instance capacity with specified number of
+        ///     <paramref name="rows"/> and <paramref name="columns"/>.
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentOutOfRangeException"/>: All the arguments must be
+        ///         greater or equal to zero.<br/>
+        ///         <see cref="OutOfMemoryException"/>: Insufficient memory to continue the
+        ///         execution of the program.
+        ///     </para>
+        /// </summary>
+        /// <param name="rows">The number of capacity rows to increase.</param>
+        /// <param name="columns">The number of capacity columns to increase.</param>
+        public void IncreaseCapacity(int rows, int columns)
+        {
+            Bounds2D size;
+
+            try
+            {
+                size = new Bounds2D(rows, columns);
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                throw;
+            }
+            catch (OutOfMemoryException)
+            {
+                throw;
+            }
+            IncreaseCapacity(size);
+        }
+
+        /// <summary>
         ///     Increases current instance boundaries with specified size.
         ///     <para>
         ///         Exceptions:<br/>
@@ -2366,6 +2398,10 @@ namespace Sztorm.Collections
                 size = new Bounds2D(rows, columns);
             }
             catch (ArgumentOutOfRangeException)
+            {
+                throw;
+            }
+            catch (OutOfMemoryException)
             {
                 throw;
             }

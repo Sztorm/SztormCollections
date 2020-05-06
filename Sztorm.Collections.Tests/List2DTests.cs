@@ -120,16 +120,6 @@ namespace Sztorm.Collections.Tests
             Assert.Throws<IndexOutOfRangeException>(testMethod);
         }
 
-        [TestCaseSource(nameof(IncreaseCapacityTestCases))]
-        public static void TestIncreaseCapacity(
-            Bounds2D initialCapacity, Bounds2D quantity, Bounds2D expected)
-        {
-            var list = new List2D<int>(initialCapacity);
-            list.IncreaseCapacity(quantity);
-
-            Assert.AreEqual(expected, list.Capacity);
-        }
-
         [TestCaseSource(nameof(AddRowsTestCases))]
         public static void TestAddRows(List2D<int> list, int count, List2D<int> expected)
         {
@@ -229,18 +219,6 @@ namespace Sztorm.Collections.Tests
                                                                             { 4, 9, 1, 5 },
                                                                             { 8, 2, 3, 0 } })),
                                                                new Index2D(0, 4));
-        }
-
-        private static IEnumerable<TestCaseData> IncreaseCapacityTestCases()
-        {
-            yield return new TestCaseData(
-                new Bounds2D(0, 0),
-                new Bounds2D(2, 3),
-                new Bounds2D(2, 3));
-            yield return new TestCaseData(
-                new Bounds2D(1, 6),
-                new Bounds2D(4, 2),
-                new Bounds2D(5, 8));
         }
 
         private static IEnumerable<TestCaseData> AddRowsTestCases()
