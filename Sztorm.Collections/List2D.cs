@@ -2709,12 +2709,12 @@ namespace Sztorm.Collections
 
         /// <summary>
         ///     Inserts specified number of columns into this instance starting at the given index.
-        ///     Inserted columns are initialized with default value.
+        ///     Inserted columns are initialized with <see langword="default"/> value.
         ///     <para>
         ///         Exceptions:<br/>
-        ///         <see cref="ArgumentOutOfRangeException"/>: 
-        ///             StartIndex must be a number in the range of <see cref="Columns"/>;<br/>
-        ///             Count must be greater or equal to zero.
+        ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="startIndex"/> must
+        ///         be a number in the range of <see cref="Columns"/>;<br/>
+        ///         <paramref name="count"/> must be greater than zero.
         ///     </para>
         /// </summary>
         /// <param name="startIndex">The zero-based index at which inserting starts.</param>
@@ -2726,12 +2726,14 @@ namespace Sztorm.Collections
             if (isInvalidColumnIndex)
             {
                 throw new ArgumentOutOfRangeException(
-                    nameof(startIndex), "StartIndex must be a number in the range of Columns.");
+                    nameof(startIndex),
+                    "StartIndex must be a number in the range of List2D<T>.Columns");
             }
             if (count < 0)
             {
                 throw new ArgumentOutOfRangeException(
-                    nameof(count), "Count must be greater or equal to zero.");
+                    nameof(count),
+                    "count must be greater than zero.");
             }
             Bounds2D newBounds = new Bounds2D(new Box<int>(Rows), new Box<int>(Columns + count));
 
@@ -2752,6 +2754,31 @@ namespace Sztorm.Collections
             }
             bounds = newBounds;
             version++;
+        }
+
+        /// <summary>
+        ///     Inserts column at given index into this instance. Inserted column is initialized
+        ///     with <see langword="default"/> values.
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentOutOfRangeException"/>:
+        ///         <paramref name="index"/> must be a number in the range of <see cref="Columns"/>
+        ///     </para>
+        /// </summary>
+        /// <param name="index">
+        ///     The zero-based index indicating where the column is inserted.
+        /// </param>
+        public void InsertColumn(int index)
+        {
+            try
+            {
+                InsertColumns(index, 1);
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                throw new ArgumentOutOfRangeException(
+                    "index must be a number in the range of List2D<T>.Columns");
+            }
         }
 
         /// <summary>
@@ -2851,12 +2878,12 @@ namespace Sztorm.Collections
 
         /// <summary>
         ///     Inserts specified number of rows into this instance starting at the given index.
-        ///     Inserted rows are initialized with default value.
+        ///     Inserted rows are initialized with <see langword="default"/> value.
         ///     <para>
         ///         Exceptions:<br/>
-        ///         <see cref="ArgumentOutOfRangeException"/>: 
-        ///             StartIndex must be a number in the range of <see cref="Rows"/>;<br/>
-        ///             Count must be greater or equal to zero.
+        ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="startIndex"/> must
+        ///         be a number in the range of <see cref="Rows"/>;<br/>
+        ///         <paramref name="count"/> must be greater than zero.
         ///     </para>
         /// </summary>
         /// <param name="startIndex">The zero-based index at which inserting starts.</param>
@@ -2868,12 +2895,13 @@ namespace Sztorm.Collections
             if (isInvalidRowIndex)
             {
                 throw new ArgumentOutOfRangeException(
-                    nameof(startIndex), "StartIndex must be a number in the range of Rows.");
+                    nameof(startIndex),
+                    "StartIndex must be a number in the range of List2D<T>.Rows");
             }
             if (count < 0)
             {
                 throw new ArgumentOutOfRangeException(
-                    nameof(count), "Count must be greater or equal to zero.");
+                    nameof(count), "count must be greater than zero.");
             }
             Bounds2D newBounds = new Bounds2D(new Box<int>(Rows + count), new Box<int>(Columns));
 
@@ -2898,16 +2926,14 @@ namespace Sztorm.Collections
 
         /// <summary>
         ///     Inserts row at given index into this instance. Inserted row is initialized with
-        ///     default values.
+        ///     <see langword="default"/> values.
         ///     <para>
         ///         Exceptions:<br/>
         ///         <see cref="ArgumentOutOfRangeException"/>:
-        ///         Index must be a number in the range of <see cref="Rows"/>.
+        ///         <paramref name="index"/> must be a number in the range of <see cref="Rows"/>
         ///     </para>
         /// </summary>
-        /// <param name="index">
-        ///     Index indicating where the row is inserted. Indexing is zero-based.
-        /// </param>
+        /// <param name="index">The zero-based index indicating where the row is inserted.</param>
         public void InsertRow(int index)
         {
             try
@@ -2917,32 +2943,7 @@ namespace Sztorm.Collections
             catch (ArgumentOutOfRangeException)
             {
                 throw new ArgumentOutOfRangeException(
-                    "Index must be a number in the range of Rows.");
-            }
-        }
-
-        /// <summary>
-        ///     Inserts column at given index into this instance. Inserted column is initialized
-        ///     with default values.
-        ///     <para>
-        ///         Exceptions:<br/>
-        ///         <see cref="ArgumentOutOfRangeException"/>:
-        ///         Index must be a number in the range of <see cref="Columns"/>.
-        ///     </para>
-        /// </summary>
-        /// <param name="index">
-        ///     Index indicating where the column is inserted. Indexing is zero-based.
-        /// </param>
-        public void InsertColumn(int index)
-        {
-            try
-            {
-                InsertColumns(index, 1);
-            }
-            catch (ArgumentOutOfRangeException)
-            {
-                throw new ArgumentOutOfRangeException(
-                    "Index must be a number in the range of Columns.");
+                    "index must be a number in the range of List2D<T>.Rows");
             }
         }
 

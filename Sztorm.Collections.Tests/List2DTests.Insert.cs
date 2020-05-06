@@ -101,8 +101,6 @@ namespace Sztorm.Collections.Tests
                 list3x2.AddColumns(2);
 
                 yield return new TestCaseData(list3x2, 0, -1);
-                yield return new TestCaseData(list3x2, 0, 4);
-                yield return new TestCaseData(list3x2, 1, 3);
             }
 
             private static IEnumerable<TestCaseData> RowsTestCases()
@@ -174,8 +172,6 @@ namespace Sztorm.Collections.Tests
                 list2x3.AddColumns(3);
 
                 yield return new TestCaseData(list2x3, 0, -1);
-                yield return new TestCaseData(list2x3, 0, 4);
-                yield return new TestCaseData(list2x3, 1, 3);
             }
 
             private static IEnumerable<TestCaseData> ColumnsTestCases()
