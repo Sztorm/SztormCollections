@@ -105,21 +105,6 @@ namespace Sztorm.Collections.Tests
             Assert.True(nonEmptyList.IsEmpty);
         }
 
-        [TestCaseSource(nameof(IndexerTestCases))]
-        public static void TestIndexer(List2D<int> list, Index2D index, int expected)
-        {
-            Assert.AreEqual(expected, list[index]);
-        }
-
-        [TestCaseSource(nameof(IndexerInvalidTestCases))]
-        public static void IndexerThrowsExceptionIfIndexIsOutOfBounds(
-            List2D<int> list, Index2D index)
-        {
-            TestDelegate testMethod = () => { int value = list[index]; };
-
-            Assert.Throws<IndexOutOfRangeException>(testMethod);
-        }
-
         [TestCaseSource(nameof(AddRowsTestCases))]
         public static void TestAddRows(List2D<int> list, int count, List2D<int> expected)
         {
@@ -168,57 +153,6 @@ namespace Sztorm.Collections.Tests
                     Assert.AreEqual(null, clearedReference);
                 }
             }
-        }
-
-        private static IEnumerable<TestCaseData> IndexerTestCases()
-        {
-            yield return new TestCaseData(
-                new List2D<int>(
-                    Array2D<int>.FromSystem2DArray(
-                        new int[,] { { 2, 3, 5 },
-                                     { 4, 9, 1 },
-                                     { 8, 2, 3 } })),
-                new Index2D(1, 1),
-                9);
-            yield return new TestCaseData(
-                new List2D<int>(
-                    Array2D<int>.FromSystem2DArray(
-                        new int[,] { { 2, 3, 5, 8 },
-                                     { 4, 9, 1, 5 },
-                                     { 8, 2, 3, 0 } })),
-                new Index2D(2, 0),
-                8);
-        }
-
-        private static IEnumerable<TestCaseData> IndexerInvalidTestCases()
-        {
-            // Index has row component less than zero.
-            yield return new TestCaseData(
-                new List2D<int>(Array2D<int>.FromSystem2DArray(new int[,] { { 2, 3, 5 },
-                                                                            { 4, 9, 1 },
-                                                                            { 8, 2, 3 } })),
-                                                               new Index2D(-1, 0));
-
-            // Index has column component less than zero.
-            yield return new TestCaseData(
-                new List2D<int>(Array2D<int>.FromSystem2DArray(new int[,] { { 2, 3, 5 },
-                                                                            { 4, 9, 1 },
-                                                                            { 8, 2, 3 } })),
-                                                               new Index2D(0, -1));
-
-            // Index exceeding rows count.
-            yield return new TestCaseData(
-                new List2D<int>(Array2D<int>.FromSystem2DArray(new int[,] { { 2, 3, 5, 8 },
-                                                                            { 4, 9, 1, 5 },
-                                                                            { 8, 2, 3, 0 } })),
-                                                               new Index2D(3, 0));
-
-            // Index exceeding column count.
-            yield return new TestCaseData(
-                new List2D<int>(Array2D<int>.FromSystem2DArray(new int[,] { { 2, 3, 5, 8 },
-                                                                            { 4, 9, 1, 5 },
-                                                                            { 8, 2, 3, 0 } })),
-                                                               new Index2D(0, 4));
         }
 
         private static IEnumerable<TestCaseData> AddRowsTestCases()
