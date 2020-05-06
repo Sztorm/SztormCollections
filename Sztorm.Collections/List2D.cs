@@ -455,20 +455,6 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        ///     Adds one row to the end of the <see cref="List2D{T}"/>. This method does the same
-        ///     as <see cref="AddLength1(int)"/> with argument of 1.
-        /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void AddRow() => AddRows(1);
-
-        /// <summary>
-        ///     Adds one column to the end of the <see cref="List2D{T}"/>. This method does the
-        ///     same as <see cref="AddLength2(int)"/> with argument of 1.
-        /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void AddColumn() => AddColumns(1);
-
-        /// <summary>
         /// Determines whether current instance capacity can accommodate specified number of rows
         /// and columns.
         /// </summary>
@@ -492,16 +478,17 @@ namespace Sztorm.Collections
         ///     Adds specified number of columns to the end of the <see cref="List2D{T}"/>.
         ///     <para>
         ///         Exceptions:<br/>
-        ///         <see cref="ArgumentOutOfRangeException"/>: Count argument must greater or equal
-        ///         to zero.
+        ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="count"/> must
+        ///         greater or equal to zero.
         ///     </para>
         /// </summary>
+        /// <param name="count">The number of columns to add.</param>
         public void AddColumns(int count)
         {
             if (count < 0)
             {
                 throw new ArgumentOutOfRangeException(
-                    nameof(count), "Count argument must greater or equal to zero.");
+                    nameof(count), "count must greater or equal to zero.");
             }
             int newRows = Rows;
             int newCols = Columns + count;
@@ -522,19 +509,39 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
+        ///     Adds specified number of columns to the end of the <see cref="List2D{T}"/>. This
+        ///     method is equivalent to <see cref="AddColumns(int)"/>.
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="count"/> must
+        ///         greater or equal to zero.
+        ///     </para>
+        /// </summary>
+        /// <param name="count">The number of columns to add.</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void AddLength2(int count) => AddColumns(count);
+
+        /// <summary>
+        ///     Adds one column to the end of the <see cref="List2D{T}"/>.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void AddColumn() => AddColumns(1);
+
+        /// <summary>
         ///     Adds specified number of rows to the end of the <see cref="List2D{T}"/>.
         ///     <para>
         ///         Exceptions:<br/>
-        ///         <see cref="ArgumentOutOfRangeException"/>: Count argument must greater or equal
-        ///         to zero.
+        ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="count"/> must
+        ///         greater or equal to zero.
         ///     </para>
         /// </summary>
+        /// <param name="count">The number of rows to add.</param>
         public void AddRows(int count)
         {
             if (count < 0)
             {
                 throw new ArgumentOutOfRangeException(
-                    nameof(count), "Count argument must greater or equal to zero.");
+                    nameof(count), "count must greater or equal to zero.");
             }
             int newRows = Rows + count;
             int newCols = Columns;
@@ -556,27 +563,22 @@ namespace Sztorm.Collections
 
         /// <summary>
         ///     Adds specified number of rows to the end of the <see cref="List2D{T}"/>. This
-        ///     method does the same as <see cref="AddRows(int)"/>.
+        ///     method is equivalent to <see cref="AddRows(int)"/>.
         ///     <para>
         ///         Exceptions:<br/>
-        ///         <see cref="ArgumentOutOfRangeException"/>: Value argument must greater or equal
-        ///         to zero.
+        ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="count"/> must
+        ///         greater or equal to zero.
         ///     </para>
         /// </summary>
+        /// <param name="count">The number of rows to add.</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void AddLength1(int count) => AddRows(count);
 
         /// <summary>
-        ///     Adds specified number of columns to the end of the <see cref="List2D{T}"/>. This
-        ///     method does the same as <see cref="AddColumns(int)"/>.
-        ///     <para>
-        ///         Exceptions:<br/>
-        ///         <see cref="ArgumentOutOfRangeException"/>: Value argument must greater or equal
-        ///         to zero.
-        ///     </para>
+        ///     Adds one row to the end of the <see cref="List2D{T}"/>.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void AddLength2(int count) => AddColumns(count);
+        public void AddRow() => AddRows(1);
 
         /// <summary>
         ///     Removes all elements from the <see cref="List2D{T}"/>. Any stored references are
@@ -2805,7 +2807,7 @@ namespace Sztorm.Collections
         ///         Exceptions:<br/>
         ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="startIndex"/> must
         ///         be a number in the range of <see cref="Columns"/>;<br/>
-        ///         <paramref name="count"/> must be greater than zero.
+        ///         <paramref name="count"/> must be greater than or equal to zero
         ///     </para>
         /// </summary>
         /// <param name="startIndex">The zero-based index at which inserting starts.</param>
@@ -2824,7 +2826,7 @@ namespace Sztorm.Collections
             {
                 throw new ArgumentOutOfRangeException(
                     nameof(count),
-                    "count must be greater than zero.");
+                    "count must be greater than or equal to zero");
             }
             Bounds2D newBounds = new Bounds2D(new Box<int>(Rows), new Box<int>(Columns + count));
 
@@ -2974,7 +2976,7 @@ namespace Sztorm.Collections
         ///         Exceptions:<br/>
         ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="startIndex"/> must
         ///         be a number in the range of <see cref="Rows"/>;<br/>
-        ///         <paramref name="count"/> must be greater than zero.
+        ///         <paramref name="count"/> must be greater than or equal to zero.
         ///     </para>
         /// </summary>
         /// <param name="startIndex">The zero-based index at which inserting starts.</param>
@@ -2992,7 +2994,7 @@ namespace Sztorm.Collections
             if (count < 0)
             {
                 throw new ArgumentOutOfRangeException(
-                    nameof(count), "count must be greater than zero.");
+                    nameof(count), "count must be greater than or equal to zero.");
             }
             Bounds2D newBounds = new Bounds2D(new Box<int>(Rows + count), new Box<int>(Columns));
 

@@ -105,28 +105,6 @@ namespace Sztorm.Collections.Tests
             Assert.True(nonEmptyList.IsEmpty);
         }
 
-        [TestCaseSource(nameof(AddRowsTestCases))]
-        public static void TestAddRows(List2D<int> list, int count, List2D<int> expected)
-        {
-            list.AddRows(count);
-
-            Assert.AreEqual(expected.Boundaries, list.Boundaries);
-            Assert.That(list.Capacity.Rows, Is.GreaterThanOrEqualTo(list.Rows));
-            Assert.That(list.Capacity.Columns, Is.GreaterThanOrEqualTo(list.Columns));
-            CollectionAssert.AreEqual(expected, list);
-        }
-
-        [TestCaseSource(nameof(AddColumnsTestCases))]
-        public static void TestAddColumns(List2D<int> list, int count, List2D<int> expected)
-        {
-            list.AddColumns(count);
-
-            Assert.AreEqual(expected.Boundaries, list.Boundaries);
-            Assert.That(list.Capacity.Rows, Is.GreaterThanOrEqualTo(list.Rows));
-            Assert.That(list.Capacity.Columns, Is.GreaterThanOrEqualTo(list.Columns));
-            CollectionAssert.AreEqual(expected, list);
-        }
-
         [TestCaseSource(nameof(NonEmptyListsOfValues))]
         [TestCaseSource(nameof(NonEmptyListsOfReferences))]
         public static void TestClear<T>(List2D<T> list)
@@ -153,41 +131,7 @@ namespace Sztorm.Collections.Tests
                     Assert.AreEqual(null, clearedReference);
                 }
             }
-        }
-
-        private static IEnumerable<TestCaseData> AddRowsTestCases()
-        {
-            yield return new TestCaseData(
-                new List2D<int>(Array2D<int>.FromSystem2DArray(new int[,] { { 2, 3, 5 } })),
-                                                               2,
-                new List2D<int>(Array2D<int>.FromSystem2DArray(new int[,] { { 2, 3, 5 },
-                                                                            { 0, 0, 0 },
-                                                                            { 0, 0, 0 } })));
-            yield return new TestCaseData(
-                new List2D<int>(Array2D<int>.FromSystem2DArray(new int[,] { { 2, 3, 5 } })),
-                                                               0,
-                new List2D<int>(Array2D<int>.FromSystem2DArray(new int[,] { { 2, 3, 5 } })));
-        }
-
-        private static IEnumerable<TestCaseData> AddColumnsTestCases()
-        {
-            yield return new TestCaseData(
-                new List2D<int>(Array2D<int>.FromSystem2DArray(new int[,] { { 2 },
-                                                                            { 4 },
-                                                                            { 8 } })),
-                                                               2,
-                new List2D<int>(Array2D<int>.FromSystem2DArray(new int[,] { { 2, 0, 0 },
-                                                                            { 4, 0, 0 },
-                                                                            { 8, 0, 0 } })));
-            yield return new TestCaseData(
-                new List2D<int>(Array2D<int>.FromSystem2DArray(new int[,] { { 2 },
-                                                                            { 4 },
-                                                                            { 8 } })),
-                                                               0,
-                new List2D<int>(Array2D<int>.FromSystem2DArray(new int[,] { { 2 },
-                                                                            { 4 },
-                                                                            { 8 } })));
-        }
+        }  
 
         private static IEnumerable<TestCaseData> NonEmptyListsOfValues()
         {
