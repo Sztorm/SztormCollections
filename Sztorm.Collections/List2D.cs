@@ -489,8 +489,7 @@ namespace Sztorm.Collections
             => IsReallocationNeeded(newBounds.Rows, newBounds.Columns);
 
         /// <summary>
-        ///     Adds specified number of columns to the end of the <see cref="List2D{T}"/>. This
-        ///     method does the same as <see cref="AddLength2(int)"/>.
+        ///     Adds specified number of columns to the end of the <see cref="List2D{T}"/>.
         ///     <para>
         ///         Exceptions:<br/>
         ///         <see cref="ArgumentOutOfRangeException"/>: Count argument must greater or equal
@@ -523,8 +522,7 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        ///     Adds specified number of rows to the end of the <see cref="List2D{T}"/>. This
-        ///     method does the same as <see cref="AddLength1(int)"/>.
+        ///     Adds specified number of rows to the end of the <see cref="List2D{T}"/>.
         ///     <para>
         ///         Exceptions:<br/>
         ///         <see cref="ArgumentOutOfRangeException"/>: Count argument must greater or equal
@@ -2277,22 +2275,22 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        /// Increases current instance capacity with specified quantity.
+        ///     Increases current instance capacity with specified size.
         ///     <para>
         ///         Exceptions:<br/>
         ///         <see cref="OutOfMemoryException"/>: Insufficient memory to continue the
         ///         execution of the program.
         ///     </para>
         /// </summary>
-        /// <param name="quantity"></param>
-        public void IncreaseCapacity(Bounds2D quantity)
+        /// <param name="size"></param>
+        public void IncreaseCapacity(Bounds2D size)
         {
             int newRows;
             int newCols;
 
             try
             {
-                newRows = checked(quantity.Rows + capacity.Rows);
+                newRows = checked(size.Rows + capacity.Rows);
             }
             catch (OverflowException)
             {
@@ -2300,7 +2298,7 @@ namespace Sztorm.Collections
             }
             try
             {
-                newCols = checked(quantity.Columns + capacity.Columns);
+                newCols = checked(size.Columns + capacity.Columns);
             }
             catch (OverflowException)
             {
@@ -2315,6 +2313,63 @@ namespace Sztorm.Collections
                 throw;
             }
             version++;
+        }
+
+        /// <summary>
+        ///     Increases current instance boundaries with specified size.
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="OutOfMemoryException"/>: Insufficient memory to continue the
+        ///         execution of the program.
+        ///     </para>
+        /// </summary>
+        /// <param name="size">The size to increase boundaries.</param>
+        public void IncreaseBounds(Bounds2D size)
+        {
+            var newBounds = new Bounds2D(
+                new Box<int>(Rows + size.Rows), new Box<int>(Columns + size.Columns));
+
+            if (IsReallocationNeeded(newBounds))
+            {
+                try
+                {
+                    Reallocate(newCapacity: EnsuredCapacity(newBounds));
+                }
+                catch (OutOfMemoryException)
+                {
+                    throw;
+                }
+            }
+            bounds = newBounds;
+            version++;
+        }
+
+        /// <summary>
+        ///     Increases current instance boundaries with specified number of
+        ///     <paramref name="rows"/> and <paramref name="columns"/>.
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentOutOfRangeException"/>: All the arguments must be
+        ///         greater or equal to zero.<br/>
+        ///         <see cref="OutOfMemoryException"/>: Insufficient memory to continue the
+        ///         execution of the program.
+        ///     </para>
+        /// </summary>
+        /// <param name="rows">The number of rows to increase.</param>
+        /// <param name="columns">The number of columns to increase.</param>
+        public void IncreaseBounds(int rows, int columns)
+        {
+            Bounds2D size;
+
+            try
+            {
+                size = new Bounds2D(rows, columns);
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                throw;
+            }
+            IncreaseBounds(size);
         }
 
         /// <summary>
