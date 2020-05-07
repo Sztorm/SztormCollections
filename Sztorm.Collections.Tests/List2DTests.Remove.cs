@@ -100,23 +100,6 @@ namespace Sztorm.Collections.Tests
                 }
             }
 
-            public static void CheckUnusedReferences<T>(
-                List2D<T> list, Index2D firstUnusedRefIndex, Bounds2D unusedRefsQuantity)
-                where T : class
-            {
-                for (int i = firstUnusedRefIndex.Row,
-                    rows = i + unusedRefsQuantity.Rows; i < rows; i++)
-                {
-                    for (int j = firstUnusedRefIndex.Column,
-                             cols = j + unusedRefsQuantity.Columns; j < cols; j++)
-                    {
-                        ref T unusedRef = ref list.GetItemInternal(i, j);
-
-                        Assert.AreEqual(null, unusedRef, $"Actual differs at {new Index2D(i, j)}.");
-                    }
-                }
-            }
-
             private static IEnumerable<TestCaseData> RowsInvalidStartIndexTestCases()
             {
                 yield return new TestCaseData(CreateList2DWithBounds<byte>(3, 3), -1, 0);

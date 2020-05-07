@@ -96,8 +96,8 @@ namespace Sztorm.Collections.Tests
             Assert.True(list.IsEmpty);
         }
 
-        [TestCaseSource(nameof(NonEmptyListsOfValues))]
-        [TestCaseSource(nameof(NonEmptyListsOfReferences))]
+        [TestCaseSource(nameof(ListsOfValues))]
+        [TestCaseSource(nameof(ListsOfReferences))]
         public static void IsEmptyReturnsTrueWhenListIsCleared<T>(List2D<T> nonEmptyList)
         {
             nonEmptyList.Clear();
@@ -105,53 +105,53 @@ namespace Sztorm.Collections.Tests
             Assert.True(nonEmptyList.IsEmpty);
         }
 
-        [TestCaseSource(nameof(NonEmptyListsOfValues))]
-        [TestCaseSource(nameof(NonEmptyListsOfReferences))]
-        public static void TestClear<T>(List2D<T> list)
+        public static void CheckUnusedReferences<T>(
+            List2D<T> list, Index2D firstUnusedRefIndex, Bounds2D unusedRefsQuantity)
+            where T : class
         {
-            list.Clear();
-
-            Assert.AreEqual(list.Boundaries, new Bounds2D(0, 0));
-        }
-
-        [TestCaseSource(nameof(NonEmptyListsOfReferences))]
-        public static void ClearReleasesReferences<T>(List2D<T> list) where T : class
-        {
-            if (list.IsEmpty)
+            for (int i = firstUnusedRefIndex.Row,
+                rows = i + unusedRefsQuantity.Rows; i < rows; i++)
             {
-                Assert.Pass("Empty list passed in. List<T>.Clear will do nothing.");
-            }
-            list.Clear();
-
-            for (int i = 0; i < list.Capacity.Rows; i++)
-            {
-                for (int j = 0; j < list.Capacity.Columns; j++)
+                for (int j = firstUnusedRefIndex.Column,
+                         cols = j + unusedRefsQuantity.Columns; j < cols; j++)
                 {
-                    ref T clearedReference = ref list.GetItemInternal(i, j);
-                    Assert.AreEqual(null, clearedReference);
+                    ref T unusedRef = ref list.GetItemInternal(i, j);
+
+                    Assert.AreEqual(null, unusedRef, $"Actual differs at {new Index2D(i, j)}.");
                 }
             }
-        }  
-
-        private static IEnumerable<TestCaseData> NonEmptyListsOfValues()
-        {
-            yield return new TestCaseData(
-                new List2D<int>(
-                    Array2D<int>.FromSystem2DArray(new int[,] { { 2, 3, 5 },
-                                                                { 4, 9, 1 },
-                                                                { 8, 2, 3 } })));
-            yield return new TestCaseData(
-                new List2D<int>(TestUtils.IncrementedIntArray2D(2, 5)));
         }
 
-        private static IEnumerable<TestCaseData> NonEmptyListsOfReferences()
+        private static IEnumerable<TestCaseData> ListsOfValues()
         {
+            var list2x3 = List2D<int>.FromSystem2DArray(
+                new int[,] { { 2, 3 },
+                             { 4, 9 },
+                             { 8, 2 } });
+            list2x3.IncreaseCapacity(list2x3.Boundaries);
+
+            yield return new TestCaseData(list2x3);
             yield return new TestCaseData(
-                new List2D<string>(
-                    Array2D<string>.FromSystem2DArray(
-                        new string[,] { { "2", "3", "5" },
-                                        { "4", "9", "1" },
-                                        { "8", "2", "3" } })));
+                List2D<int>.FromSystem2DArray(
+                    new int[,] { { 1, 2, 3, 4, 5  },
+                                 { 6, 7, 8, 9, 10 } }));
+            yield return new TestCaseData(new List2D<byte>(3, 4));
+        }
+
+        private static IEnumerable<TestCaseData> ListsOfReferences()
+        {
+            var list2x3 = List2D<string>.FromSystem2DArray(
+                new string[,] { { "2", "3" },
+                                { "4", "9" },
+                                { "8", "2" } });
+            list2x3.IncreaseCapacity(list2x3.Boundaries);
+
+            yield return new TestCaseData(list2x3);
+            yield return new TestCaseData(
+                List2D<string>.FromSystem2DArray(
+                    new string[,] { { "1", "2", "3", "4", "5" },
+                                    { "6", "7", "8", "9", "10" } }));
+            yield return new TestCaseData(new List2D<object>(3, 4));
         }
     }
 }
