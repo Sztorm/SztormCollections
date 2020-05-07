@@ -2211,6 +2211,64 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
+        ///     Performs the specified action on each element of the <see cref="Array2D{T}"/>.
+        /// </summary>
+        /// <typeparam name="TAction">
+        ///     <typeparamref name="TAction"/> is <see cref="IAction{T}"/> and
+        ///     <see langword="struct"/>
+        /// </typeparam>
+        /// <param name="action">
+        ///     A <see langword="struct"/> implementing <see cref="IAction{T}"/> that defines
+        ///     an action to perform on each element.
+        /// </param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void ForEach<TAction>(TAction action) where TAction : IAction<T>
+            => ForEach(ref action);
+
+        /// <summary>
+        ///     Performs the specified action on each element of the <see cref="Array2D{T}"/>.
+        ///     <paramref name="action"/> modifications are reflected to the caller as it is passed
+        ///     by <see langword="ref"/>.
+        /// </summary>
+        /// <typeparam name="TAction">
+        ///     <typeparamref name="TAction"/> is <see cref="IAction{T}"/> and
+        ///     <see langword="struct"/>
+        /// </typeparam>
+        /// <param name="action">
+        ///     A <see langword="struct"/> implementing <see cref="IAction{T}"/> that defines
+        ///     an action to perform on each element.
+        /// </param>
+        public void ForEach<TAction>(ref TAction action) where TAction : IAction<T>
+        {
+            for (int i = 0, length = Count; i < length; i++)
+            {
+                action.Invoke(items[i]);
+            }
+        }
+
+        /// <summary>
+        ///     Performs the specified action on each element of the <see cref="Array2D{T}"/>.<br/>
+        ///     Use <see cref="ForEach{TAction}(TAction)"/> to avoid virtual call.
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentNullException"/>: <paramref name="action"/> cannot be
+        ///         <see langword="null"/>.<br/>
+        ///     </para>
+        /// </summary>
+        /// <param name="action">
+        ///     The <see cref="Action{T}"/> delegate to perform on each element of the
+        ///     <see cref="List2D{T}"/>.
+        /// </param>
+        public void ForEach(Action<T> action)
+        {
+            if (action == null)
+            {
+                throw new ArgumentNullException("action cannot be null.");
+            }
+            ForEach(new BoxedAction<T>(action));
+        }
+
+        /// <summary>
         /// Creates a <see cref="Array2D{T}"/> from <typeparamref name = "T"/>[,] instance.
         /// <para>
         ///     Exceptions:<br/>
