@@ -74,6 +74,7 @@ namespace Sztorm.Collections.Tests
                 var list2x3 = List2D<int>.FromSystem2DArray(
                     new int[,] { { 1, 2, 3 },
                                  { 4, 5, 6 } });
+                list2x3.IncreaseCapacity(list2x3.Capacity);
 
                 yield return new TestCaseData(
                     list2x3, new Index2D(1, 0), new Bounds2D(1, 3), List2D<int>.FromSystem2DArray(
