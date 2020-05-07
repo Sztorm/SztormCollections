@@ -280,6 +280,48 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
+        ///     Returns a shallow copy of a sector of elements in the source
+        ///     <see cref="List2D{T}"/>.
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="startIndex"/> must
+        ///         must be within list bounds;<br/>
+        ///         <paramref name="sectorSize"/> must be within list bounds along with
+        ///         <paramref name="startIndex"/>.
+        ///     </para>
+        /// </summary>
+        /// <param name="startIndex">The zero-based index at which the sector starts.</param>
+        /// <param name="sectorSize">The size of the sector of items to be copied.</param>
+        /// <returns></returns>
+        public List2D<T> GetSector(Index2D startIndex, Bounds2D sectorSize)
+        {
+            if (!IsValidIndex(startIndex))
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(startIndex), "startIndex must be within list bounds.");
+            }
+            if (startIndex.Row + sectorSize.Rows > this.Rows ||
+                startIndex.Column + sectorSize.Columns > this.Columns)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(sectorSize),
+                    "sectorSize must be within list bounds along with startIndex.");
+            }
+            var result = new List2D<T>(sectorSize);
+            result.bounds = sectorSize;
+            int capCols = capacity.Columns;
+            int srcStartIndex = RowMajorIndex2DToInt(startIndex, capCols);
+            int dstStartIndex = 0;
+
+            for (int i = 0; i < sectorSize.Rows;
+                i++, srcStartIndex += capCols, dstStartIndex += sectorSize.Columns)
+            {
+                Array.Copy(items, srcStartIndex, result.items, dstStartIndex, sectorSize.Columns);
+            }
+            return result;
+        }
+
+        /// <summary>
         ///     Returns an enumerator for all elements of the <see cref="List2D{T}"/>, which
         ///     enumerates row by row from the (0, 0) position.
         /// </summary>
