@@ -205,6 +205,46 @@ namespace Sztorm.Collections
             => ref items[index.Dimension1Index * Columns + index.Dimension2Index];
 
         /// <summary>
+        ///     Returns a shallow copy of a sector of this <see cref="Array2D{T}"/> instance.
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="startIndex"/> must
+        ///         must be within array bounds;<br/>
+        ///         <paramref name="sectorSize"/> must be within list bounds along with
+        ///         <paramref name="startIndex"/>.
+        ///     </para>
+        /// </summary>
+        /// <param name="startIndex">The zero-based index at which the sector starts.</param>
+        /// <param name="sectorSize">The size of the sector to be copied.</param>
+        /// <returns></returns>
+        public Array2D<T> GetSector(Index2D startIndex, Bounds2D sectorSize)
+        {
+            if (!IsValidIndex(startIndex))
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(startIndex), "startIndex must be within list bounds.");
+            }
+            if (startIndex.Row + sectorSize.Rows > this.Rows ||
+                startIndex.Column + sectorSize.Columns > this.Columns)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(sectorSize),
+                    "sectorSize must be within array bounds along with startIndex.");
+            }
+            var result = new Array2D<T>(sectorSize);
+            int cols = bounds.Columns;
+            int srcStartIndex = RowMajorIndex2DToInt(startIndex, cols);
+            int dstStartIndex = 0;
+
+            for (int i = 0; i < sectorSize.Rows;
+                i++, srcStartIndex += cols, dstStartIndex += sectorSize.Columns)
+            {
+                Array.Copy(items, srcStartIndex, result.items, dstStartIndex, sectorSize.Columns);
+            }
+            return result;
+        }
+
+        /// <summary>
         ///     Returns an element stored at specified one-dimensional index. Indexing start at
         ///     zero and follows row-major ordering.
         ///     <para>
