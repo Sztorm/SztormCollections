@@ -38,7 +38,7 @@ namespace Sztorm.Collections
     /// </summary>
     /// <typeparam name="T"></typeparam>
     [Serializable]
-    public sealed class Array2D<T> : IRefRectangularCollection<T>, ICollection
+    public sealed partial class Array2D<T> : IRefRectangularCollection<T>, ICollection
     {
         private readonly T[] items;
         private readonly Bounds2D bounds;
@@ -171,16 +171,11 @@ namespace Sztorm.Collections
         ///     Returns an enumerator for all elements of two-dimensional array.
         /// </summary>
         /// <returns></returns>
-        public IEnumerator<T> GetEnumerator()
-        {
-            for (int i = 0, length = items.Length; i < length; i++)
-            {
-                yield return items[i];
-            }
-        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public IEnumerator<T> GetEnumerator() => new Enumerator(this);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
         /// <summary>
         ///     Returns an element stored at specified row and column.<br/>
