@@ -168,6 +168,48 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
+        ///     Returns an enumerator for all elements of two-dimensional array.
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerator<T> GetEnumerator()
+        {
+            for (int i = 0, length = items.Length; i < length; i++)
+            {
+                yield return items[i];
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+
+        /// <summary>
+        ///     Returns an element stored at specified row and column.<br/>
+        ///     Arguments are not checked. For internal purposes only.
+        /// </summary>
+        /// <param name="row">
+        ///     Range: ([0, <see cref="Rows"/>).
+        /// </param>
+        /// <param name="column">
+        ///     Range: ([0, <see cref="Columns"/>).
+        /// </param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal ref T GetItemInternal(int row, int column)
+            => ref items[row * Columns + column];
+
+        /// <summary>
+        ///     Returns an element stored at specified index.<br/>
+        ///     Argument is not checked. For internal purposes only.
+        /// </summary>
+        /// <param name="index">
+        ///     Range: ([0, <see cref="Rows"/>), [0, <see cref="Columns"/>)).
+        /// </param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal ref T GetItemInternal(Index2D index)
+            => ref items[index.Dimension1Index * Columns + index.Dimension2Index];
+
+        /// <summary>
         ///     Returns an element stored at specified one-dimensional index. Indexing start at
         ///     zero and follows row-major ordering.
         ///     <para>
@@ -240,54 +282,6 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        ///     Returns an element stored at specified row and column.<br/>
-        ///     Arguments are not checked. For internal purposes only.
-        /// </summary>
-        /// <param name="row">
-        ///     Range: ([0, <see cref="Rows"/>).
-        /// </param>
-        /// <param name="column">
-        ///     Range: ([0, <see cref="Columns"/>).
-        /// </param>
-        /// <returns></returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal ref T GetItemInternal(int row, int column)
-            => ref items[row * Columns + column];
-
-        /// <summary>
-        ///     Returns an element stored at specified index.<br/>
-        ///     Argument is not checked. For internal purposes only.
-        /// </summary>
-        /// <param name="index">
-        ///     Range: ([0, <see cref="Rows"/>), [0, <see cref="Columns"/>)).
-        /// </param>
-        /// <returns></returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal ref T GetItemInternal(Index2D index)
-            => ref items[index.Dimension1Index * Columns + index.Dimension2Index];
-
-        /// <summary>
-        ///     Determines whether specified index exists in this <see cref="Array2D{T}"/>
-        ///     instance.
-        /// </summary>
-        /// <param name="row"></param>
-        /// <param name="column"></param>
-        /// <returns></returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool IsValidIndex(int row, int column)
-            => bounds.IsValidIndex(row, column);
-
-        /// <summary>
-        ///     Determines whether specified index exists in this <see cref="Array2D{T}"/>
-        ///     instance.
-        /// </summary>
-        /// <param name="index"></param>
-        /// <returns></returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool IsValidIndex(Index2D index)
-            => bounds.IsValidIndex(index);
-
-        /// <summary>
         ///     Constructs a two-dimensional rectangular array with specified quantity of rows and
         ///     columns.
         ///     <para>
@@ -319,6 +313,130 @@ namespace Sztorm.Collections
         {
             bounds = boundaries;
             items = new T[boundaries.Length1 * boundaries.Length2];
+        }
+
+        /// <summary>
+        ///     Determines whether specified item exists in the current instance.<br/>
+        ///     Use <see cref="ContainsEquatable{U}(U)"/> or <see cref="ContainsComparable{U}(U)"/>
+        ///     to avoid unnecessary boxing if stored type is <see cref="IEquatable{T}"/> or
+        ///     <see cref="IComparable{T}"/>.
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool Contains(T item) => IndexOf(item).IsSuccess;
+
+        /// <summary>
+        ///     Determines whether specified item exists in the current instance.<br/>
+        ///     To search for <see langword="null"/> use <see cref="Contains(T)"/>
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentNullException"/>: <paramref name="item"/> cannot be
+        ///         <see langword="null"/>.
+        ///     </para>
+        /// </summary>
+        /// <typeparam name="U">
+        ///     <typeparamref name = "U"/> is <see cref="IComparable{T}"/> and
+        ///     <typeparamref name = "T"/>
+        /// </typeparam>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool ContainsComparable<U>(U item) where U : T, IComparable<T>
+        {
+            try
+            {
+                return IndexOfComparable(item).IsSuccess;
+            }
+            catch (ArgumentNullException)
+            {
+                throw new ArgumentNullException("item cannot be null.");
+            }
+        }
+
+        /// <summary>
+        ///     Determines whether specified item exists in the current instance.<br/>
+        ///     To search for <see langword="null"/> use <see cref="Contains(T)"/>
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentNullException"/>: <paramref name="item"/> cannot be
+        ///         <see langword="null"/>.
+        ///     </para>
+        /// </summary>
+        /// <typeparam name="U">
+        ///     <typeparamref name = "U"/> is <see cref="IEquatable{T}"/> and
+        ///     <typeparamref name = "T"/>
+        /// </typeparam>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool ContainsEquatable<U>(U item) where U : T, IEquatable<T>
+        {
+            try
+            {
+                return IndexOfEquatable(item).IsSuccess;
+            }
+            catch (ArgumentNullException)
+            {
+                throw new ArgumentNullException("item cannot be null.");
+            }
+        }
+
+        /// <summary>
+        ///     Returns a new <see cref="Array2D{TOutput}"/> instance containing items from this
+        ///     instance converted to another type.
+        /// </summary>
+        /// <typeparam name="TOutput">
+        ///     Target type of resulting <see cref="Array2D{T}"/>.
+        /// </typeparam>
+        /// <typeparam name="TConverter">
+        ///     <typeparamref name = "TConverter"/> is <see cref="IConverter{T, TOutput}"/> and
+        ///     <see langword="struct"/>
+        /// </typeparam>
+        /// <param name="converter">
+        ///     An <see langword="struct"/> implementing <see cref="IConverter{T, TOutput}"/> that
+        ///     converts each element from one type to another type.
+        /// </param>
+        /// <returns></returns>
+        public Array2D<TOutput> ConvertAll<TOutput, TConverter>(TConverter converter)
+            where TConverter : struct, IConverter<T, TOutput>
+        {
+            var result = new Array2D<TOutput>(this.bounds);
+
+            for (int i = 0, length = Count; i < length; i++)
+            {
+                result.items[i] = converter.Invoke(items[i]);
+            }
+            return result;
+        }
+
+        /// <summary>
+        ///     Returns a new <see cref="Array2D{TOutput}"/> instance containing items from this
+        ///     instance converted to another type.<br/>
+        ///     Use <see cref="ConvertAll{TOutput, TConverter}(TConverter)"/> to avoid virtual
+        ///     call.
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentNullException"/>: <paramref name="converter"/> cannot be
+        ///         <see langword="null"/>.<br/>
+        ///     </para>
+        /// </summary>
+        /// <typeparam name="TOutput">
+        ///     Target type of resulting <see cref="Array2D{T}"/>.
+        /// </typeparam>
+        /// <param name="converter">
+        ///    A <see cref="Converter{TInput, TOutput}"/> delegate that converts each element from
+        ///    one type to another type.
+        /// </param>
+        /// <returns></returns>
+        public Array2D<TOutput> ConvertAll<TOutput>(Converter<T, TOutput> converter)
+        {
+            if (converter == null)
+            {
+                throw new ArgumentNullException(nameof(converter), "converter cannot be null.");
+            }
+            return ConvertAll<TOutput, BoxedConverter<T, TOutput>>(
+                new BoxedConverter<T, TOutput>(converter));
         }
 
         /// <summary>
@@ -819,88 +937,6 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        ///     Returns an enumerator for all elements of two-dimensional array.
-        /// </summary>
-        /// <returns></returns>
-        public IEnumerator<T> GetEnumerator()
-        {
-            for (int i = 0, length = items.Length; i < length; i++)
-            {
-                yield return items[i];
-            }
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
-
-        /// <summary>
-        ///     Determines whether specified item exists in the current instance.<br/>
-        ///     Use <see cref="ContainsEquatable{U}(U)"/> or <see cref="ContainsComparable{U}(U)"/>
-        ///     to avoid unnecessary boxing if stored type is <see cref="IEquatable{T}"/> or
-        ///     <see cref="IComparable{T}"/>.
-        /// </summary>
-        /// <param name="item"></param>
-        /// <returns></returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool Contains(T item) => IndexOf(item).IsSuccess;
-
-        /// <summary>
-        ///     Determines whether specified item exists in the current instance.<br/>
-        ///     To search for <see langword="null"/> use <see cref="Contains(T)"/>
-        ///     <para>
-        ///         Exceptions:<br/>
-        ///         <see cref="ArgumentNullException"/>: <paramref name="item"/> cannot be
-        ///         <see langword="null"/>.
-        ///     </para>
-        /// </summary>
-        /// <typeparam name="U">
-        ///     <typeparamref name = "U"/> is <see cref="IEquatable{T}"/> and
-        ///     <typeparamref name = "T"/>
-        /// </typeparam>
-        /// <param name="item"></param>
-        /// <returns></returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool ContainsEquatable<U>(U item) where U : T, IEquatable<T>
-        {
-            try
-            {
-                return IndexOfEquatable(item).IsSuccess;
-            }
-            catch (ArgumentNullException)
-            {
-                throw new ArgumentNullException("item cannot be null.");
-            }
-        }
-
-        /// <summary>
-        ///     Determines whether specified item exists in the current instance.<br/>
-        ///     To search for <see langword="null"/> use <see cref="Contains(T)"/>
-        ///     <para>
-        ///         Exceptions:<br/>
-        ///         <see cref="ArgumentNullException"/>: <paramref name="item"/> cannot be
-        ///         <see langword="null"/>.
-        ///     </para>
-        /// </summary>
-        /// <typeparam name="U">
-        ///     <typeparamref name = "U"/> is <see cref="IComparable{T}"/> and
-        ///     <typeparamref name = "T"/>
-        /// </typeparam>
-        /// <param name="item"></param>
-        /// <returns></returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool ContainsComparable<U>(U item) where U : T, IComparable<T>
-        {
-            try
-            {
-                return IndexOfComparable(item).IsSuccess;
-            }
-            catch (ArgumentNullException)
-            {
-                throw new ArgumentNullException("item cannot be null.");
-            }
-        }
-
-        /// <summary>
         ///     Determines whether any item that match the conditions defined by the specified
         ///     predicate exists in the current instance.
         /// </summary>
@@ -944,6 +980,1269 @@ namespace Sztorm.Collections
             {
                 throw;
             }
+        }
+
+        /// <summary>
+        ///     Searches for an item that matches the conditions defined by the specified
+        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying first
+        ///     occurrence searched row by row within the entire <see cref="Array2D{T}"/> if found.
+        ///     Otherwise returns <see cref="ItemRequestResult{T}.Failed"/>
+        /// </summary>
+        /// <typeparam name="TPredicate">
+        ///     <typeparamref name = "TPredicate"/> is <see cref="IPredicate{T}"/> and
+        ///     <see langword="struct"/>
+        /// </typeparam>
+        /// <param name="match">
+        ///     A <see langword="struct"/> implementing <see cref="IPredicate{T}"/> that defines
+        ///     the conditions of the element to search for.
+        /// </param>
+        /// <returns></returns>
+        public ItemRequestResult<T> Find<TPredicate>(TPredicate match)
+            where TPredicate : struct, IPredicate<T>
+        {
+            for (int i = 0, length = Count; i < length; i++)
+            {
+                ref readonly T item = ref items[i];
+
+                if (match.Invoke(item))
+                {
+                    return new ItemRequestResult<T>(item);
+                }
+            }
+            return ItemRequestResult<T>.Failed;
+        }
+
+        /// <summary>
+        ///     Searches for an item that matches the conditions defined by the specified
+        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying first
+        ///     occurrence searched row by row within the entire <see cref="Array2D{T}"/> if found.
+        ///     Otherwise returns <see cref="ItemRequestResult{T}.Failed"/><br/>
+        ///     Use <see cref="Find{TPredicate}(TPredicate)"/> to avoid virtual call.
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentNullException"/>: <paramref name="match"/> cannot be
+        ///         <see langword="null"/>.
+        ///     </para>
+        /// </summary>
+        /// <param name="match">
+        ///     The <see cref="Predicate{T}"/> delegate that defines the conditions of the element
+        ///     to search for.
+        /// </param>
+        /// <returns></returns>
+        public ItemRequestResult<T> Find(Predicate<T> match)
+        {
+            if (match == null)
+            {
+                throw new ArgumentNullException(nameof(match), "Match cannot be null.");
+            }
+            return Find(new BoxedPredicate<T>(match));
+        }
+
+        /// <summary>
+        ///     Returns <see cref="ICollection{T}"/> containing all the elements that match the
+        ///     conditions defined by the specified predicate.
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="NotSupportedException"/>: Provided type must support 
+        ///         <see cref="ICollection{T}.Add(T)"/> method.
+        ///     </para>
+        /// </summary>
+        /// <typeparam name="TCollection">
+        ///     <typeparamref name = "TCollection"/> is <see cref="ICollection{T}"/> and has a
+        ///     parameterless constructor.
+        /// </typeparam>
+        /// <typeparam name="TPredicate">
+        ///     <typeparamref name = "TPredicate"/> is <see cref="IPredicate{T}"/> and
+        ///     <see langword="struct"/>
+        /// </typeparam>
+        /// <param name="match">
+        ///     A <see langword="struct"/> implementing <see cref="IPredicate{T}"/> that defines
+        ///     the conditions of the element to search for.
+        /// </param>
+        /// <returns></returns>
+        public TCollection FindAll<TCollection, TPredicate>(TPredicate match)
+            where TCollection : ICollection<T>, new()
+            where TPredicate : struct, IPredicate<T>
+        {
+            var resizableCollection = new TCollection();
+            try
+            {
+                for (int i = 0, length = Count; i < length; i++)
+                {
+                    ref readonly T item = ref items[i];
+
+                    if (match.Invoke(item))
+                    {
+                        resizableCollection.Add(item);
+                    }
+                }
+            }
+            catch (NotSupportedException)
+            {
+                throw new NotSupportedException("Provided type must support Add(T) method.");
+            }
+            return resizableCollection;
+        }
+
+        /// <summary>
+        ///     Returns <see cref="ICollection{T}"/> containing all the elements that match the
+        ///     conditions defined by the specified predicate.<br/>
+        ///     Use <see cref="FindAll{TCollection, TPredicate}(TPredicate)"/> to avoid virtual
+        ///     call.
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentNullException"/>: <paramref name="match"/> cannot be
+        ///         <see langword="null"/>.<br/>
+        ///         <see cref="NotSupportedException"/>: Provided type must support
+        ///         <see cref="ICollection{T}.Add(T)"/> method.
+        ///     </para>
+        /// </summary>
+        /// <typeparam name="TCollection">
+        ///     <typeparamref name = "TCollection"/> is <see cref="ICollection{T}"/> and has a
+        ///     parameterless constructor.
+        /// </typeparam>
+        /// <param name="match">
+        ///     The <see cref="Predicate{T}"/> delegate that defines the conditions of the element
+        ///     to search for.
+        /// </param>
+        /// <returns></returns>
+        public TCollection FindAll<TCollection>(Predicate<T> match)
+            where TCollection : ICollection<T>, new()
+        {
+            if (match == null)
+            {
+                throw new ArgumentNullException(nameof(match), "Match cannot be null.");
+            }
+            try
+            {
+                return FindAll<TCollection, BoxedPredicate<T>>(new BoxedPredicate<T>(match));
+            }
+            catch (NotSupportedException)
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        ///     Returns <see cref="ICollection{T}"/> containing all the indices of which items
+        ///     match the conditions defined by the specified predicate.<br/>
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="NotSupportedException"/>: Provided type must support 
+        ///         <see cref="ICollection{T}.Add(T)"/> method.
+        ///     </para>
+        /// </summary>
+        /// <typeparam name="Index2DCollection">
+        ///     <typeparamref name = "Index2DCollection"/> is <see cref="ICollection{T}"/> and has a
+        ///     parameterless constructor.
+        /// </typeparam>
+        /// <typeparam name="TPredicate">
+        ///     <typeparamref name = "TPredicate"/> is <see cref="IPredicate{T}"/> and
+        ///     <see langword="struct"/>
+        /// </typeparam>
+        /// <param name="match">
+        ///     A <see langword="struct"/> implementing <see cref="IPredicate{T}"/> that defines
+        ///     the conditions of the element to search for.
+        /// </param>
+        /// <returns></returns>
+        public Index2DCollection FindAllIndices<Index2DCollection, TPredicate>(TPredicate match)
+            where Index2DCollection : ICollection<Index2D>, new()
+            where TPredicate : struct, IPredicate<T>
+        {
+            var resizableCollection = new Index2DCollection();
+            try
+            {
+                for (int i = 0, length = Count, columns = Columns; i < length; i++)
+                {
+                    if (match.Invoke(items[i]))
+                    {
+                        resizableCollection.Add(IntToRowMajorIndex2D(i, columns));
+                    }
+                }
+            }
+            catch (NotSupportedException)
+            {
+                throw new NotSupportedException("Provided type must support Add(T) method.");
+            }
+            return resizableCollection;
+        }
+
+        /// <summary>
+        ///     Returns <see cref="ICollection{T}"/> containing all the indices of which items
+        ///     match the conditions defined by the specified predicate.<br/>
+        ///     Use <see cref="FindAllIndices{TCollection, TPredicate}(TPredicate)"/> to avoid
+        ///     virtual call.
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentNullException"/>: <paramref name="match"/> cannot be
+        ///         <see langword="null"/>.<br/>
+        ///         <see cref="NotSupportedException"/>: Provided type must support
+        ///         <see cref="ICollection{T}.Add(T)"/> method.
+        ///     </para>
+        /// </summary>
+        /// <typeparam name="Index2DCollection">
+        ///     <typeparamref name = "Index2DCollection"/> is <see cref="ICollection{T}"/> and has a
+        ///     parameterless constructor.
+        /// </typeparam>
+        /// <param name="match">
+        ///     The <see cref="Predicate{T}"/> delegate that defines the conditions of the element
+        ///     to search for.
+        /// </param>
+        /// <returns></returns>
+        public Index2DCollection FindAllIndices<Index2DCollection>(Predicate<T> match)
+            where Index2DCollection : ICollection<Index2D>, new()
+        {
+            if (match == null)
+            {
+                throw new ArgumentNullException(nameof(match), "Match cannot be null.");
+            }
+            try
+            {
+                return FindAllIndices<Index2DCollection, BoxedPredicate<T>>(
+                    new BoxedPredicate<T>(match));
+            }
+            catch (NotSupportedException)
+            {
+                throw;
+            }
+        }
+
+        internal ItemRequestResult<int> FindIndexInternal<TPredicate>(
+           int startIndex, int indexAfterEnd, TPredicate match)
+           where TPredicate : struct, IPredicate<T>
+        {
+            Debug.Assert(startIndex >= 0);
+            Debug.Assert(indexAfterEnd >= 0);
+            Debug.Assert(indexAfterEnd <= Count);
+
+            for (int i = startIndex; i < indexAfterEnd; i++)
+            {
+                if (match.Invoke(items[i]))
+                {
+                    return new ItemRequestResult<int>(i);
+                }
+            }
+            return ItemRequestResult<int>.Failed;
+        }
+
+        /// <summary>
+        ///     Searches from the beginning for an item that matches the conditions defined by the
+        ///     specified predicate, and returns the <see cref="ItemRequestResult{T}"/> with
+        ///     underlying one-dimensional index of the first occurrence searched within the entire
+        ///     <see cref="Array2D{T}"/> if found. Otherwise returns
+        ///     <see cref="ItemRequestResult{T}.Failed"/>
+        /// </summary>
+        /// <typeparam name="TPredicate">
+        ///     <typeparamref name = "TPredicate"/> is <see cref="IPredicate{T}"/> and
+        ///     <see langword="struct"/>
+        /// </typeparam>
+        /// <param name="match">
+        ///     A <see langword="struct"/> implementing <see cref="IPredicate{T}"/> that defines
+        ///     the conditions of the element to search for.
+        /// </param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public ItemRequestResult<int> FindIndex<TPredicate>(TPredicate match)
+            where TPredicate : struct, IPredicate<T>
+            => FindIndexInternal(0, Count, match);
+
+        /// <summary>
+        ///     Searches for an item that matches the conditions defined by the specified
+        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying
+        ///     one-dimensional index of the first occurrence searched row by row within the
+        ///     specified range of items if found. Otherwise returns
+        ///     <see cref="ItemRequestResult{T}.Failed"/>
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="startIndex"/> must
+        ///         be within array bounds;<br/>
+        ///         <paramref name="count"/> must be greater or equal to zero;<br/>
+        ///         <paramref name="startIndex"/> together with <paramref name="count"/> must not
+        ///         exceed <see cref="Count"/>
+        ///     </para>
+        /// </summary>
+        /// <typeparam name="TPredicate">
+        ///     <typeparamref name = "TPredicate"/> is <see cref="IPredicate{T}"/> and
+        ///     <see langword="struct"/>
+        /// </typeparam>
+        /// <param name="startIndex">Zero-based index from which searching starts.</param>
+        /// <param name="count">Number of items to search.</param>
+        /// <param name="match">
+        ///     A <see langword="struct"/> implementing <see cref="IPredicate{T}"/> that defines
+        ///     the conditions of the element to search for.
+        /// </param>
+        /// <returns></returns>
+        public ItemRequestResult<int> FindIndex<TPredicate>(
+            Index2D startIndex, int count, TPredicate match)
+            where TPredicate : struct, IPredicate<T>
+        {
+            if (!IsValidIndex(startIndex))
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(startIndex), "startIndex must be within array bounds.");
+            }
+            if (count < 0)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(count), "count must be greater or equal to zero.");
+            }
+            int startIndex1D = RowMajorIndex2DToInt(startIndex, Columns);
+            int indexAfterEnd = startIndex1D + count;
+
+            if (indexAfterEnd > items.Length)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(count), "startIndex together with count must not exceed Array2D.Count");
+            }
+            return FindIndexInternal(startIndex1D, indexAfterEnd, match);
+        }
+
+        /// <summary>
+        ///     Searches for an item that matches the conditions defined by the specified
+        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying
+        ///     one-dimensional index of the first occurrence searched within the specified sector.
+        ///     Otherwise returns <see cref="ItemRequestResult{T}.Failed"/>
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="startIndex"/> must
+        ///         be within array bounds;<br/>
+        ///         <paramref name="sectorSize"/> must be within array bounds, beginning from
+        ///         <paramref name="startIndex"/>.
+        ///     </para>   
+        /// </summary>
+        /// <typeparam name="TPredicate">
+        ///     <typeparamref name = "TPredicate"/> is <see cref="IPredicate{T}"/> and
+        ///     <see langword="struct"/>
+        /// </typeparam>
+        /// <param name="startIndex">Zero-based index from which searching starts.</param>
+        /// <param name="sectorSize">The rectangular sector size to be searched.</param>
+        /// <param name="match">
+        ///     A <see langword="struct"/> implementing <see cref="IPredicate{T}"/> that defines
+        ///     the conditions of the element to search for.
+        /// </param>
+        /// <returns></returns>
+        public ItemRequestResult<int> FindIndex<TPredicate>(
+            Index2D startIndex, Bounds2D sectorSize, TPredicate match)
+            where TPredicate : struct, IPredicate<T>
+        {
+            if (!IsValidIndex(startIndex))
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(startIndex), "startIndex must be within array bounds.");
+            }
+            var indexAfterEnd = new Index2D(
+                startIndex.Row + sectorSize.Rows,
+                startIndex.Column + sectorSize.Columns);
+
+            if (indexAfterEnd.Row > Rows || indexAfterEnd.Column > Columns)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(sectorSize),
+                    "sectorSize must be within array bounds, beginning from startIndex.");
+            }
+            for (int i = startIndex.Row; i < indexAfterEnd.Row; i++)
+            {
+                for (int j = startIndex.Column; j < indexAfterEnd.Column; j++)
+                {
+                    if (match.Invoke(GetItemInternal(i, j)))
+                    {
+                        return new ItemRequestResult<int>(
+                            RowMajorIndex2DToInt(new Index2D(i, j), Columns));
+                    }
+                }
+            }
+            return ItemRequestResult<int>.Failed;
+        }
+
+        /// <summary>
+        ///     Searches for an item that matches the conditions defined by the specified
+        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying
+        ///     one-dimensional index of the first occurrence searched within the entire
+        ///     <see cref="Array2D{T}"/> if found. Otherwise returns
+        ///     <see cref="ItemRequestResult{T}.Failed"/><br/>
+        ///     Use <see cref="FindIndex{TPredicate}(TPredicate)"/> to avoid virtual call.
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentNullException"/>: <paramref name="match"/> cannot be
+        ///         <see langword="null"/>.
+        ///     </para>
+        /// </summary>
+        /// <param name="match">
+        ///     The <see cref="Predicate{T}"/> delegate that defines the conditions of the element
+        ///     to search for.
+        /// </param>
+        /// <returns></returns>
+        public ItemRequestResult<int> FindIndex(Predicate<T> match)
+        {
+            if (match == null)
+            {
+                throw new ArgumentNullException(nameof(match), "Match cannot be null.");
+            }
+            return FindIndexInternal(0, Count, new BoxedPredicate<T>(match));
+        }
+
+        /// <summary>
+        ///     Searches for an item that matches the conditions defined by the specified
+        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying
+        ///     one-dimensional index of the first occurrence searched row by row within the
+        ///     specified range of items if found. Otherwise returns
+        ///     <see cref="ItemRequestResult{T}.Failed"/><br/>
+        ///     Use <see cref="FindIndex{TPredicate}(Index2D, int, TPredicate)"/> to avoid virtual
+        ///     call.
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentNullException"/>: <paramref name="match"/> cannot be
+        ///         <see langword="null"/>.<br/>
+        ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="startIndex"/> must
+        ///         be within array bounds;<br/>
+        ///         <paramref name="count"/> must be greater or equal to zero;<br/>
+        ///         <paramref name="startIndex"/> together with <paramref name="count"/> must not
+        ///         exceed <see cref="Count"/>
+        ///     </para>
+        /// </summary>
+        /// <param name="startIndex">Zero-based index from which searching starts.</param>
+        /// <param name="count">Number of items to search.</param>
+        /// <param name="match">
+        ///     The <see cref="Predicate{T}"/> delegate that defines the conditions of the element
+        ///     to search for.
+        /// </param>
+        /// <returns></returns>
+        public ItemRequestResult<int> FindIndex(Index2D startIndex, int count, Predicate<T> match)
+        {
+            if (match == null)
+            {
+                throw new ArgumentNullException(nameof(match), "match cannot be null.");
+            }
+            try
+            {
+                return FindIndex(startIndex, count, new BoxedPredicate<T>(match));
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        ///     Searches for an item that matches the conditions defined by the specified
+        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying
+        ///     one-dimensional index of the first occurrence searched within the specified sector.
+        ///     Otherwise returns <see cref="ItemRequestResult{T}.Failed"/><br/>
+        ///     Use <see cref="FindIndex{TPredicate}(Index2D, Bounds2D, TPredicate)"/> to avoid
+        ///     virtual call.
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentNullException"/>: <paramref name="match"/> cannot be
+        ///         <see langword="null"/>.<br/>
+        ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="startIndex"/> must
+        ///         be within array bounds;<br/>
+        ///         <paramref name="sectorSize"/> must be within array bounds, beginning from
+        ///         <paramref name="startIndex"/>.
+        ///     </para>
+        /// </summary>
+        /// <param name="startIndex">Zero-based index from which searching starts.</param>
+        /// <param name="sectorSize">The rectangular sector size to be searched.</param>
+        /// <param name="match">
+        ///     The <see cref="Predicate{T}"/> delegate that defines the conditions of the element
+        ///     to search for.
+        /// </param>
+        /// <returns></returns>
+        public ItemRequestResult<int> FindIndex(
+            Index2D startIndex, Bounds2D sectorSize, Predicate<T> match)
+        {
+            if (match == null)
+            {
+                throw new ArgumentNullException(nameof(match), "match cannot be null.");
+            }
+            try
+            {
+                return FindIndex(startIndex, sectorSize, new BoxedPredicate<T>(match));
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                throw;
+            }
+        }
+
+        private ItemRequestResult<Index2D> RequestedIntToRequested2DIndex(
+            ItemRequestResult<int> possibleIndex)
+        {
+            if (!possibleIndex.IsSuccess)
+            {
+                return ItemRequestResult<Index2D>.Failed;
+            }
+            return new ItemRequestResult<Index2D>(
+                IntToRowMajorIndex2D(possibleIndex.ItemOrDefault, Columns));
+        }
+
+        /// <summary>
+        ///     Searches for an item that matches the conditions defined by the specified
+        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying index
+        ///     of the first occurrence searched within the entire <see cref="Array2D{T}"/> if
+        ///     found. Otherwise returns <see cref="ItemRequestResult{T}.Failed"/>
+        /// </summary>
+        /// <typeparam name="TPredicate">
+        ///     <typeparamref name = "TPredicate"/> is <see cref="IPredicate{T}"/> and
+        ///     <see langword="struct"/>
+        /// </typeparam>
+        /// <param name="match">
+        ///     A <see langword="struct"/> implementing <see cref="IPredicate{T}"/> that defines
+        ///     the conditions of the element to search for.
+        /// </param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public ItemRequestResult<Index2D> FindIndex2D<TPredicate>(TPredicate match)
+            where TPredicate : struct, IPredicate<T>
+            => RequestedIntToRequested2DIndex(FindIndex(match));
+
+        /// <summary>
+        ///     Searches for an item that matches the conditions defined by the specified
+        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying index
+        ///     of the first occurrence searched row by row within the specified range of items if
+        ///     found. Otherwise returns <see cref="ItemRequestResult{T}.Failed"/>
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="startIndex"/> must
+        ///         be within array bounds;<br/>
+        ///         <paramref name="count"/> must be greater or equal to zero;<br/>
+        ///         <paramref name="startIndex"/> together with <paramref name="count"/> must not
+        ///         exceed <see cref="Count"/>
+        ///     </para>
+        /// </summary>
+        /// <typeparam name="TPredicate">
+        ///     <typeparamref name = "TPredicate"/> is <see cref="IPredicate{T}"/> and
+        ///     <see langword="struct"/>
+        /// </typeparam>
+        /// <param name="startIndex">Zero-based index from which searching starts.</param>
+        /// <param name="count">Number of items to search.</param>
+        /// <param name="match">
+        ///     A <see langword="struct"/> implementing <see cref="IPredicate{T}"/> that defines
+        ///     the conditions of the element to search for.
+        /// </param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public ItemRequestResult<Index2D> FindIndex2D<TPredicate>(
+            Index2D startIndex, int count, TPredicate match)
+            where TPredicate : struct, IPredicate<T>
+        {
+            try
+            {
+                return RequestedIntToRequested2DIndex(FindIndex(startIndex, count, match));
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        ///     Searches for an item that matches the conditions defined by the specified
+        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying index
+        ///     of the first occurrence searched within the specified sector. Otherwise returns
+        ///     <see cref="ItemRequestResult{T}.Failed"/>
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="startIndex"/> must
+        ///         be within array bounds;<br/>
+        ///         <paramref name="sectorSize"/> must be within array bounds, beginning from
+        ///         <paramref name="startIndex"/>.
+        ///     </para>   
+        /// </summary>
+        /// <typeparam name="TPredicate">
+        ///     <typeparamref name = "TPredicate"/> is <see cref="IPredicate{T}"/> and
+        ///     <see langword="struct"/>
+        /// </typeparam>
+        /// <param name="startIndex">Zero-based index from which searching starts.</param>
+        /// <param name="sectorSize">The rectangular sector size to be searched.</param>
+        /// <param name="match">
+        ///     A <see langword="struct"/> implementing <see cref="IPredicate{T}"/> that defines
+        ///     the conditions of the element to search for.
+        /// </param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public ItemRequestResult<Index2D> FindIndex2D<TPredicate>(
+            Index2D startIndex, Bounds2D sectorSize, TPredicate match)
+            where TPredicate : struct, IPredicate<T>
+        {
+            try
+            {
+                return RequestedIntToRequested2DIndex(FindIndex(startIndex, sectorSize, match));
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        ///     Searches for an item that matches the conditions defined by the specified
+        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying index
+        ///     of the first occurrence searched within the entire <see cref="Array2D{T}"/> if found.
+        ///     Otherwise returns <see cref="ItemRequestResult{T}.Failed"/><br/>
+        ///     Use <see cref="FindIndex2D{TPredicate}(TPredicate)"/> to avoid virtual call.
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentNullException"/> <paramref name="match"/> cannot be
+        ///         <see langword="null"/>.
+        ///     </para>
+        /// </summary>
+        /// <param name="match">
+        ///     The <see cref="Predicate{T}"/> delegate that defines the conditions of the element
+        ///     to search for.
+        /// </param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public ItemRequestResult<Index2D> FindIndex2D(Predicate<T> match)
+        {
+            try
+            {
+                return RequestedIntToRequested2DIndex(FindIndex(match));
+            }
+            catch (ArgumentNullException)
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        ///     Searches for an item that matches the conditions defined by the specified
+        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying index
+        ///     of the first occurrence searched row by row within the specified range of items if
+        ///     found. Otherwise returns <see cref="ItemRequestResult{T}.Failed"/><br/>
+        ///     Use <see cref="FindIndex2D{TPredicate}(Index2D, int, TPredicate)"/> to avoid
+        ///     virtual call.
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentNullException"/>: <paramref name="match"/> cannot be
+        ///         <see langword="null"/>.<br/>
+        ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="startIndex"/> must
+        ///         be within array bounds;<br/>
+        ///         <paramref name="count"/> must be greater or equal to zero;<br/>
+        ///         <paramref name="startIndex"/> together with <paramref name="count"/> must not
+        ///         exceed <see cref="Count"/>
+        ///     </para>
+        /// </summary>
+        /// <param name="startIndex">Zero-based index from which searching starts.</param>
+        /// <param name="count">Number of items to search.</param>
+        /// <param name="match">
+        ///     The <see cref="Predicate{T}"/> delegate that defines the conditions of the element
+        ///     to search for.
+        /// </param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public ItemRequestResult<Index2D> FindIndex2D(
+            Index2D startIndex, int count, Predicate<T> match)
+        {
+            try
+            {
+                return RequestedIntToRequested2DIndex(FindIndex(startIndex, count, match));
+            }
+            catch (ArgumentNullException)
+            {
+                throw;
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        ///     Searches for an item that matches the conditions defined by the specified
+        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying index
+        ///     of the first occurrence searched within the specified sector. Otherwise returns
+        ///     <see cref="ItemRequestResult{T}.Failed"/><br/>
+        ///     Use <see cref="FindIndex2D{TPredicate}(Index2D, Bounds2D, TPredicate)"/> to avoid
+        ///     virtual call.
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentNullException"/>: <paramref name="match"/> cannot be
+        ///         <see langword="null"/>.<br/>
+        ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="startIndex"/> must
+        ///         be within array bounds;<br/>
+        ///         <paramref name="sectorSize"/> must be within array bounds, beginning from
+        ///         <paramref name="startIndex"/>.
+        ///     </para>
+        /// </summary>
+        /// <param name="startIndex">Zero-based index from which searching starts.</param>
+        /// <param name="sectorSize">The rectangular sector size to be searched.</param>
+        /// <param name="match">
+        ///     The <see cref="Predicate{T}"/> delegate that defines the conditions of the element
+        ///     to search for.
+        /// </param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public ItemRequestResult<Index2D> FindIndex2D(
+            Index2D startIndex, Bounds2D sectorSize, Predicate<T> match)
+        {
+            try
+            {
+                return RequestedIntToRequested2DIndex(FindIndex(startIndex, sectorSize, match));
+            }
+            catch (ArgumentNullException)
+            {
+                throw;
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        ///     Searches for an item that matches the conditions defined by the specified
+        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying last
+        ///     occurrence searched row by row within the entire <see cref="Array2D{T}"/> if found.
+        ///     Otherwise returns <see cref="ItemRequestResult{T}.Failed"/>
+        /// </summary>
+        /// <typeparam name="TPredicate">
+        ///     <typeparamref name = "TPredicate"/> is <see cref="IPredicate{T}"/> and
+        ///     <see langword="struct"/>
+        /// </typeparam>
+        /// <param name="match">
+        ///     A <see langword="struct"/> implementing <see cref="IPredicate{T}"/> that defines
+        ///     the conditions of the element to search for.
+        /// </param>
+        /// <returns></returns>
+        public ItemRequestResult<T> FindLast<TPredicate>(TPredicate match)
+            where TPredicate : struct, IPredicate<T>
+        {
+            for (int i = Count - 1; i >= 0; i--)
+            {
+                ref readonly T item = ref items[i];
+
+                if (match.Invoke(item))
+                {
+                    return new ItemRequestResult<T>(item);
+                }
+            }
+            return ItemRequestResult<T>.Failed;
+        }
+
+        /// <summary>
+        ///     Searches for an item that matches the conditions defined by the specified
+        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying last
+        ///     occurrence searched row by row within the entire <see cref="Array2D{T}"/> if found.
+        ///     Otherwise returns <see cref="ItemRequestResult{T}.Failed"/><br/>
+        ///     Use <see cref="FindLast{TPredicate}(TPredicate)"/> to avoid virtual call.
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentNullException"/>: <paramref name="match"/> cannot be
+        ///         <see langword="null"/>.
+        ///     </para>
+        /// </summary>
+        /// <param name="match">
+        ///     The <see cref="Predicate{T}"/> delegate that defines the conditions of the element
+        ///     to search for.
+        /// </param>
+        /// <returns></returns>
+        public ItemRequestResult<T> FindLast(Predicate<T> match)
+        {
+            if (match == null)
+            {
+                throw new ArgumentNullException(nameof(match), "Match cannot be null.");
+            }
+            return FindLast(new BoxedPredicate<T>(match));
+        }
+
+        internal ItemRequestResult<int> FindLastIndexInternal<TPredicate>(
+            int startIndex, int indexAfterEnd, TPredicate match)
+            where TPredicate : struct, IPredicate<T>
+        {
+            Debug.Assert(startIndex < Count);
+            Debug.Assert(indexAfterEnd >= -1);
+
+            for (int i = startIndex; i > indexAfterEnd; i--)
+            {
+                if (match.Invoke(items[i]))
+                {
+                    return new ItemRequestResult<int>(i);
+                }
+            }
+            return ItemRequestResult<int>.Failed;
+        }
+
+        /// <summary>
+        ///     Searches from the beginning for an item that matches the conditions defined by the
+        ///     specified predicate, and returns the <see cref="ItemRequestResult{T}"/> with
+        ///     underlying one-dimensional index of the last occurrence searched within the entire
+        ///     <see cref="Array2D{T}"/> if found. Otherwise returns
+        ///     <see cref="ItemRequestResult{T}.Failed"/>
+        /// </summary>
+        /// <typeparam name="TPredicate">
+        ///     <typeparamref name = "TPredicate"/> is <see cref="IPredicate{T}"/> and
+        ///     <see langword="struct"/>
+        /// </typeparam>
+        /// <param name="match">
+        ///     A <see langword="struct"/> implementing <see cref="IPredicate{T}"/> that defines
+        ///     the conditions of the element to search for.
+        /// </param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public ItemRequestResult<int> FindLastIndex<TPredicate>(TPredicate match)
+            where TPredicate : struct, IPredicate<T>
+            => FindLastIndexInternal(Count - 1, -1, match);
+
+        /// <summary>
+        ///     Searches for an item that matches the conditions defined by the specified
+        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying
+        ///     one-dimensional index of the last occurrence searched row by row within the
+        ///     specified range of items if found. Otherwise returns
+        ///     <see cref="ItemRequestResult{T}.Failed"/>
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="startIndex"/> must
+        ///         be within array bounds;<br/>
+        ///         <paramref name="count"/> must be greater or equal to zero;<br/>
+        ///         <paramref name="startIndex"/> together with <paramref name="count"/> must not
+        ///         exceed <see cref="Count"/>
+        ///     </para>
+        /// </summary>
+        /// <typeparam name="TPredicate">
+        ///     <typeparamref name = "TPredicate"/> is <see cref="IPredicate{T}"/> and
+        ///     <see langword="struct"/>
+        /// </typeparam>
+        /// <param name="startIndex">Zero-based starting index of the backward search.</param>
+        /// <param name="count">Number of items to search.</param>
+        /// <param name="match">
+        ///     A <see langword="struct"/> implementing <see cref="IPredicate{T}"/> that defines
+        ///     the conditions of the element to search for.
+        /// </param>
+        /// <returns></returns>
+        public ItemRequestResult<int> FindLastIndex<TPredicate>(
+            Index2D startIndex, int count, TPredicate match)
+            where TPredicate : struct, IPredicate<T>
+        {
+            if (!IsValidIndex(startIndex))
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(startIndex), "startIndex must be within array bounds.");
+            }
+            if (count < 0)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(count), "count must be greater or equal to zero.");
+            }
+            int startIndex1D = RowMajorIndex2DToInt(startIndex, Columns);
+            int indexAfterEnd = startIndex1D - count;
+
+            if (indexAfterEnd < -1)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(count), "startIndex together with count must not exceed Array2D.Count");
+            }
+            return FindLastIndexInternal(startIndex1D, indexAfterEnd, match);
+        }
+
+        /// <summary>
+        ///     Searches for an item that matches the conditions defined by the specified
+        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying
+        ///     one-dimensional index of the last occurrence searched within the specified sector.
+        ///     Otherwise returns <see cref="ItemRequestResult{T}.Failed"/>
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="startIndex"/> must
+        ///         be within array bounds;<br/>
+        ///         <paramref name="sectorSize"/> must be within array bounds, beginning backwardly
+        ///         from <paramref name="startIndex"/>.
+        ///     </para>   
+        /// </summary>
+        /// <typeparam name="TPredicate">
+        ///     <typeparamref name = "TPredicate"/> is <see cref="IPredicate{T}"/> and
+        ///     <see langword="struct"/>
+        /// </typeparam>
+        /// <param name="startIndex">Zero-based starting index of the backward search.</param>
+        /// <param name="sectorSize">The rectangular sector size to be searched.</param>
+        /// <param name="match">
+        ///     A <see langword="struct"/> implementing <see cref="IPredicate{T}"/> that defines
+        ///     the conditions of the element to search for.
+        /// </param>
+        /// <returns></returns>
+        public ItemRequestResult<int> FindLastIndex<TPredicate>(
+            Index2D startIndex, Bounds2D sectorSize, TPredicate match)
+            where TPredicate : struct, IPredicate<T>
+        {
+            if (!IsValidIndex(startIndex))
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(startIndex), "startIndex must be within array bounds.");
+            }
+            var indexAfterEnd = new Index2D(
+                startIndex.Row - sectorSize.Rows,
+                startIndex.Column - sectorSize.Columns);
+
+            if (indexAfterEnd.Row < -1 || indexAfterEnd.Column < -1)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(sectorSize),
+                    "sectorSize must be within array bounds, beginning backwardly from " +
+                    "startIndex.");
+            }
+            for (int i = startIndex.Row; i > indexAfterEnd.Row; i--)
+            {
+                for (int j = startIndex.Column; j > indexAfterEnd.Column; j--)
+                {
+                    if (match.Invoke(GetItemInternal(i, j)))
+                    {
+                        return new ItemRequestResult<int>(
+                            RowMajorIndex2DToInt(new Index2D(i, j), Columns));
+                    }
+                }
+            }
+            return ItemRequestResult<int>.Failed;
+        }
+
+        /// <summary>
+        ///     Searches for an item that matches the conditions defined by the specified
+        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying
+        ///     one-dimensional index of the last occurrence searched within the entire
+        ///     <see cref="Array2D{T}"/> if found. Otherwise returns
+        ///     <see cref="ItemRequestResult{T}.Failed"/><br/>
+        ///     Use <see cref="FindLastIndex{TPredicate}(TPredicate)"/> to avoid virtual call.
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentNullException"/>: <paramref name="match"/> cannot be
+        ///         <see langword="null"/>.
+        ///     </para>
+        /// </summary>
+        /// <param name="match">
+        ///     The <see cref="Predicate{T}"/> delegate that defines the conditions of the element
+        ///     to search for.
+        /// </param>
+        /// <returns></returns>
+        public ItemRequestResult<int> FindLastIndex(Predicate<T> match)
+        {
+            if (match == null)
+            {
+                throw new ArgumentNullException(nameof(match), "Match cannot be null.");
+            }
+            return FindLastIndexInternal(Count - 1, -1, new BoxedPredicate<T>(match));
+        }
+
+        /// <summary>
+        ///     Searches for an item that matches the conditions defined by the specified
+        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying
+        ///     one-dimensional index of the last occurrence searched row by row within the
+        ///     specified range of items if found. Otherwise returns
+        ///     <see cref="ItemRequestResult{T}.Failed"/><br/>
+        ///     Use <see cref="FindLastIndex{TPredicate}(Index2D, int, TPredicate)"/> to avoid
+        ///     virtual call.
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentNullException"/>: <paramref name="match"/> cannot be
+        ///         <see langword="null"/>.<br/>
+        ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="startIndex"/> must
+        ///         be within array bounds;<br/>
+        ///         <paramref name="count"/> must be greater or equal to zero;<br/>
+        ///         <paramref name="startIndex"/> together with <paramref name="count"/> must not
+        ///         exceed <see cref="Count"/>
+        ///     </para>
+        /// </summary>
+        /// <param name="startIndex">Zero-based starting index of the backward search.</param>
+        /// <param name="count">Number of items to search.</param>
+        /// <param name="match">
+        ///     The <see cref="Predicate{T}"/> delegate that defines the conditions of the element
+        ///     to search for.
+        /// </param>
+        /// <returns></returns>
+        public ItemRequestResult<int> FindLastIndex(
+            Index2D startIndex, int count, Predicate<T> match)
+        {
+            if (match == null)
+            {
+                throw new ArgumentNullException(nameof(match), "match cannot be null.");
+            }
+            try
+            {
+                return FindLastIndex(startIndex, count, new BoxedPredicate<T>(match));
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        ///     Searches for an item that matches the conditions defined by the specified
+        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying
+        ///     one-dimensional index of the last occurrence searched within the specified sector.
+        ///     Otherwise returns <see cref="ItemRequestResult{T}.Failed"/><br/>
+        ///     Use <see cref="FindLastIndex{TPredicate}(Index2D, Bounds2D, TPredicate)"/> to avoid
+        ///     virtual call.
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentNullException"/>: <paramref name="match"/> cannot be
+        ///         <see langword="null"/>.<br/>
+        ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="startIndex"/> must
+        ///         be within array bounds;<br/>
+        ///         <paramref name="sectorSize"/> must be within array bounds, beginning backwardly
+        ///         from <paramref name="startIndex"/>.
+        ///     </para>
+        /// </summary>
+        /// <param name="startIndex">Zero-based starting index of the backward search.</param>
+        /// <param name="sectorSize">The rectangular sector size to be searched.</param>
+        /// <param name="match">
+        ///     The <see cref="Predicate{T}"/> delegate that defines the conditions of the element
+        ///     to search for.
+        /// </param>
+        /// <returns></returns>
+        public ItemRequestResult<int> FindLastIndex(
+            Index2D startIndex, Bounds2D sectorSize, Predicate<T> match)
+        {
+            if (match == null)
+            {
+                throw new ArgumentNullException(nameof(match), "match cannot be null.");
+            }
+            try
+            {
+                return FindLastIndex(startIndex, sectorSize, new BoxedPredicate<T>(match));
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        ///     Searches from the beginning for an item that matches the conditions defined by the
+        ///     specified predicate, and returns the <see cref="ItemRequestResult{T}"/> with
+        ///     underlying index of the last occurrence searched within the entire
+        ///     <see cref="Array2D{T}"/> if found. Otherwise returns
+        ///     <see cref="ItemRequestResult{T}.Failed"/>
+        /// </summary>
+        /// <typeparam name="TPredicate">
+        ///     <typeparamref name = "TPredicate"/> is <see cref="IPredicate{T}"/> and
+        ///     <see langword="struct"/>
+        /// </typeparam>
+        /// <param name="match">
+        ///     A <see langword="struct"/> implementing <see cref="IPredicate{T}"/> that defines
+        ///     the conditions of the element to search for.
+        /// </param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public ItemRequestResult<Index2D> FindLastIndex2D<TPredicate>(TPredicate match)
+            where TPredicate : struct, IPredicate<T>
+            => RequestedIntToRequested2DIndex(FindLastIndex(match));
+
+        /// <summary>
+        ///     Searches for an item that matches the conditions defined by the specified
+        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying index
+        ///     of the last occurrence searched row by row within the specified range of items if
+        ///     found. Otherwise returns <see cref="ItemRequestResult{T}.Failed"/>
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="startIndex"/> must
+        ///         be within array bounds;<br/>
+        ///         <paramref name="count"/> must be greater or equal to zero;<br/>
+        ///         <paramref name="startIndex"/> together with <paramref name="count"/> must not
+        ///         exceed <see cref="Count"/>
+        ///     </para>
+        /// </summary>
+        /// <typeparam name="TPredicate">
+        ///     <typeparamref name = "TPredicate"/> is <see cref="IPredicate{T}"/> and
+        ///     <see langword="struct"/>
+        /// </typeparam>
+        /// <param name="startIndex">Zero-based starting index of the backward search.</param>
+        /// <param name="count">Number of items to search.</param>
+        /// <param name="match">
+        ///     A <see langword="struct"/> implementing <see cref="IPredicate{T}"/> that defines
+        ///     the conditions of the element to search for.
+        /// </param>
+        /// <returns></returns>
+        public ItemRequestResult<Index2D> FindLastIndex2D<TPredicate>(
+            Index2D startIndex, int count, TPredicate match)
+            where TPredicate : struct, IPredicate<T>
+        {
+            try
+            {
+                return RequestedIntToRequested2DIndex(FindLastIndex(startIndex, count, match));
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        ///     Searches for an item that matches the conditions defined by the specified
+        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying index
+        ///     of the last occurrence searched within the specified sector. Otherwise returns
+        ///     <see cref="ItemRequestResult{T}.Failed"/>
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="startIndex"/> must
+        ///         be within array bounds;<br/>
+        ///         <paramref name="sectorSize"/> must be within array bounds, beginning backwardly
+        ///         from <paramref name="startIndex"/>.
+        ///     </para>   
+        /// </summary>
+        /// <typeparam name="TPredicate">
+        ///     <typeparamref name = "TPredicate"/> is <see cref="IPredicate{T}"/> and
+        ///     <see langword="struct"/>
+        /// </typeparam>
+        /// <param name="startIndex">Zero-based starting index of the backward search.</param>
+        /// <param name="sectorSize">The rectangular sector size to be searched.</param>
+        /// <param name="match">
+        ///     A <see langword="struct"/> implementing <see cref="IPredicate{T}"/> that defines
+        ///     the conditions of the element to search for.
+        /// </param>
+        /// <returns></returns>
+        public ItemRequestResult<Index2D> FindLastIndex2D<TPredicate>(
+            Index2D startIndex, Bounds2D sectorSize, TPredicate match)
+            where TPredicate : struct, IPredicate<T>
+        {
+            try
+            {
+                return RequestedIntToRequested2DIndex(
+                    FindLastIndex(startIndex, sectorSize, match));
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        ///     Searches for an item that matches the conditions defined by the specified
+        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying index
+        ///     of the last occurrence searched within the entire <see cref="Array2D{T}"/> if
+        ///     found. Otherwise returns <see cref="ItemRequestResult{T}.Failed"/><br/>
+        ///     Use <see cref="FindLastIndex2D{TPredicate}(TPredicate)"/> to avoid virtual call.
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentNullException"/>: <paramref name="match"/> cannot be
+        ///         <see langword="null"/>.
+        ///     </para>
+        /// </summary>
+        /// <param name="match">
+        ///     The <see cref="Predicate{T}"/> delegate that defines the conditions of the element
+        ///     to search for.
+        /// </param>
+        /// <returns></returns>
+        public ItemRequestResult<Index2D> FindLastIndex2D(Predicate<T> match)
+        {
+            try
+            {
+                return RequestedIntToRequested2DIndex(FindLastIndex(match));
+            }
+            catch (ArgumentNullException)
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        ///     Searches for an item that matches the conditions defined by the specified
+        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying index
+        ///     of the last occurrence searched row by row within the specified range of items if
+        ///     found. Otherwise returns <see cref="ItemRequestResult{T}.Failed"/><br/>
+        ///     Use <see cref="FindLastIndex2D{TPredicate}(Index2D, int, TPredicate)"/> to avoid
+        ///     virtual call.
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentNullException"/>: <paramref name="match"/> cannot be
+        ///         <see langword="null"/>.<br/>
+        ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="startIndex"/> must
+        ///         be within array bounds;<br/>
+        ///         <paramref name="count"/> must be greater or equal to zero;<br/>
+        ///         <paramref name="startIndex"/> together with <paramref name="count"/> must not
+        ///         exceed <see cref="Count"/>
+        ///     </para>
+        /// </summary>
+        /// <param name="startIndex">Zero-based starting index of the backward search.</param>
+        /// <param name="count">Number of items to search.</param>
+        /// <param name="match">
+        ///     The <see cref="Predicate{T}"/> delegate that defines the conditions of the element
+        ///     to search for.
+        /// </param>
+        /// <returns></returns>
+        public ItemRequestResult<Index2D> FindLastIndex2D(
+            Index2D startIndex, int count, Predicate<T> match)
+        {
+            try
+            {
+                return RequestedIntToRequested2DIndex(FindLastIndex(startIndex, count, match));
+            }
+            catch (ArgumentNullException)
+            {
+                throw;
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        ///     Searches for an item that matches the conditions defined by the specified
+        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying index
+        ///     of the last occurrence searched within the specified sector. Otherwise returns
+        ///     <see cref="ItemRequestResult{T}.Failed"/><br/>
+        ///     Use <see cref="FindLastIndex2D{TPredicate}(Index2D, Bounds2D, TPredicate)"/> to avoid
+        ///     virtual call.
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentNullException"/>: <paramref name="match"/> cannot be
+        ///         <see langword="null"/>.<br/>
+        ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="startIndex"/> must
+        ///         be within array bounds;<br/>
+        ///         <paramref name="sectorSize"/> must be within array bounds, beginning backwardly
+        ///         from <paramref name="startIndex"/>.
+        ///     </para>
+        /// </summary>
+        /// <param name="startIndex">Zero-based starting index of the backward search.</param>
+        /// <param name="sectorSize">The rectangular sector size to be searched.</param>
+        /// <param name="match">
+        ///     The <see cref="Predicate{T}"/> delegate that defines the conditions of the element
+        ///     to search for.
+        /// </param>
+        /// <returns></returns>
+        public ItemRequestResult<Index2D> FindLastIndex2D(
+            Index2D startIndex, Bounds2D sectorSize, Predicate<T> match)
+        {
+            try
+            {
+                return RequestedIntToRequested2DIndex(
+                    FindLastIndex(startIndex, sectorSize, match));
+            }
+            catch (ArgumentNullException)
+            {
+                throw;
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Creates a <see cref="Array2D{T}"/> from <typeparamref name = "T"/>[,] instance.
+        /// <para>
+        ///     Exceptions:<br/>
+        ///     <see cref="ArgumentNullException"/>: Array cannot be null.
+        /// </para>
+        /// </summary>
+        /// <param name="array"></param>
+        /// <returns></returns>
+        public static Array2D<T> FromSystem2DArray(T[,] array)
+        {
+            if (array == null)
+            {
+                throw new ArgumentNullException(nameof(array), "Array cannot be null.");
+            }
+            Bounds2D bounds = new Bounds2D(
+                new Box<int>(array.GetLength(0)), new Box<int>(array.GetLength(1)));
+            var result = new Array2D<T>(bounds);
+            int index1D = 0;
+
+            for (int i = 0; i < bounds.Rows; i++)
+            {
+                for (int j = 0; j < bounds.Columns; j++, index1D++)
+                {
+                    result.items[index1D] = array[i, j];
+                }
+            }
+            return result;
         }
 
         /// <summary>
@@ -1569,6 +2868,27 @@ namespace Sztorm.Collections
                 throw;
             }
         }
+
+        /// <summary>
+        ///     Determines whether specified index exists in this <see cref="Array2D{T}"/>
+        ///     instance.
+        /// </summary>
+        /// <param name="row"></param>
+        /// <param name="column"></param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool IsValidIndex(int row, int column)
+            => bounds.IsValidIndex(row, column);
+
+        /// <summary>
+        ///     Determines whether specified index exists in this <see cref="Array2D{T}"/>
+        ///     instance.
+        /// </summary>
+        /// <param name="index"></param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool IsValidIndex(Index2D index)
+            => bounds.IsValidIndex(index);
 
         /// <summary>
         ///     Returns the <see cref="ItemRequestResult{T}"/> with underlying one-dimensional
@@ -2198,1297 +3518,15 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        ///     Searches for an item that matches the conditions defined by the specified
-        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying first
-        ///     occurrence searched row by row within the entire <see cref="Array2D{T}"/> if found.
-        ///     Otherwise returns <see cref="ItemRequestResult{T}.Failed"/>
+        ///     Creates a <typeparamref name = "T"/>[,] from this <see cref="Array2D{T}"/>
+        ///     instance.
         /// </summary>
-        /// <typeparam name="TPredicate">
-        ///     <typeparamref name = "TPredicate"/> is <see cref="IPredicate{T}"/> and
-        ///     <see langword="struct"/>
-        /// </typeparam>
-        /// <param name="match">
-        ///     A <see langword="struct"/> implementing <see cref="IPredicate{T}"/> that defines
-        ///     the conditions of the element to search for.
-        /// </param>
         /// <returns></returns>
-        public ItemRequestResult<T> Find<TPredicate>(TPredicate match)
-            where TPredicate : struct, IPredicate<T>
+        public T[,] ToSystem2DArray()
         {
-            for (int i = 0, length = Count; i < length; i++)
-            {
-                ref readonly T item = ref items[i];
+            var result = new T[Rows, Columns];
 
-                if (match.Invoke(item))
-                {
-                    return new ItemRequestResult<T>(item);
-                }
-            }
-            return ItemRequestResult<T>.Failed;
-        }
-
-        /// <summary>
-        ///     Searches for an item that matches the conditions defined by the specified
-        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying first
-        ///     occurrence searched row by row within the entire <see cref="Array2D{T}"/> if found.
-        ///     Otherwise returns <see cref="ItemRequestResult{T}.Failed"/><br/>
-        ///     Use <see cref="Find{TPredicate}(TPredicate)"/> to avoid virtual call.
-        ///     <para>
-        ///         Exceptions:<br/>
-        ///         <see cref="ArgumentNullException"/>: <paramref name="match"/> cannot be
-        ///         <see langword="null"/>.
-        ///     </para>
-        /// </summary>
-        /// <param name="match">
-        ///     The <see cref="Predicate{T}"/> delegate that defines the conditions of the element
-        ///     to search for.
-        /// </param>
-        /// <returns></returns>
-        public ItemRequestResult<T> Find(Predicate<T> match)
-        {
-            if (match == null)
-            {
-                throw new ArgumentNullException(nameof(match), "Match cannot be null.");
-            }
-            return Find(new BoxedPredicate<T>(match));
-        }
-
-        /// <summary>
-        ///     Searches for an item that matches the conditions defined by the specified
-        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying last
-        ///     occurrence searched row by row within the entire <see cref="Array2D{T}"/> if found.
-        ///     Otherwise returns <see cref="ItemRequestResult{T}.Failed"/>
-        /// </summary>
-        /// <typeparam name="TPredicate">
-        ///     <typeparamref name = "TPredicate"/> is <see cref="IPredicate{T}"/> and
-        ///     <see langword="struct"/>
-        /// </typeparam>
-        /// <param name="match">
-        ///     A <see langword="struct"/> implementing <see cref="IPredicate{T}"/> that defines
-        ///     the conditions of the element to search for.
-        /// </param>
-        /// <returns></returns>
-        public ItemRequestResult<T> FindLast<TPredicate>(TPredicate match)
-            where TPredicate : struct, IPredicate<T>
-        {
-            for (int i = Count - 1; i >= 0; i--)
-            {
-                ref readonly T item = ref items[i];
-
-                if (match.Invoke(item))
-                {
-                    return new ItemRequestResult<T>(item);
-                }
-            }
-            return ItemRequestResult<T>.Failed;
-        }
-
-        /// <summary>
-        ///     Searches for an item that matches the conditions defined by the specified
-        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying last
-        ///     occurrence searched row by row within the entire <see cref="Array2D{T}"/> if found.
-        ///     Otherwise returns <see cref="ItemRequestResult{T}.Failed"/><br/>
-        ///     Use <see cref="FindLast{TPredicate}(TPredicate)"/> to avoid virtual call.
-        ///     <para>
-        ///         Exceptions:<br/>
-        ///         <see cref="ArgumentNullException"/>: <paramref name="match"/> cannot be
-        ///         <see langword="null"/>.
-        ///     </para>
-        /// </summary>
-        /// <param name="match">
-        ///     The <see cref="Predicate{T}"/> delegate that defines the conditions of the element
-        ///     to search for.
-        /// </param>
-        /// <returns></returns>
-        public ItemRequestResult<T> FindLast(Predicate<T> match)
-        {
-            if (match == null)
-            {
-                throw new ArgumentNullException(nameof(match), "Match cannot be null.");
-            }
-            return FindLast(new BoxedPredicate<T>(match));
-        }
-
-        /// <summary>
-        ///     Returns <see cref="ICollection{T}"/> containing all the elements that match the
-        ///     conditions defined by the specified predicate.
-        ///     <para>
-        ///         Exceptions:<br/>
-        ///         <see cref="NotSupportedException"/>: Provided type must support 
-        ///         <see cref="ICollection{T}.Add(T)"/> method.
-        ///     </para>
-        /// </summary>
-        /// <typeparam name="TCollection">
-        ///     <typeparamref name = "TCollection"/> is <see cref="ICollection{T}"/> and has a
-        ///     parameterless constructor.
-        /// </typeparam>
-        /// <typeparam name="TPredicate">
-        ///     <typeparamref name = "TPredicate"/> is <see cref="IPredicate{T}"/> and
-        ///     <see langword="struct"/>
-        /// </typeparam>
-        /// <param name="match">
-        ///     A <see langword="struct"/> implementing <see cref="IPredicate{T}"/> that defines
-        ///     the conditions of the element to search for.
-        /// </param>
-        /// <returns></returns>
-        public TCollection FindAll<TCollection, TPredicate>(TPredicate match)
-            where TCollection : ICollection<T>, new()
-            where TPredicate : struct, IPredicate<T>
-        {
-            var resizableCollection = new TCollection();
-            try
-            {
-                for (int i = 0, length = Count; i < length; i++)
-                {
-                    ref readonly T item = ref items[i];
-
-                    if (match.Invoke(item))
-                    {
-                        resizableCollection.Add(item);
-                    }
-                }
-            }
-            catch (NotSupportedException)
-            {
-                throw new NotSupportedException("Provided type must support Add(T) method.");
-            }
-            return resizableCollection;
-        }
-
-        /// <summary>
-        ///     Returns <see cref="ICollection{T}"/> containing all the elements that match the
-        ///     conditions defined by the specified predicate.<br/>
-        ///     Use <see cref="FindAll{TCollection, TPredicate}(TPredicate)"/> to avoid virtual
-        ///     call.
-        ///     <para>
-        ///         Exceptions:<br/>
-        ///         <see cref="ArgumentNullException"/>: <paramref name="match"/> cannot be
-        ///         <see langword="null"/>.<br/>
-        ///         <see cref="NotSupportedException"/>: Provided type must support
-        ///         <see cref="ICollection{T}.Add(T)"/> method.
-        ///     </para>
-        /// </summary>
-        /// <typeparam name="TCollection">
-        ///     <typeparamref name = "TCollection"/> is <see cref="ICollection{T}"/> and has a
-        ///     parameterless constructor.
-        /// </typeparam>
-        /// <param name="match">
-        ///     The <see cref="Predicate{T}"/> delegate that defines the conditions of the element
-        ///     to search for.
-        /// </param>
-        /// <returns></returns>
-        public TCollection FindAll<TCollection>(Predicate<T> match)
-            where TCollection : ICollection<T>, new()
-        {
-            if (match == null)
-            {
-                throw new ArgumentNullException(nameof(match), "Match cannot be null.");
-            }
-            try
-            {
-                return FindAll<TCollection, BoxedPredicate<T>>(new BoxedPredicate<T>(match));
-            }
-            catch (NotSupportedException)
-            {
-                throw;
-            }
-        }
-
-        /// <summary>
-        ///     Returns <see cref="ICollection{T}"/> containing all the indices of which items
-        ///     match the conditions defined by the specified predicate.<br/>
-        ///     <para>
-        ///         Exceptions:<br/>
-        ///         <see cref="NotSupportedException"/>: Provided type must support 
-        ///         <see cref="ICollection{T}.Add(T)"/> method.
-        ///     </para>
-        /// </summary>
-        /// <typeparam name="Index2DCollection">
-        ///     <typeparamref name = "Index2DCollection"/> is <see cref="ICollection{T}"/> and has a
-        ///     parameterless constructor.
-        /// </typeparam>
-        /// <typeparam name="TPredicate">
-        ///     <typeparamref name = "TPredicate"/> is <see cref="IPredicate{T}"/> and
-        ///     <see langword="struct"/>
-        /// </typeparam>
-        /// <param name="match">
-        ///     A <see langword="struct"/> implementing <see cref="IPredicate{T}"/> that defines
-        ///     the conditions of the element to search for.
-        /// </param>
-        /// <returns></returns>
-        public Index2DCollection FindAllIndices<Index2DCollection, TPredicate>(TPredicate match)
-            where Index2DCollection : ICollection<Index2D>, new()
-            where TPredicate : struct, IPredicate<T>
-        {
-            var resizableCollection = new Index2DCollection();
-            try
-            {
-                for (int i = 0, length = Count, columns = Columns; i < length; i++)
-                {
-                    if (match.Invoke(items[i]))
-                    {
-                        resizableCollection.Add(IntToRowMajorIndex2D(i, columns));
-                    }
-                }
-            }
-            catch (NotSupportedException)
-            {
-                throw new NotSupportedException("Provided type must support Add(T) method.");
-            }
-            return resizableCollection;
-        }
-
-        /// <summary>
-        ///     Returns <see cref="ICollection{T}"/> containing all the indices of which items
-        ///     match the conditions defined by the specified predicate.<br/>
-        ///     Use <see cref="FindAllIndices{TCollection, TPredicate}(TPredicate)"/> to avoid
-        ///     virtual call.
-        ///     <para>
-        ///         Exceptions:<br/>
-        ///         <see cref="ArgumentNullException"/>: <paramref name="match"/> cannot be
-        ///         <see langword="null"/>.<br/>
-        ///         <see cref="NotSupportedException"/>: Provided type must support
-        ///         <see cref="ICollection{T}.Add(T)"/> method.
-        ///     </para>
-        /// </summary>
-        /// <typeparam name="Index2DCollection">
-        ///     <typeparamref name = "Index2DCollection"/> is <see cref="ICollection{T}"/> and has a
-        ///     parameterless constructor.
-        /// </typeparam>
-        /// <param name="match">
-        ///     The <see cref="Predicate{T}"/> delegate that defines the conditions of the element
-        ///     to search for.
-        /// </param>
-        /// <returns></returns>
-        public Index2DCollection FindAllIndices<Index2DCollection>(Predicate<T> match)
-            where Index2DCollection : ICollection<Index2D>, new()
-        {
-            if (match == null)
-            {
-                throw new ArgumentNullException(nameof(match), "Match cannot be null.");
-            }
-            try
-            {
-                return FindAllIndices<Index2DCollection, BoxedPredicate<T>>(
-                    new BoxedPredicate<T>(match));
-            }
-            catch (NotSupportedException)
-            {
-                throw;
-            }
-        }
-
-        internal ItemRequestResult<int> FindIndexInternal<TPredicate>(
-            int startIndex, int indexAfterEnd, TPredicate match)
-            where TPredicate : struct, IPredicate<T>
-        {
-            Debug.Assert(startIndex >= 0);
-            Debug.Assert(indexAfterEnd >= 0);
-            Debug.Assert(indexAfterEnd <= Count);
-
-            for (int i = startIndex; i < indexAfterEnd; i++)
-            {
-                if (match.Invoke(items[i]))
-                {
-                    return new ItemRequestResult<int>(i);
-                }
-            }
-            return ItemRequestResult<int>.Failed;
-        }
-
-        /// <summary>
-        ///     Searches from the beginning for an item that matches the conditions defined by the
-        ///     specified predicate, and returns the <see cref="ItemRequestResult{T}"/> with
-        ///     underlying one-dimensional index of the first occurrence searched within the entire
-        ///     <see cref="Array2D{T}"/> if found. Otherwise returns
-        ///     <see cref="ItemRequestResult{T}.Failed"/>
-        /// </summary>
-        /// <typeparam name="TPredicate">
-        ///     <typeparamref name = "TPredicate"/> is <see cref="IPredicate{T}"/> and
-        ///     <see langword="struct"/>
-        /// </typeparam>
-        /// <param name="match">
-        ///     A <see langword="struct"/> implementing <see cref="IPredicate{T}"/> that defines
-        ///     the conditions of the element to search for.
-        /// </param>
-        /// <returns></returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ItemRequestResult<int> FindIndex<TPredicate>(TPredicate match)
-            where TPredicate : struct, IPredicate<T>
-            => FindIndexInternal(0, Count, match);
-
-        /// <summary>
-        ///     Searches for an item that matches the conditions defined by the specified
-        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying
-        ///     one-dimensional index of the first occurrence searched row by row within the
-        ///     specified range of items if found. Otherwise returns
-        ///     <see cref="ItemRequestResult{T}.Failed"/>
-        ///     <para>
-        ///         Exceptions:<br/>
-        ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="startIndex"/> must
-        ///         be within array bounds;<br/>
-        ///         <paramref name="count"/> must be greater or equal to zero;<br/>
-        ///         <paramref name="startIndex"/> together with <paramref name="count"/> must not
-        ///         exceed <see cref="Count"/>
-        ///     </para>
-        /// </summary>
-        /// <typeparam name="TPredicate">
-        ///     <typeparamref name = "TPredicate"/> is <see cref="IPredicate{T}"/> and
-        ///     <see langword="struct"/>
-        /// </typeparam>
-        /// <param name="startIndex">Zero-based index from which searching starts.</param>
-        /// <param name="count">Number of items to search.</param>
-        /// <param name="match">
-        ///     A <see langword="struct"/> implementing <see cref="IPredicate{T}"/> that defines
-        ///     the conditions of the element to search for.
-        /// </param>
-        /// <returns></returns>
-        public ItemRequestResult<int> FindIndex<TPredicate>(
-            Index2D startIndex, int count, TPredicate match)
-            where TPredicate : struct, IPredicate<T>
-        {
-            if (!IsValidIndex(startIndex))
-            {
-                throw new ArgumentOutOfRangeException(
-                    nameof(startIndex), "startIndex must be within array bounds.");
-            }
-            if (count < 0)
-            {
-                throw new ArgumentOutOfRangeException(
-                    nameof(count), "count must be greater or equal to zero.");
-            }
-            int startIndex1D = RowMajorIndex2DToInt(startIndex, Columns);
-            int indexAfterEnd = startIndex1D + count;
-
-            if (indexAfterEnd > items.Length)
-            {
-                throw new ArgumentOutOfRangeException(
-                    nameof(count), "startIndex together with count must not exceed Array2D.Count");
-            }
-            return FindIndexInternal(startIndex1D, indexAfterEnd, match);
-        }
-
-        /// <summary>
-        ///     Searches for an item that matches the conditions defined by the specified
-        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying
-        ///     one-dimensional index of the first occurrence searched within the specified sector.
-        ///     Otherwise returns <see cref="ItemRequestResult{T}.Failed"/>
-        ///     <para>
-        ///         Exceptions:<br/>
-        ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="startIndex"/> must
-        ///         be within array bounds;<br/>
-        ///         <paramref name="sectorSize"/> must be within array bounds, beginning from
-        ///         <paramref name="startIndex"/>.
-        ///     </para>   
-        /// </summary>
-        /// <typeparam name="TPredicate">
-        ///     <typeparamref name = "TPredicate"/> is <see cref="IPredicate{T}"/> and
-        ///     <see langword="struct"/>
-        /// </typeparam>
-        /// <param name="startIndex">Zero-based index from which searching starts.</param>
-        /// <param name="sectorSize">The rectangular sector size to be searched.</param>
-        /// <param name="match">
-        ///     A <see langword="struct"/> implementing <see cref="IPredicate{T}"/> that defines
-        ///     the conditions of the element to search for.
-        /// </param>
-        /// <returns></returns>
-        public ItemRequestResult<int> FindIndex<TPredicate>(
-            Index2D startIndex, Bounds2D sectorSize, TPredicate match)
-            where TPredicate : struct, IPredicate<T>
-        {
-            if (!IsValidIndex(startIndex))
-            {
-                throw new ArgumentOutOfRangeException(
-                    nameof(startIndex), "startIndex must be within array bounds.");
-            }
-            var indexAfterEnd = new Index2D(
-                startIndex.Row + sectorSize.Rows,
-                startIndex.Column + sectorSize.Columns);
-
-            if (indexAfterEnd.Row > Rows || indexAfterEnd.Column > Columns)
-            {
-                throw new ArgumentOutOfRangeException(
-                    nameof(sectorSize),
-                    "sectorSize must be within array bounds, beginning from startIndex.");
-            }
-            for (int i = startIndex.Row; i < indexAfterEnd.Row; i++)
-            {
-                for (int j = startIndex.Column; j < indexAfterEnd.Column; j++)
-                {
-                    if (match.Invoke(GetItemInternal(i, j)))
-                    {
-                        return new ItemRequestResult<int>(
-                            RowMajorIndex2DToInt(new Index2D(i, j), Columns));
-                    }
-                }
-            }
-            return ItemRequestResult<int>.Failed;
-        }
-
-        /// <summary>
-        ///     Searches for an item that matches the conditions defined by the specified
-        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying
-        ///     one-dimensional index of the first occurrence searched within the entire
-        ///     <see cref="Array2D{T}"/> if found. Otherwise returns
-        ///     <see cref="ItemRequestResult{T}.Failed"/><br/>
-        ///     Use <see cref="FindIndex{TPredicate}(TPredicate)"/> to avoid virtual call.
-        ///     <para>
-        ///         Exceptions:<br/>
-        ///         <see cref="ArgumentNullException"/>: <paramref name="match"/> cannot be
-        ///         <see langword="null"/>.
-        ///     </para>
-        /// </summary>
-        /// <param name="match">
-        ///     The <see cref="Predicate{T}"/> delegate that defines the conditions of the element
-        ///     to search for.
-        /// </param>
-        /// <returns></returns>
-        public ItemRequestResult<int> FindIndex(Predicate<T> match)
-        {
-            if (match == null)
-            {
-                throw new ArgumentNullException(nameof(match), "Match cannot be null.");
-            }
-            return FindIndexInternal(0, Count, new BoxedPredicate<T>(match));
-        }
-
-        /// <summary>
-        ///     Searches for an item that matches the conditions defined by the specified
-        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying
-        ///     one-dimensional index of the first occurrence searched row by row within the
-        ///     specified range of items if found. Otherwise returns
-        ///     <see cref="ItemRequestResult{T}.Failed"/><br/>
-        ///     Use <see cref="FindIndex{TPredicate}(Index2D, int, TPredicate)"/> to avoid virtual
-        ///     call.
-        ///     <para>
-        ///         Exceptions:<br/>
-        ///         <see cref="ArgumentNullException"/>: <paramref name="match"/> cannot be
-        ///         <see langword="null"/>.<br/>
-        ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="startIndex"/> must
-        ///         be within array bounds;<br/>
-        ///         <paramref name="count"/> must be greater or equal to zero;<br/>
-        ///         <paramref name="startIndex"/> together with <paramref name="count"/> must not
-        ///         exceed <see cref="Count"/>
-        ///     </para>
-        /// </summary>
-        /// <param name="startIndex">Zero-based index from which searching starts.</param>
-        /// <param name="count">Number of items to search.</param>
-        /// <param name="match">
-        ///     The <see cref="Predicate{T}"/> delegate that defines the conditions of the element
-        ///     to search for.
-        /// </param>
-        /// <returns></returns>
-        public ItemRequestResult<int> FindIndex(Index2D startIndex, int count, Predicate<T> match)
-        {
-            if (match == null)
-            {
-                throw new ArgumentNullException(nameof(match), "match cannot be null.");
-            }
-            try
-            {
-                return FindIndex(startIndex, count, new BoxedPredicate<T>(match));
-            }
-            catch (ArgumentOutOfRangeException)
-            {
-                throw;
-            }
-        }
-
-        /// <summary>
-        ///     Searches for an item that matches the conditions defined by the specified
-        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying
-        ///     one-dimensional index of the first occurrence searched within the specified sector.
-        ///     Otherwise returns <see cref="ItemRequestResult{T}.Failed"/><br/>
-        ///     Use <see cref="FindIndex{TPredicate}(Index2D, Bounds2D, TPredicate)"/> to avoid
-        ///     virtual call.
-        ///     <para>
-        ///         Exceptions:<br/>
-        ///         <see cref="ArgumentNullException"/>: <paramref name="match"/> cannot be
-        ///         <see langword="null"/>.<br/>
-        ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="startIndex"/> must
-        ///         be within array bounds;<br/>
-        ///         <paramref name="sectorSize"/> must be within array bounds, beginning from
-        ///         <paramref name="startIndex"/>.
-        ///     </para>
-        /// </summary>
-        /// <param name="startIndex">Zero-based index from which searching starts.</param>
-        /// <param name="sectorSize">The rectangular sector size to be searched.</param>
-        /// <param name="match">
-        ///     The <see cref="Predicate{T}"/> delegate that defines the conditions of the element
-        ///     to search for.
-        /// </param>
-        /// <returns></returns>
-        public ItemRequestResult<int> FindIndex(
-            Index2D startIndex, Bounds2D sectorSize, Predicate<T> match)
-        {
-            if (match == null)
-            {
-                throw new ArgumentNullException(nameof(match), "match cannot be null.");
-            }
-            try
-            {
-                return FindIndex(startIndex, sectorSize, new BoxedPredicate<T>(match));
-            }
-            catch (ArgumentOutOfRangeException)
-            {
-                throw;
-            }
-        }
-
-        private ItemRequestResult<Index2D> RequestedIntToRequested2DIndex(
-            ItemRequestResult<int> possibleIndex)
-        {
-            if (!possibleIndex.IsSuccess)
-            {
-                return ItemRequestResult<Index2D>.Failed;
-            }
-            return new ItemRequestResult<Index2D>(
-                IntToRowMajorIndex2D(possibleIndex.ItemOrDefault, Columns));
-        }
-
-        /// <summary>
-        ///     Searches for an item that matches the conditions defined by the specified
-        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying index
-        ///     of the first occurrence searched within the entire <see cref="Array2D{T}"/> if
-        ///     found. Otherwise returns <see cref="ItemRequestResult{T}.Failed"/>
-        /// </summary>
-        /// <typeparam name="TPredicate">
-        ///     <typeparamref name = "TPredicate"/> is <see cref="IPredicate{T}"/> and
-        ///     <see langword="struct"/>
-        /// </typeparam>
-        /// <param name="match">
-        ///     A <see langword="struct"/> implementing <see cref="IPredicate{T}"/> that defines
-        ///     the conditions of the element to search for.
-        /// </param>
-        /// <returns></returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ItemRequestResult<Index2D> FindIndex2D<TPredicate>(TPredicate match)
-            where TPredicate : struct, IPredicate<T>
-            => RequestedIntToRequested2DIndex(FindIndex(match));
-
-        /// <summary>
-        ///     Searches for an item that matches the conditions defined by the specified
-        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying index
-        ///     of the first occurrence searched row by row within the specified range of items if
-        ///     found. Otherwise returns <see cref="ItemRequestResult{T}.Failed"/>
-        ///     <para>
-        ///         Exceptions:<br/>
-        ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="startIndex"/> must
-        ///         be within array bounds;<br/>
-        ///         <paramref name="count"/> must be greater or equal to zero;<br/>
-        ///         <paramref name="startIndex"/> together with <paramref name="count"/> must not
-        ///         exceed <see cref="Count"/>
-        ///     </para>
-        /// </summary>
-        /// <typeparam name="TPredicate">
-        ///     <typeparamref name = "TPredicate"/> is <see cref="IPredicate{T}"/> and
-        ///     <see langword="struct"/>
-        /// </typeparam>
-        /// <param name="startIndex">Zero-based index from which searching starts.</param>
-        /// <param name="count">Number of items to search.</param>
-        /// <param name="match">
-        ///     A <see langword="struct"/> implementing <see cref="IPredicate{T}"/> that defines
-        ///     the conditions of the element to search for.
-        /// </param>
-        /// <returns></returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ItemRequestResult<Index2D> FindIndex2D<TPredicate>(
-            Index2D startIndex, int count, TPredicate match)
-            where TPredicate : struct, IPredicate<T>
-        {
-            try
-            {
-                return RequestedIntToRequested2DIndex(FindIndex(startIndex, count, match));
-            }
-            catch (ArgumentOutOfRangeException)
-            {
-                throw;
-            }
-        }
-
-        /// <summary>
-        ///     Searches for an item that matches the conditions defined by the specified
-        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying index
-        ///     of the first occurrence searched within the specified sector. Otherwise returns
-        ///     <see cref="ItemRequestResult{T}.Failed"/>
-        ///     <para>
-        ///         Exceptions:<br/>
-        ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="startIndex"/> must
-        ///         be within array bounds;<br/>
-        ///         <paramref name="sectorSize"/> must be within array bounds, beginning from
-        ///         <paramref name="startIndex"/>.
-        ///     </para>   
-        /// </summary>
-        /// <typeparam name="TPredicate">
-        ///     <typeparamref name = "TPredicate"/> is <see cref="IPredicate{T}"/> and
-        ///     <see langword="struct"/>
-        /// </typeparam>
-        /// <param name="startIndex">Zero-based index from which searching starts.</param>
-        /// <param name="sectorSize">The rectangular sector size to be searched.</param>
-        /// <param name="match">
-        ///     A <see langword="struct"/> implementing <see cref="IPredicate{T}"/> that defines
-        ///     the conditions of the element to search for.
-        /// </param>
-        /// <returns></returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ItemRequestResult<Index2D> FindIndex2D<TPredicate>(
-            Index2D startIndex, Bounds2D sectorSize, TPredicate match)
-            where TPredicate : struct, IPredicate<T>
-        {
-            try
-            {
-                return RequestedIntToRequested2DIndex(FindIndex(startIndex, sectorSize, match));
-            }
-            catch (ArgumentOutOfRangeException)
-            {
-                throw;
-            }
-        }
-
-        /// <summary>
-        ///     Searches for an item that matches the conditions defined by the specified
-        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying index
-        ///     of the first occurrence searched within the entire <see cref="Array2D{T}"/> if found.
-        ///     Otherwise returns <see cref="ItemRequestResult{T}.Failed"/><br/>
-        ///     Use <see cref="FindIndex2D{TPredicate}(TPredicate)"/> to avoid virtual call.
-        ///     <para>
-        ///         Exceptions:<br/>
-        ///         <see cref="ArgumentNullException"/> <paramref name="match"/> cannot be
-        ///         <see langword="null"/>.
-        ///     </para>
-        /// </summary>
-        /// <param name="match">
-        ///     The <see cref="Predicate{T}"/> delegate that defines the conditions of the element
-        ///     to search for.
-        /// </param>
-        /// <returns></returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ItemRequestResult<Index2D> FindIndex2D(Predicate<T> match)
-        {
-            try
-            {
-                return RequestedIntToRequested2DIndex(FindIndex(match));
-            }
-            catch (ArgumentNullException)
-            {
-                throw;
-            }
-        }
-
-        /// <summary>
-        ///     Searches for an item that matches the conditions defined by the specified
-        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying index
-        ///     of the first occurrence searched row by row within the specified range of items if
-        ///     found. Otherwise returns <see cref="ItemRequestResult{T}.Failed"/><br/>
-        ///     Use <see cref="FindIndex2D{TPredicate}(Index2D, int, TPredicate)"/> to avoid
-        ///     virtual call.
-        ///     <para>
-        ///         Exceptions:<br/>
-        ///         <see cref="ArgumentNullException"/>: <paramref name="match"/> cannot be
-        ///         <see langword="null"/>.<br/>
-        ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="startIndex"/> must
-        ///         be within array bounds;<br/>
-        ///         <paramref name="count"/> must be greater or equal to zero;<br/>
-        ///         <paramref name="startIndex"/> together with <paramref name="count"/> must not
-        ///         exceed <see cref="Count"/>
-        ///     </para>
-        /// </summary>
-        /// <param name="startIndex">Zero-based index from which searching starts.</param>
-        /// <param name="count">Number of items to search.</param>
-        /// <param name="match">
-        ///     The <see cref="Predicate{T}"/> delegate that defines the conditions of the element
-        ///     to search for.
-        /// </param>
-        /// <returns></returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ItemRequestResult<Index2D> FindIndex2D(
-            Index2D startIndex, int count, Predicate<T> match)
-        {
-            try
-            {
-                return RequestedIntToRequested2DIndex(FindIndex(startIndex, count, match));
-            }
-            catch (ArgumentNullException)
-            {
-                throw;
-            }
-            catch (ArgumentOutOfRangeException)
-            {
-                throw;
-            }
-        }
-
-        /// <summary>
-        ///     Searches for an item that matches the conditions defined by the specified
-        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying index
-        ///     of the first occurrence searched within the specified sector. Otherwise returns
-        ///     <see cref="ItemRequestResult{T}.Failed"/><br/>
-        ///     Use <see cref="FindIndex2D{TPredicate}(Index2D, Bounds2D, TPredicate)"/> to avoid
-        ///     virtual call.
-        ///     <para>
-        ///         Exceptions:<br/>
-        ///         <see cref="ArgumentNullException"/>: <paramref name="match"/> cannot be
-        ///         <see langword="null"/>.<br/>
-        ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="startIndex"/> must
-        ///         be within array bounds;<br/>
-        ///         <paramref name="sectorSize"/> must be within array bounds, beginning from
-        ///         <paramref name="startIndex"/>.
-        ///     </para>
-        /// </summary>
-        /// <param name="startIndex">Zero-based index from which searching starts.</param>
-        /// <param name="sectorSize">The rectangular sector size to be searched.</param>
-        /// <param name="match">
-        ///     The <see cref="Predicate{T}"/> delegate that defines the conditions of the element
-        ///     to search for.
-        /// </param>
-        /// <returns></returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ItemRequestResult<Index2D> FindIndex2D(
-            Index2D startIndex, Bounds2D sectorSize, Predicate<T> match)
-        {
-            try
-            {
-                return RequestedIntToRequested2DIndex(FindIndex(startIndex, sectorSize, match));
-            }
-            catch (ArgumentNullException)
-            {
-                throw;
-            }
-            catch (ArgumentOutOfRangeException)
-            {
-                throw;
-            }
-        }
-
-        internal ItemRequestResult<int> FindLastIndexInternal<TPredicate>(
-            int startIndex, int indexAfterEnd, TPredicate match)
-            where TPredicate : struct, IPredicate<T>
-        {
-            Debug.Assert(startIndex < Count);
-            Debug.Assert(indexAfterEnd >= -1);
-
-            for (int i = startIndex; i > indexAfterEnd; i--)
-            {
-                if (match.Invoke(items[i]))
-                {
-                    return new ItemRequestResult<int>(i);
-                }
-            }
-            return ItemRequestResult<int>.Failed;
-        }
-
-        /// <summary>
-        ///     Searches from the beginning for an item that matches the conditions defined by the
-        ///     specified predicate, and returns the <see cref="ItemRequestResult{T}"/> with
-        ///     underlying one-dimensional index of the last occurrence searched within the entire
-        ///     <see cref="Array2D{T}"/> if found. Otherwise returns
-        ///     <see cref="ItemRequestResult{T}.Failed"/>
-        /// </summary>
-        /// <typeparam name="TPredicate">
-        ///     <typeparamref name = "TPredicate"/> is <see cref="IPredicate{T}"/> and
-        ///     <see langword="struct"/>
-        /// </typeparam>
-        /// <param name="match">
-        ///     A <see langword="struct"/> implementing <see cref="IPredicate{T}"/> that defines
-        ///     the conditions of the element to search for.
-        /// </param>
-        /// <returns></returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ItemRequestResult<int> FindLastIndex<TPredicate>(TPredicate match)
-            where TPredicate : struct, IPredicate<T>
-            => FindLastIndexInternal(Count - 1, -1, match);
-
-        /// <summary>
-        ///     Searches for an item that matches the conditions defined by the specified
-        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying
-        ///     one-dimensional index of the last occurrence searched row by row within the
-        ///     specified range of items if found. Otherwise returns
-        ///     <see cref="ItemRequestResult{T}.Failed"/>
-        ///     <para>
-        ///         Exceptions:<br/>
-        ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="startIndex"/> must
-        ///         be within array bounds;<br/>
-        ///         <paramref name="count"/> must be greater or equal to zero;<br/>
-        ///         <paramref name="startIndex"/> together with <paramref name="count"/> must not
-        ///         exceed <see cref="Count"/>
-        ///     </para>
-        /// </summary>
-        /// <typeparam name="TPredicate">
-        ///     <typeparamref name = "TPredicate"/> is <see cref="IPredicate{T}"/> and
-        ///     <see langword="struct"/>
-        /// </typeparam>
-        /// <param name="startIndex">Zero-based starting index of the backward search.</param>
-        /// <param name="count">Number of items to search.</param>
-        /// <param name="match">
-        ///     A <see langword="struct"/> implementing <see cref="IPredicate{T}"/> that defines
-        ///     the conditions of the element to search for.
-        /// </param>
-        /// <returns></returns>
-        public ItemRequestResult<int> FindLastIndex<TPredicate>(
-            Index2D startIndex, int count, TPredicate match)
-            where TPredicate : struct, IPredicate<T>
-        {
-            if (!IsValidIndex(startIndex))
-            {
-                throw new ArgumentOutOfRangeException(
-                    nameof(startIndex), "startIndex must be within array bounds.");
-            }
-            if (count < 0)
-            {
-                throw new ArgumentOutOfRangeException(
-                    nameof(count), "count must be greater or equal to zero.");
-            }
-            int startIndex1D = RowMajorIndex2DToInt(startIndex, Columns);
-            int indexAfterEnd = startIndex1D - count;
-
-            if (indexAfterEnd < -1)
-            {
-                throw new ArgumentOutOfRangeException(
-                    nameof(count), "startIndex together with count must not exceed Array2D.Count");
-            }
-            return FindLastIndexInternal(startIndex1D, indexAfterEnd, match);
-        }
-
-        /// <summary>
-        ///     Searches for an item that matches the conditions defined by the specified
-        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying
-        ///     one-dimensional index of the last occurrence searched within the specified sector.
-        ///     Otherwise returns <see cref="ItemRequestResult{T}.Failed"/>
-        ///     <para>
-        ///         Exceptions:<br/>
-        ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="startIndex"/> must
-        ///         be within array bounds;<br/>
-        ///         <paramref name="sectorSize"/> must be within array bounds, beginning backwardly
-        ///         from <paramref name="startIndex"/>.
-        ///     </para>   
-        /// </summary>
-        /// <typeparam name="TPredicate">
-        ///     <typeparamref name = "TPredicate"/> is <see cref="IPredicate{T}"/> and
-        ///     <see langword="struct"/>
-        /// </typeparam>
-        /// <param name="startIndex">Zero-based starting index of the backward search.</param>
-        /// <param name="sectorSize">The rectangular sector size to be searched.</param>
-        /// <param name="match">
-        ///     A <see langword="struct"/> implementing <see cref="IPredicate{T}"/> that defines
-        ///     the conditions of the element to search for.
-        /// </param>
-        /// <returns></returns>
-        public ItemRequestResult<int> FindLastIndex<TPredicate>(
-            Index2D startIndex, Bounds2D sectorSize, TPredicate match)
-            where TPredicate : struct, IPredicate<T>
-        {
-            if (!IsValidIndex(startIndex))
-            {
-                throw new ArgumentOutOfRangeException(
-                    nameof(startIndex), "startIndex must be within array bounds.");
-            }
-            var indexAfterEnd = new Index2D(
-                startIndex.Row - sectorSize.Rows,
-                startIndex.Column - sectorSize.Columns);
-
-            if (indexAfterEnd.Row < -1 || indexAfterEnd.Column < -1)
-            {
-                throw new ArgumentOutOfRangeException(
-                    nameof(sectorSize),
-                    "sectorSize must be within array bounds, beginning backwardly from " +
-                    "startIndex.");
-            }
-            for (int i = startIndex.Row; i > indexAfterEnd.Row; i--)
-            {
-                for (int j = startIndex.Column; j > indexAfterEnd.Column; j--)
-                {
-                    if (match.Invoke(GetItemInternal(i, j)))
-                    {
-                        return new ItemRequestResult<int>(
-                            RowMajorIndex2DToInt(new Index2D(i, j), Columns));
-                    }
-                }
-            }
-            return ItemRequestResult<int>.Failed;
-        }
-
-        /// <summary>
-        ///     Searches for an item that matches the conditions defined by the specified
-        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying
-        ///     one-dimensional index of the last occurrence searched within the entire
-        ///     <see cref="Array2D{T}"/> if found. Otherwise returns
-        ///     <see cref="ItemRequestResult{T}.Failed"/><br/>
-        ///     Use <see cref="FindLastIndex{TPredicate}(TPredicate)"/> to avoid virtual call.
-        ///     <para>
-        ///         Exceptions:<br/>
-        ///         <see cref="ArgumentNullException"/>: <paramref name="match"/> cannot be
-        ///         <see langword="null"/>.
-        ///     </para>
-        /// </summary>
-        /// <param name="match">
-        ///     The <see cref="Predicate{T}"/> delegate that defines the conditions of the element
-        ///     to search for.
-        /// </param>
-        /// <returns></returns>
-        public ItemRequestResult<int> FindLastIndex(Predicate<T> match)
-        {
-            if (match == null)
-            {
-                throw new ArgumentNullException(nameof(match), "Match cannot be null.");
-            }
-            return FindLastIndexInternal(Count - 1, -1, new BoxedPredicate<T>(match));
-        }
-
-        /// <summary>
-        ///     Searches for an item that matches the conditions defined by the specified
-        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying
-        ///     one-dimensional index of the last occurrence searched row by row within the
-        ///     specified range of items if found. Otherwise returns
-        ///     <see cref="ItemRequestResult{T}.Failed"/><br/>
-        ///     Use <see cref="FindLastIndex{TPredicate}(Index2D, int, TPredicate)"/> to avoid
-        ///     virtual call.
-        ///     <para>
-        ///         Exceptions:<br/>
-        ///         <see cref="ArgumentNullException"/>: <paramref name="match"/> cannot be
-        ///         <see langword="null"/>.<br/>
-        ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="startIndex"/> must
-        ///         be within array bounds;<br/>
-        ///         <paramref name="count"/> must be greater or equal to zero;<br/>
-        ///         <paramref name="startIndex"/> together with <paramref name="count"/> must not
-        ///         exceed <see cref="Count"/>
-        ///     </para>
-        /// </summary>
-        /// <param name="startIndex">Zero-based starting index of the backward search.</param>
-        /// <param name="count">Number of items to search.</param>
-        /// <param name="match">
-        ///     The <see cref="Predicate{T}"/> delegate that defines the conditions of the element
-        ///     to search for.
-        /// </param>
-        /// <returns></returns>
-        public ItemRequestResult<int> FindLastIndex(
-            Index2D startIndex, int count, Predicate<T> match)
-        {
-            if (match == null)
-            {
-                throw new ArgumentNullException(nameof(match), "match cannot be null.");
-            }
-            try
-            {
-                return FindLastIndex(startIndex, count, new BoxedPredicate<T>(match));
-            }
-            catch (ArgumentOutOfRangeException)
-            {
-                throw;
-            }
-        }
-
-        /// <summary>
-        ///     Searches for an item that matches the conditions defined by the specified
-        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying
-        ///     one-dimensional index of the last occurrence searched within the specified sector.
-        ///     Otherwise returns <see cref="ItemRequestResult{T}.Failed"/><br/>
-        ///     Use <see cref="FindLastIndex{TPredicate}(Index2D, Bounds2D, TPredicate)"/> to avoid
-        ///     virtual call.
-        ///     <para>
-        ///         Exceptions:<br/>
-        ///         <see cref="ArgumentNullException"/>: <paramref name="match"/> cannot be
-        ///         <see langword="null"/>.<br/>
-        ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="startIndex"/> must
-        ///         be within array bounds;<br/>
-        ///         <paramref name="sectorSize"/> must be within array bounds, beginning backwardly
-        ///         from <paramref name="startIndex"/>.
-        ///     </para>
-        /// </summary>
-        /// <param name="startIndex">Zero-based starting index of the backward search.</param>
-        /// <param name="sectorSize">The rectangular sector size to be searched.</param>
-        /// <param name="match">
-        ///     The <see cref="Predicate{T}"/> delegate that defines the conditions of the element
-        ///     to search for.
-        /// </param>
-        /// <returns></returns>
-        public ItemRequestResult<int> FindLastIndex(
-            Index2D startIndex, Bounds2D sectorSize, Predicate<T> match)
-        {
-            if (match == null)
-            {
-                throw new ArgumentNullException(nameof(match), "match cannot be null.");
-            }
-            try
-            {
-                return FindLastIndex(startIndex, sectorSize, new BoxedPredicate<T>(match));
-            }
-            catch (ArgumentOutOfRangeException)
-            {
-                throw;
-            }
-        }
-
-        /// <summary>
-        ///     Searches from the beginning for an item that matches the conditions defined by the
-        ///     specified predicate, and returns the <see cref="ItemRequestResult{T}"/> with
-        ///     underlying index of the last occurrence searched within the entire
-        ///     <see cref="Array2D{T}"/> if found. Otherwise returns
-        ///     <see cref="ItemRequestResult{T}.Failed"/>
-        /// </summary>
-        /// <typeparam name="TPredicate">
-        ///     <typeparamref name = "TPredicate"/> is <see cref="IPredicate{T}"/> and
-        ///     <see langword="struct"/>
-        /// </typeparam>
-        /// <param name="match">
-        ///     A <see langword="struct"/> implementing <see cref="IPredicate{T}"/> that defines
-        ///     the conditions of the element to search for.
-        /// </param>
-        /// <returns></returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ItemRequestResult<Index2D> FindLastIndex2D<TPredicate>(TPredicate match)
-            where TPredicate : struct, IPredicate<T>
-            => RequestedIntToRequested2DIndex(FindLastIndex(match));
-
-        /// <summary>
-        ///     Searches for an item that matches the conditions defined by the specified
-        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying index
-        ///     of the last occurrence searched row by row within the specified range of items if
-        ///     found. Otherwise returns <see cref="ItemRequestResult{T}.Failed"/>
-        ///     <para>
-        ///         Exceptions:<br/>
-        ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="startIndex"/> must
-        ///         be within array bounds;<br/>
-        ///         <paramref name="count"/> must be greater or equal to zero;<br/>
-        ///         <paramref name="startIndex"/> together with <paramref name="count"/> must not
-        ///         exceed <see cref="Count"/>
-        ///     </para>
-        /// </summary>
-        /// <typeparam name="TPredicate">
-        ///     <typeparamref name = "TPredicate"/> is <see cref="IPredicate{T}"/> and
-        ///     <see langword="struct"/>
-        /// </typeparam>
-        /// <param name="startIndex">Zero-based starting index of the backward search.</param>
-        /// <param name="count">Number of items to search.</param>
-        /// <param name="match">
-        ///     A <see langword="struct"/> implementing <see cref="IPredicate{T}"/> that defines
-        ///     the conditions of the element to search for.
-        /// </param>
-        /// <returns></returns>
-        public ItemRequestResult<Index2D> FindLastIndex2D<TPredicate>(
-            Index2D startIndex, int count, TPredicate match)
-            where TPredicate : struct, IPredicate<T>
-        {
-            try
-            {
-                return RequestedIntToRequested2DIndex(FindLastIndex(startIndex, count, match));
-            }
-            catch (ArgumentOutOfRangeException)
-            {
-                throw;
-            }
-        }
-
-        /// <summary>
-        ///     Searches for an item that matches the conditions defined by the specified
-        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying index
-        ///     of the last occurrence searched within the specified sector. Otherwise returns
-        ///     <see cref="ItemRequestResult{T}.Failed"/>
-        ///     <para>
-        ///         Exceptions:<br/>
-        ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="startIndex"/> must
-        ///         be within array bounds;<br/>
-        ///         <paramref name="sectorSize"/> must be within array bounds, beginning backwardly
-        ///         from <paramref name="startIndex"/>.
-        ///     </para>   
-        /// </summary>
-        /// <typeparam name="TPredicate">
-        ///     <typeparamref name = "TPredicate"/> is <see cref="IPredicate{T}"/> and
-        ///     <see langword="struct"/>
-        /// </typeparam>
-        /// <param name="startIndex">Zero-based starting index of the backward search.</param>
-        /// <param name="sectorSize">The rectangular sector size to be searched.</param>
-        /// <param name="match">
-        ///     A <see langword="struct"/> implementing <see cref="IPredicate{T}"/> that defines
-        ///     the conditions of the element to search for.
-        /// </param>
-        /// <returns></returns>
-        public ItemRequestResult<Index2D> FindLastIndex2D<TPredicate>(
-            Index2D startIndex, Bounds2D sectorSize, TPredicate match)
-            where TPredicate : struct, IPredicate<T>
-        {
-            try
-            {
-                return RequestedIntToRequested2DIndex(
-                    FindLastIndex(startIndex, sectorSize, match));
-            }
-            catch (ArgumentOutOfRangeException)
-            {
-                throw;
-            }
-        }
-
-        /// <summary>
-        ///     Searches for an item that matches the conditions defined by the specified
-        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying index
-        ///     of the last occurrence searched within the entire <see cref="Array2D{T}"/> if
-        ///     found. Otherwise returns <see cref="ItemRequestResult{T}.Failed"/><br/>
-        ///     Use <see cref="FindLastIndex2D{TPredicate}(TPredicate)"/> to avoid virtual call.
-        ///     <para>
-        ///         Exceptions:<br/>
-        ///         <see cref="ArgumentNullException"/>: <paramref name="match"/> cannot be
-        ///         <see langword="null"/>.
-        ///     </para>
-        /// </summary>
-        /// <param name="match">
-        ///     The <see cref="Predicate{T}"/> delegate that defines the conditions of the element
-        ///     to search for.
-        /// </param>
-        /// <returns></returns>
-        public ItemRequestResult<Index2D> FindLastIndex2D(Predicate<T> match)
-        {
-            try
-            {
-                return RequestedIntToRequested2DIndex(FindLastIndex(match));
-            }
-            catch (ArgumentNullException)
-            {
-                throw;
-            }
-        }
-
-        /// <summary>
-        ///     Searches for an item that matches the conditions defined by the specified
-        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying index
-        ///     of the last occurrence searched row by row within the specified range of items if
-        ///     found. Otherwise returns <see cref="ItemRequestResult{T}.Failed"/><br/>
-        ///     Use <see cref="FindLastIndex2D{TPredicate}(Index2D, int, TPredicate)"/> to avoid
-        ///     virtual call.
-        ///     <para>
-        ///         Exceptions:<br/>
-        ///         <see cref="ArgumentNullException"/>: <paramref name="match"/> cannot be
-        ///         <see langword="null"/>.<br/>
-        ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="startIndex"/> must
-        ///         be within array bounds;<br/>
-        ///         <paramref name="count"/> must be greater or equal to zero;<br/>
-        ///         <paramref name="startIndex"/> together with <paramref name="count"/> must not
-        ///         exceed <see cref="Count"/>
-        ///     </para>
-        /// </summary>
-        /// <param name="startIndex">Zero-based starting index of the backward search.</param>
-        /// <param name="count">Number of items to search.</param>
-        /// <param name="match">
-        ///     The <see cref="Predicate{T}"/> delegate that defines the conditions of the element
-        ///     to search for.
-        /// </param>
-        /// <returns></returns>
-        public ItemRequestResult<Index2D> FindLastIndex2D(
-            Index2D startIndex, int count, Predicate<T> match)
-        {
-            try
-            {
-                return RequestedIntToRequested2DIndex(FindLastIndex(startIndex, count, match));
-            }
-            catch (ArgumentNullException)
-            {
-                throw;
-            }
-            catch (ArgumentOutOfRangeException)
-            {
-                throw;
-            }
-        }
-
-        /// <summary>
-        ///     Searches for an item that matches the conditions defined by the specified
-        ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying index
-        ///     of the last occurrence searched within the specified sector. Otherwise returns
-        ///     <see cref="ItemRequestResult{T}.Failed"/><br/>
-        ///     Use <see cref="FindLastIndex2D{TPredicate}(Index2D, Bounds2D, TPredicate)"/> to avoid
-        ///     virtual call.
-        ///     <para>
-        ///         Exceptions:<br/>
-        ///         <see cref="ArgumentNullException"/>: <paramref name="match"/> cannot be
-        ///         <see langword="null"/>.<br/>
-        ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="startIndex"/> must
-        ///         be within array bounds;<br/>
-        ///         <paramref name="sectorSize"/> must be within array bounds, beginning backwardly
-        ///         from <paramref name="startIndex"/>.
-        ///     </para>
-        /// </summary>
-        /// <param name="startIndex">Zero-based starting index of the backward search.</param>
-        /// <param name="sectorSize">The rectangular sector size to be searched.</param>
-        /// <param name="match">
-        ///     The <see cref="Predicate{T}"/> delegate that defines the conditions of the element
-        ///     to search for.
-        /// </param>
-        /// <returns></returns>
-        public ItemRequestResult<Index2D> FindLastIndex2D(
-            Index2D startIndex, Bounds2D sectorSize, Predicate<T> match)
-        {
-            try
-            {
-                return RequestedIntToRequested2DIndex(
-                    FindLastIndex(startIndex, sectorSize, match));
-            }
-            catch (ArgumentNullException)
-            {
-                throw;
-            }
-            catch (ArgumentOutOfRangeException)
-            {
-                throw;
-            }
-        }
-
-        /// <summary>
-        ///     Returns a new <see cref="Array2D{TOutput}"/> instance containing items from this
-        ///     instance converted to another type.
-        /// </summary>
-        /// <typeparam name="TOutput">
-        ///     Target type of resulting <see cref="Array2D{T}"/>.
-        /// </typeparam>
-        /// <typeparam name="TConverter">
-        ///     <typeparamref name = "TConverter"/> is <see cref="IConverter{T, TOutput}"/> and
-        ///     <see langword="struct"/>
-        /// </typeparam>
-        /// <param name="converter">
-        ///     An <see langword="struct"/> implementing <see cref="IConverter{T, TOutput}"/> that
-        ///     converts each element from one type to another type.
-        /// </param>
-        /// <returns></returns>
-        public Array2D<TOutput> ConvertAll<TOutput, TConverter>(TConverter converter)
-            where TConverter : struct, IConverter<T, TOutput>
-        {
-            var result = new Array2D<TOutput>(this.bounds);
-
-            for (int i = 0, length = Count; i < length; i++)
-            {
-                result.items[i] = converter.Invoke(items[i]);
-            }
-            return result;
-        }
-
-        /// <summary>
-        ///     Returns a new <see cref="Array2D{TOutput}"/> instance containing items from this
-        ///     instance converted to another type.<br/>
-        ///     Use <see cref="ConvertAll{TOutput, TConverter}(TConverter)"/> to avoid virtual
-        ///     call.
-        ///     <para>
-        ///         Exceptions:<br/>
-        ///         <see cref="ArgumentNullException"/>: <paramref name="converter"/> cannot be
-        ///         <see langword="null"/>.<br/>
-        ///     </para>
-        /// </summary>
-        /// <typeparam name="TOutput">
-        ///     Target type of resulting <see cref="Array2D{T}"/>.
-        /// </typeparam>
-        /// <param name="converter">
-        ///    A <see cref="Converter{TInput, TOutput}"/> delegate that converts each element from
-        ///    one type to another type.
-        /// </param>
-        /// <returns></returns>
-        public Array2D<TOutput> ConvertAll<TOutput>(Converter<T, TOutput> converter)
-        {
-            if (converter == null)
-            {
-                throw new ArgumentNullException(nameof(converter), "converter cannot be null.");
-            }
-            var result = new Array2D<TOutput>(this.bounds);
-
-            for (int i = 0, length = Count; i < length; i++)
-            {
-                result.items[i] = converter(items[i]);
-            }
+            CopyToInternal(new Index2D(), result, bounds, new Index2D());
             return result;
         }
 
@@ -3542,49 +3580,6 @@ namespace Sztorm.Collections
                 throw new ArgumentNullException(nameof(match), "match cannot be null.");
             }
             return TrueForAll(new BoxedPredicate<T>(match));
-        }
-
-        /// <summary>
-        ///     Creates a <typeparamref name = "T"/>[,] from this <see cref="Array2D{T}"/>
-        ///     instance.
-        /// </summary>
-        /// <returns></returns>
-        public T[,] ToSystem2DArray()
-        {
-            var result = new T[Rows, Columns];
-
-            CopyToInternal(new Index2D(), result, bounds, new Index2D());
-            return result;
-        }
-
-        /// <summary>
-        /// Creates a <see cref="Array2D{T}"/> from <typeparamref name = "T"/>[,] instance.
-        /// <para>
-        ///     Exceptions:<br/>
-        ///     <see cref="ArgumentNullException"/>: Array cannot be null.
-        /// </para>
-        /// </summary>
-        /// <param name="array"></param>
-        /// <returns></returns>
-        public static Array2D<T> FromSystem2DArray(T[,] array)
-        {
-            if (array == null)
-            {
-                throw new ArgumentNullException(nameof(array), "Array cannot be null.");
-            }
-            Bounds2D bounds = new Bounds2D(
-                new Box<int>(array.GetLength(0)), new Box<int>(array.GetLength(1)));
-            var result = new Array2D<T>(bounds);
-            int index1D = 0;
-
-            for (int i = 0; i < bounds.Rows; i++)
-            {
-                for (int j = 0; j < bounds.Columns; j++, index1D++)
-                {
-                    result.items[index1D] = array[i, j];        
-                }
-            }
-            return result;
         }
     }
 }
