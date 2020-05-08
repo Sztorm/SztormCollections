@@ -40,7 +40,10 @@ namespace Sztorm.Collections
     [Serializable]
     public sealed partial class Array2D<T> : IRefRectangularCollection<T>, ICollection
     {
-        private readonly T[] items;
+        /// <summary>
+        ///     Internal buffer for items. Exposed for optimization purposes.
+        /// </summary>
+        internal readonly T[] items;
         private readonly Bounds2D bounds;
 
         /// <summary>
