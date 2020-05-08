@@ -1907,14 +1907,16 @@ namespace Sztorm.Collections
                     "sectorSize must be within array bounds, beginning backwardly from " +
                     "startIndex.");
             }
-            for (int i = startIndex.Row; i > indexAfterEnd.Row; i--)
+            int index1D = RowMajorIndex2DToInt(startIndex, Columns);
+            int stepsToNextIndex = Columns - sectorSize.Columns;
+
+            for (int i = startIndex.Row; i > indexAfterEnd.Row; i--, index1D -= stepsToNextIndex)
             {
-                for (int j = startIndex.Column; j > indexAfterEnd.Column; j--)
+                for (int j = startIndex.Column; j > indexAfterEnd.Column; j--, index1D--)
                 {
-                    if (match.Invoke(GetItemInternal(i, j)))
+                    if (match.Invoke(items[index1D]))
                     {
-                        return new ItemRequestResult<int>(
-                            RowMajorIndex2DToInt(new Index2D(i, j), Columns));
+                        return new ItemRequestResult<int>(index1D);
                     }
                 }
             }
