@@ -232,15 +232,8 @@ namespace Sztorm.Collections
                     "sectorSize must be within array bounds along with startIndex.");
             }
             var result = new Array2D<T>(sectorSize);
-            int cols = bounds.Columns;
-            int srcStartIndex = RowMajorIndex2DToInt(startIndex, cols);
-            int dstStartIndex = 0;
 
-            for (int i = 0; i < sectorSize.Rows;
-                i++, srcStartIndex += cols, dstStartIndex += sectorSize.Columns)
-            {
-                Array.Copy(items, srcStartIndex, result.items, dstStartIndex, sectorSize.Columns);
-            }
+            CopyToInternal(startIndex, result, sectorSize, new Index2D());
             return result;
         }
 
@@ -766,12 +759,11 @@ namespace Sztorm.Collections
             int dr = destIndex.Row;
             int sr = srcIndex.Row;
             int totalRows = dr + sectorSize.Rows;
+            int srcIndex1D = RowMajorIndex2DToInt(new Index2D(sr, srcIndex.Column), srcCols);
+            int dstIndex1D = RowMajorIndex2DToInt(new Index2D(dr, destIndex.Column), dstCols);
 
-            for (; dr < totalRows; dr++, sr++)
+            for (; dr < totalRows; dr++, sr++, srcIndex1D += srcCols, dstIndex1D += dstCols)
             {
-                int srcIndex1D = RowMajorIndex2DToInt(new Index2D(sr, srcIndex.Column), srcCols);
-                int dstIndex1D = RowMajorIndex2DToInt(new Index2D(dr, destIndex.Column), dstCols);
-
                 Array.Copy(items, srcIndex1D, dest.items, dstIndex1D, sectorSize.Columns);
             }
         }
