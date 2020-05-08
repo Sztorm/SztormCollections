@@ -280,8 +280,21 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        ///     Returns a shallow copy of a sector of elements in the source
-        ///     <see cref="List2D{T}"/>.
+        ///     Returns an enumerator for all elements of the <see cref="List2D{T}"/>, which
+        ///     enumerates row by row from the (0, 0) position.
+        /// </summary>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public Enumerator GetEnumerator() => new Enumerator(this);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        IEnumerator<T> IEnumerable<T>.GetEnumerator() => GetEnumerator();
+
+        /// <summary>
+        ///     Returns a shallow copy of a sector of this <see cref="List2D{T}"/> instance.
         ///     <para>
         ///         Exceptions:<br/>
         ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="startIndex"/> must
@@ -291,7 +304,7 @@ namespace Sztorm.Collections
         ///     </para>
         /// </summary>
         /// <param name="startIndex">The zero-based index at which the sector starts.</param>
-        /// <param name="sectorSize">The size of the sector of items to be copied.</param>
+        /// <param name="sectorSize">The size of the sector to be copied.</param>
         /// <returns></returns>
         public List2D<T> GetSector(Index2D startIndex, Bounds2D sectorSize)
         {
@@ -312,28 +325,14 @@ namespace Sztorm.Collections
             int capCols = capacity.Columns;
             int srcStartIndex = RowMajorIndex2DToInt(startIndex, capCols);
             int dstStartIndex = 0;
+            int sectorCount = sectorSize.Rows * sectorSize.Columns;
 
-            for (int i = 0; i < sectorSize.Rows;
-                i++, srcStartIndex += capCols, dstStartIndex += sectorSize.Columns)
+            for (; dstStartIndex < sectorCount; srcStartIndex += capCols, dstStartIndex += sectorSize.Columns)
             {
                 Array.Copy(items, srcStartIndex, result.items, dstStartIndex, sectorSize.Columns);
             }
             return result;
         }
-
-        /// <summary>
-        ///     Returns an enumerator for all elements of the <see cref="List2D{T}"/>, which
-        ///     enumerates row by row from the (0, 0) position.
-        /// </summary>
-        /// <returns></returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public Enumerator GetEnumerator() => new Enumerator(this);
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        IEnumerator<T> IEnumerable<T>.GetEnumerator() => GetEnumerator();
 
         /// <summary>
         ///     Constructs a new instance of <see cref="List2D{T}"/> class that is empty and has
