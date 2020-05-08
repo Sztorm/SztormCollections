@@ -526,13 +526,13 @@ namespace Sztorm.Collections
             int sr = srcIndex.Row;
             int totalRows = destIndex.Row + sectorSize.Rows;
             int totalCols = destIndex.Column + sectorSize.Columns;
-            int srcCols = Columns;
+            int srcIndex1D = RowMajorIndex2DToInt(new Index2D(sr, srcIndex.Column), Columns);
+            int stepsToNextSrcIndex = Columns - sectorSize.Columns;
 
-            for (; dr < totalRows; dr++, sr++)
+            for (; dr < totalRows; dr++, sr++, srcIndex1D += stepsToNextSrcIndex)
             {
                 int dc = destIndex.Column;
                 int sc = srcIndex.Column;
-                int srcIndex1D = RowMajorIndex2DToInt(new Index2D(sr, sc), srcCols);
 
                 for (; dc < totalCols; dc++, sc++, srcIndex1D++)
                 {
