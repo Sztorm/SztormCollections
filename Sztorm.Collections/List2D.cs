@@ -2062,11 +2062,11 @@ namespace Sztorm.Collections
                     "startIndex.");
             }
             int capCols = capacity.Columns;
+            int index1D = RowMajorIndex2DToInt(startIndex, capCols);
+            int stepToNextSrcIndex = capacity.Columns - sectorSize.Columns;
 
-            for (int i = startIndex.Row; i > indexAfterEnd.Row; i--)
+            for (int i = startIndex.Row; i > indexAfterEnd.Row; i--, index1D -= stepToNextSrcIndex)
             {
-                int index1D = RowMajorIndex2DToInt(new Index2D(i, startIndex.Column), capCols);
-
                 for (int j = startIndex.Column; j > indexAfterEnd.Column; j--, index1D--)
                 {
                     if (match.Invoke(items[index1D]))
