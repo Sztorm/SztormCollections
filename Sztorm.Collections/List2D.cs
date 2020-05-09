@@ -482,13 +482,17 @@ namespace Sztorm.Collections
             }
             int rows = Rows;
             int cols = Columns;
+            int count = rows * cols;
+            int index1D = 0;
+            int newIndex1D = 0;
+            int gapPerRow = capacity.Columns - cols;
+            int newGapPerRow = newCapacity.Columns - cols;
 
-            for (int i = 0; i < rows; i++)
+            for (; index1D < count; index1D += gapPerRow, newIndex1D += newGapPerRow)
             {
-                for (int j = 0; j < cols; j++)
+                for (int j = 0; j < cols; j++, index1D++, newIndex1D++)
                 {
-                    newItems[RowMajorIndex2DToInt(new Index2D(i, j), newCapacity.Columns)] =
-                        GetItemInternal(i, j);
+                    newItems[newIndex1D] = items[index1D];
                 }
             }
             capacity = newCapacity;
@@ -3491,11 +3495,11 @@ namespace Sztorm.Collections
 
             int rows = bounds.Rows;
             int capCols = capacity.Columns;
+            int index1D = RowMajorIndex2DToInt(new Index2D(0, startIndex), capCols);
 
-            for (int i = 0; i < rows; i++)
+            for (int i = 0; i < rows; i++, index1D += capCols)
             {
-                Array.Clear(items, RowMajorIndex2DToInt(
-                    new Index2D(i, startIndex), capCols), count);
+                Array.Clear(items, index1D, count);
             }
         }
 
