@@ -770,24 +770,21 @@ namespace Sztorm.Collections
         }
 
         internal void CopyToInternal(
-            Index2D sourceIndex, Array2D<T> dest, Bounds2D sectorSize, Index2D destIndex)
+            Index2D srcIndex, Array2D<T> dest, Bounds2D sectorSize, Index2D destIndex)
         {
             Debug.Assert(dest != null);
 
+            int sr = srcIndex.Row;
             int dr = destIndex.Row;
-            int sr = sourceIndex.Row;
-            int totalRows = destIndex.Row + sectorSize.Rows;
-            int totalCols = destIndex.Column + sectorSize.Columns;
+            int srcCapCols = capacity.Columns;
+            int dstCols = dest.Columns;
+            int dstLastRow = dr + sectorSize.Rows;
+            int srcIndex1D = RowMajorIndex2DToInt(new Index2D(sr, srcIndex.Column), srcCapCols);
+            int dstIndex1D = RowMajorIndex2DToInt(new Index2D(dr, destIndex.Column), dstCols);
 
-            for (; dr < totalRows; dr++, sr++)
+            for (; dr < dstLastRow; dr++, sr++, srcIndex1D += srcCapCols, dstIndex1D += dstCols)
             {
-                int dc = destIndex.Column;
-                int sc = sourceIndex.Column;
-
-                for (; dc < totalCols; dc++, sc++)
-                {
-                    dest[dr, dc] = this[sr, sc];
-                }
+                Array.Copy(items, srcIndex1D, dest.items, dstIndex1D, sectorSize.Columns);
             }
         }
 
