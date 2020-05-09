@@ -774,15 +774,14 @@ namespace Sztorm.Collections
         {
             Debug.Assert(dest != null);
 
-            int sr = srcIndex.Row;
             int dr = destIndex.Row;
             int srcCapCols = capacity.Columns;
             int dstCols = dest.Columns;
             int dstLastRow = dr + sectorSize.Rows;
-            int srcIndex1D = RowMajorIndex2DToInt(new Index2D(sr, srcIndex.Column), srcCapCols);
+            int srcIndex1D = RowMajorIndex2DToInt(srcIndex, srcCapCols);
             int dstIndex1D = RowMajorIndex2DToInt(new Index2D(dr, destIndex.Column), dstCols);
 
-            for (; dr < dstLastRow; dr++, sr++, srcIndex1D += srcCapCols, dstIndex1D += dstCols)
+            for (; dr < dstLastRow; dr++, srcIndex1D += srcCapCols, dstIndex1D += dstCols)
             {
                 Array.Copy(items, srcIndex1D, dest.items, dstIndex1D, sectorSize.Columns);
             }
@@ -989,22 +988,18 @@ namespace Sztorm.Collections
             Debug.Assert(dest != null);
 
             int dr = destIndex.Row;
-            int sr = srcIndex.Row;
-            int totalRows = destIndex.Row + sectorSize.Rows;
-            int totalCols = destIndex.Column + sectorSize.Columns;
-            int srcCapCols = capacity.Columns;
+            int dstLastRow = dr + sectorSize.Rows;
+            int dstLastCol = destIndex.Column + sectorSize.Columns;
+            int srcIndex1D = RowMajorIndex2DToInt(srcIndex, capacity.Columns);
+            int stepToNextSrcIndex = capacity.Columns - sectorSize.Columns;
 
-            for (; dr < totalRows; dr++, sr++)
+            for (; dr < dstLastRow; dr++, srcIndex1D += stepToNextSrcIndex)
             {
-                int dc = destIndex.Column;
-                int sc = srcIndex.Column;
-                int srcIndex1D = RowMajorIndex2DToInt(new Index2D(sr, sc), srcCapCols);
-
-                for (; dc < totalCols; dc++, sc++, srcIndex1D++)
+                for (int dc = destIndex.Column; dc < dstLastCol; dc++, srcIndex1D++)
                 {
                     dest[dr, dc] = items[srcIndex1D];
                 }
-            }          
+            }
         }
 
         /// <summary>
