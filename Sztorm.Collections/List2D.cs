@@ -2295,15 +2295,13 @@ namespace Sztorm.Collections
             Bounds2D bounds = new Bounds2D(
                 new Box<int>(array.GetLength(0)), new Box<int>(array.GetLength(1)));
             var result = new List2D<T>(bounds);
+            result.bounds = bounds;
 
-            result.AddRows(bounds.Rows);
-            result.AddColumns(bounds.Columns);
-
-            for (int i = 0; i < bounds.Rows; i++)
+            for (int i = 0, index1D = 0; i < bounds.Rows; i++)
             {
-                for (int j = 0; j < bounds.Columns; j++)
+                for (int j = 0; j < bounds.Columns; j++, index1D++)
                 {
-                    result[i, j] = array[i, j];
+                    result.items[index1D] = array[i, j];
                 }
             }
             return result;
