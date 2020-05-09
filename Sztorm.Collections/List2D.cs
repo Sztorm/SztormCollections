@@ -483,17 +483,12 @@ namespace Sztorm.Collections
             int rows = Rows;
             int cols = Columns;
             int count = rows * cols;
-            int index1D = 0;
-            int newIndex1D = 0;
-            int gapPerRow = capacity.Columns - cols;
-            int newGapPerRow = newCapacity.Columns - cols;
+            int capCols = capacity.Columns;
 
-            for (; index1D < count; index1D += gapPerRow, newIndex1D += newGapPerRow)
+            for (int index1D = 0, newIndex1D = 0;
+                index1D < count; index1D += capCols, newIndex1D += newCapacity.Columns)
             {
-                for (int j = 0; j < cols; j++, index1D++, newIndex1D++)
-                {
-                    newItems[newIndex1D] = items[index1D];
-                }
+                Array.Copy(items, index1D, newItems, newIndex1D, cols);
             }
             capacity = newCapacity;
             items = newItems;
