@@ -2940,14 +2940,27 @@ namespace Sztorm.Collections
             Debug.Assert(count <= capacity.Rows - startIndex);
             Debug.Assert(newBounds.Columns <= Columns);
 
-            for (int i0 = newBounds.Rows - 1, i1 = i0 - count; i1 >= startIndex; i0--, i1--)
+            bool nothingIsMoved = startIndex >= Rows;
+
+            if (nothingIsMoved)
             {
-                for (int j = 0; j < newBounds.Columns; j++)
-                {
-                    GetItemInternal(i0, j) = GetItemInternal(i1, j);
-                }
+                return;
             }
-            ClearRows(startIndex, count);
+            int cols = Columns;
+            int capCols = capacity.Columns;
+            int index1D = (Rows - 1) * capCols;
+            int newIndex1D = (newBounds.Rows - 1) * capCols;
+            int copyOnlyRowsCount = Rows - startIndex - count;
+
+            for (int i = 0; i < copyOnlyRowsCount; i++, index1D -= capCols, newIndex1D -= capCols)
+            {
+                Array.Copy(items, index1D, items, newIndex1D, cols);
+            }
+            for (int i = 0; i < count; i++, index1D -= capCols, newIndex1D -= capCols)
+            {
+                Array.Copy(items, index1D, items, newIndex1D, cols);
+                Array.Clear(items, index1D, cols);
+            }
         }
 
         /// <summary>
@@ -2978,21 +2991,22 @@ namespace Sztorm.Collections
             {
                 throw;
             }
-            for (int i = 0; i < startIndex; i++)
+            int rows = Rows;
+            int cols = Columns;
+            int capCols = capacity.Columns;
+            int index1D = 0;
+            int newIndex1D = 0;
+            int row = 0;
+
+            for (; row < startIndex; row++, index1D += capCols, newIndex1D += newCapacity.Columns)
             {
-                for (int j = 0; j < newBounds.Columns; j++)
-                {
-                    newItems[RowMajorIndex2DToInt(new Index2D(i, j), newCapacity.Columns)] =
-                        GetItemInternal(i, j);
-                }
+                Array.Copy(items, index1D, newItems, newIndex1D, cols);
             }
-            for (int i0 = startIndex, i1 = i0 + count; i1 < newBounds.Rows; i0++, i1++)
+            newIndex1D = (startIndex + count) * newCapacity.Columns;
+
+            for (; row < rows; row++, index1D += capCols, newIndex1D += newCapacity.Columns)
             {
-                for (int j = 0; j < newBounds.Columns; j++)
-                {
-                    newItems[RowMajorIndex2DToInt(new Index2D(i1, j), newCapacity.Columns)] =
-                        GetItemInternal(i0, j);
-                }
+                Array.Copy(items, index1D, newItems, newIndex1D, cols);
             }
             capacity = newCapacity;
             items = newItems;
