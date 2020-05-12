@@ -213,7 +213,7 @@ namespace Sztorm.Collections
         ///         Exceptions:<br/>
         ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="startIndex"/> must
         ///         must be within array bounds;<br/>
-        ///         <paramref name="sectorSize"/> must be within list bounds along with
+        ///         <paramref name="sectorSize"/> must be within array bounds along with
         ///         <paramref name="startIndex"/>.
         ///     </para>
         /// </summary>
@@ -225,7 +225,7 @@ namespace Sztorm.Collections
             if (!IsValidIndex(startIndex))
             {
                 throw new ArgumentOutOfRangeException(
-                    nameof(startIndex), "startIndex must be within list bounds.");
+                    nameof(startIndex), "startIndex must be within array bounds.");
             }
             if (startIndex.Row + sectorSize.Rows > this.Rows ||
                 startIndex.Column + sectorSize.Columns > this.Columns)
