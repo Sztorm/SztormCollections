@@ -2904,25 +2904,6 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        /// Sets items of specified number of rows at given starting index to default values.
-        /// Arguments are not checked on release build.
-        /// </summary>
-        /// <param name="startIndex">Range: [0, <see cref="capacity"/>.Rows]</param>
-        /// <param name="count">Range: [0, <see cref="capacity"/> - startIndex.Rows)</param>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void ClearRows(int startIndex, int count)
-        {
-            Debug.Assert(startIndex >= 0);
-            Debug.Assert(startIndex <= capacity.Rows);
-            Debug.Assert(count >= 0);
-            Debug.Assert(count <= (capacity.Rows - startIndex));
-
-            int capCols = capacity.Columns;
-
-            Array.Clear(items, startIndex * capCols, count * capCols);
-        }
-
-        /// <summary>
         ///     Inserts specified number of rows into this instance starting at the given index by
         ///     copying. Inserted rows are initialized with default value. newBounds should be a
         ///     cached value equal to (<see cref="Rows"/> + count, <see cref="Columns"/>).
@@ -3419,6 +3400,29 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
+        /// Sets items of specified number of rows at given starting index to default values.
+        /// Arguments are not checked on release build.
+        /// </summary>
+        /// <param name="startIndex">Range: [0, <see cref="capacity"/>.Rows]</param>
+        /// <param name="count">Range: [0, <see cref="capacity"/> - startIndex.Rows)</param>
+        private void ClearRows(int startIndex, int count)
+        {
+            Debug.Assert(startIndex >= 0);
+            Debug.Assert(startIndex <= capacity.Rows);
+            Debug.Assert(count >= 0);
+            Debug.Assert(count <= (capacity.Rows - startIndex));
+
+            int capCols = capacity.Columns;
+            int cols = bounds.Columns;
+            int index1D = startIndex * capCols;
+
+            for (int i = 0; i < count; i++, index1D += capCols)
+            {
+                Array.Clear(items, index1D, cols);
+            }
+        }
+
+        /// <summary>
         ///     Removes specified number of rows from this instance starting at the given index.
         ///     <para>
         ///         Exceptions:<br/> 
@@ -3447,16 +3451,16 @@ namespace Sztorm.Collections
                     nameof(count),
                     "count together with startIndex must not exceed List2D<T>.Rows");
             }
-            int rows = bounds.Rows;
             int cols = bounds.Columns;
-            int newRows = rows - count;
+            int capCols = capacity.Columns;
+            int newRows = bounds.Rows - count;
+            int index1D = (startIndex + count) * capCols;
+            int newIndex1D = startIndex * capCols;
 
-            for (int i0 = startIndex, i1 = i0 + count; i0 < newRows; i0++, i1++)
+            for (int row = startIndex; row < newRows;
+                row++, index1D += capCols, newIndex1D += capCols)
             {
-                for (int j = 0; j < cols; j++)
-                {
-                    GetItemInternal(i0, j) = GetItemInternal(i1, j);
-                }
+                Array.Copy(items, index1D, items, newIndex1D, cols);
             }
             ClearRows(newRows, count);
 
