@@ -121,16 +121,16 @@ namespace Sztorm.Collections.Tests
                                  { 8, 2, 3 } });
                 list1.IncreaseCapacity(list1.Boundaries);
 
-                var list2 = List2D<string>.FromSystem2DArray(
+                var list2 = List2D<int>.FromSystem2DArray(
+                    new int[,] { { 2, 3, 5 },
+                                 { 4, 9, 1 },
+                                 { 8, 2, 3 } });
+
+                var list3 = List2D<string>.FromSystem2DArray(
                     new string[,] { { "2", "3" },
                                     { "4", "8" },
                                     { "1", "0" },
                                     { "8", "2" } });
-                list2.IncreaseCapacity(list2.Boundaries);
-
-                var list3 = List2D<int>.FromSystem2DArray(
-                    new int[,] { { 1, 2 },
-                                 { 3, 4 } });
                 list3.IncreaseCapacity(list3.Boundaries);
 
                 var list4 = List2D<int>.FromSystem2DArray(
@@ -138,19 +138,28 @@ namespace Sztorm.Collections.Tests
                                  { 3, 4 } });
                 list4.IncreaseCapacity(list4.Boundaries);
 
+                var list5 = List2D<int>.FromSystem2DArray(
+                    new int[,] { { 1, 2 },
+                                 { 3, 4 } });
+                list5.IncreaseCapacity(list5.Boundaries);
+
                 yield return new TestCaseData(
                     list1, 1, 1, List2D<int>.FromSystem2DArray(
                         new int[,] { { 2, 3, 5 },
                                      { 8, 2, 3 } }));
                 yield return new TestCaseData(
-                    list2, 0, 2, List2D<string>.FromSystem2DArray(
+                    list2, 1, 1, List2D<int>.FromSystem2DArray(
+                        new int[,] { { 2, 3, 5 },
+                                     { 8, 2, 3 } }));
+                yield return new TestCaseData(
+                    list3, 0, 2, List2D<string>.FromSystem2DArray(
                         new string[,] { { "1", "0" },
                                         { "8", "2" } }));
                 yield return new TestCaseData(
-                    list3, 0, 0, List2D<int>.FromSystem2DArray(
+                    list4, 0, 0, List2D<int>.FromSystem2DArray(
                         new int[,] { { 1, 2 },
                                      { 3, 4 } }));
-                yield return new TestCaseData(list4, 0, 2, new List2D<int>());
+                yield return new TestCaseData(list5, 0, 2, new List2D<int>());
             }
 
             private static IEnumerable<TestCaseData> RowsReleasesUnusedReferencesTestCases()
@@ -167,10 +176,17 @@ namespace Sztorm.Collections.Tests
                                     { "4", "8" },
                                     { "1", "0" },
                                     { "8", "2" } });
-                list2.IncreaseCapacity(list2.Boundaries);
+
+                var list3 = List2D<string>.FromSystem2DArray(
+                    new string[,] { { "2", "3" },
+                                    { "4", "8" },
+                                    { "1", "0" },
+                                    { "8", "2" } });
+                list3.IncreaseCapacity(list3.Boundaries);
 
                 yield return new TestCaseData(list1, 0, 2, new Index2D(2, 0), new Bounds2D(2, 2));
-                yield return new TestCaseData(list2, 1, 3, new Index2D(1, 0), new Bounds2D(3, 2));
+                yield return new TestCaseData(list2, 0, 2, new Index2D(2, 0), new Bounds2D(2, 2));
+                yield return new TestCaseData(list3, 1, 3, new Index2D(1, 0), new Bounds2D(3, 2));
             }
 
             private static IEnumerable<TestCaseData> ColumnsInvalidStartIndexTestCases()
