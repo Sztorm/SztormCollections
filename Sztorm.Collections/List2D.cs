@@ -3492,30 +3492,6 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        /// Sets items of specified number of columns at given starting index to default values.
-        /// Arguments are not checked on release build.
-        /// </summary>
-        /// <param name="startIndex">Range: [0, <see cref="capacity"/>.Columns]</param>
-        /// <param name="count">Range: [0, <see cref="capacity"/>.Columns - startIndex)</param>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void ClearColumns(int startIndex, int count)
-        {
-            Debug.Assert(startIndex >= 0);
-            Debug.Assert(startIndex <= capacity.Columns);
-            Debug.Assert(count >= 0);
-            Debug.Assert(count <= (capacity.Columns - startIndex));
-
-            int rows = bounds.Rows;
-            int capCols = capacity.Columns;
-            int index1D = RowMajorIndex2DToInt(new Index2D(0, startIndex), capCols);
-
-            for (int i = 0; i < rows; i++, index1D += capCols)
-            {
-                Array.Clear(items, index1D, count);
-            }
-        }
-
-        /// <summary>
         ///     Removes specified number of columns from this instance starting at the given index.
         ///     <para>
         ///         Exceptions:<br/>
@@ -3545,18 +3521,19 @@ namespace Sztorm.Collections
                     "count together with startIndex must not exceed List2D<T>.Rows");
             }
             int rows = bounds.Rows;
-            int cols = bounds.Columns;
-            int newCols = cols - count;
+            int newCols = bounds.Columns - count;
+            int capCols = capacity.Columns;
+            int index1D = startIndex + count;
+            int newIndex1D = startIndex;
+            int clearIndex1D = newCols;
+            int movedCount = bounds.Columns - index1D;
+            int exceededIndex = index1D + rows * capCols;
 
-            for (int i = 0; i < rows; i++)
+            for (; index1D < exceededIndex; index1D += capCols, newIndex1D += capCols, clearIndex1D += capCols)
             {
-                for (int j0 = startIndex, j1 = j0 + count; j0 < newCols; j0++, j1++)
-                {
-                    GetItemInternal(i, j0) = GetItemInternal(i, j1);
-                }
+                Array.Copy(items, index1D, items, newIndex1D, movedCount);
+                Array.Clear(items, clearIndex1D, count);
             }
-            ClearColumns(newCols, count);
-
             bounds = new Bounds2D(new Box<int>(rows), new Box<int>(newCols));
             version++;
         }
