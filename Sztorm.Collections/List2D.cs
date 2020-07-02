@@ -3631,5 +3631,64 @@ namespace Sztorm.Collections
             }
             return TrueForAll(new BoxedPredicate<T>(match));
         }
+
+        /// <summary>
+        ///     Determines whether any of items matches the conditions defined by the specified
+        ///     predicate. If the current instance contains no items the return value is
+        ///     <see langword="false"/>.
+        /// </summary>
+        /// <typeparam name="TPredicate">
+        ///     <typeparamref name = "TPredicate"/> is <see cref="IPredicate{T}"/> and
+        ///     <see langword="struct"/>
+        /// </typeparam>
+        /// <param name="match">
+        ///     A <see langword="struct"/> implementing <see cref="IPredicate{T}"/> that defines
+        ///     the conditions to check against the items.
+        /// </param>
+        /// <returns>true</returns>
+        public bool TrueForAny<TPredicate>(TPredicate match)
+             where TPredicate : struct, IPredicate<T>
+        {
+            int cols = Columns;
+            int gapPerRow = capacity.Columns - cols;
+            int indexAfterEnd = Rows * (cols + gapPerRow) - gapPerRow;
+            
+            for (int i = 0; i < indexAfterEnd; i += gapPerRow)
+            {
+                for (int j = 0; j < cols; j++, i++)
+                {
+                    if (match.Invoke(items[i]))
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        /// <summary>
+        ///     Determines whether any of items matches the conditions defined by the specified
+        ///     predicate. If the current instance contains no items the return value is
+        ///     <see langword="false"/>.<br/>
+        ///     Use <see cref="TrueForAll{TPredicate}(TPredicate)"/> to avoid virtual call.
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentNullException"/>: <paramref name="match"/> cannot be
+        ///         <see langword="null"/>.
+        ///     </para>
+        /// </summary>
+        /// <param name="match">
+        ///     The <see cref="Predicate{T}"/> delegate that defines the conditions to check
+        ///     against the items.
+        /// </param>
+        /// <returns></returns>
+        public bool TrueForAny(Predicate<T> match)
+        {
+            if (match == null)
+            {
+                throw new ArgumentNullException(nameof(match), "match cannot be null.");
+            }
+            return TrueForAny(new BoxedPredicate<T>(match));
+        }
     }
 }
