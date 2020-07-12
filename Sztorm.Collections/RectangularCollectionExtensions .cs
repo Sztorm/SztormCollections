@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Sztorm.Collections
 {
-    public static class IRefRectangularCollectionExtensions
+    public static partial class RectangularCollectionExtensions
     {
     }
 }
