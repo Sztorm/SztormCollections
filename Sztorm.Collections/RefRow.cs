@@ -24,7 +24,7 @@ namespace Sztorm.Collections
         public int Count
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => collection.Length2;
+            get => collection.Boundaries.Length2;
         }
 
         /// <summary>

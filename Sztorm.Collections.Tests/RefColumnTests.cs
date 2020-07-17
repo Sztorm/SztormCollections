@@ -14,17 +14,13 @@ namespace Sztorm.Collections.Tests
             TRefRectangularCollection collection,
             RefColumn<T, TRefRectangularCollection> column)
             where TRefRectangularCollection : IRefRectangularCollection<T>
-            => Assert.AreEqual(collection.Length1, column.Count);
+            => Assert.AreEqual(collection.Boundaries.Length1, column.Count);
 
         public static void IndexerThrowsExceptionIfIndexIsOutOfBounds
             <T, TRefRectangularCollection>(
             RefColumn<T, TRefRectangularCollection> column, int index)
             where TRefRectangularCollection : IRefRectangularCollection<T>
-        {
-            TestDelegate testMethod = () => { T value = column[index]; };
-
-            Assert.Throws<IndexOutOfRangeException>(testMethod);
-        }
+            => Assert.Throws<IndexOutOfRangeException>(() => { T value = column[index]; });
 
         public static void TestEquality<T, TRefRectangularCollection, TEnumerable>(
             RefColumn<T, TRefRectangularCollection> actual, TEnumerable expected)

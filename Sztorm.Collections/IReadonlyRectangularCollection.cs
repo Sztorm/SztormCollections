@@ -7,9 +7,7 @@ namespace Sztorm.Collections
     ///     collections.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public interface IReadOnlyRectangularCollection<T> : IEnumerable<T>, IReadOnlyIndexable2D<T>
-    {
-        int Length1 { get; }
-        int Length2 { get; }
-    }
+    public interface IReadOnlyRectangularCollection<T> : 
+        IEnumerable<T>, IReadOnlyIndexable2D<T>, IHasRectangularBoundaries
+    { }
 }

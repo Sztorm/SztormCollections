@@ -7,9 +7,6 @@ namespace Sztorm.Collections
     ///     ref-returning indexer.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public interface IRefRectangularCollection<T> : IEnumerable<T>, IRefIndexable2D<T>
-    {
-        int Length1 { get; }
-        int Length2 { get; }
-    }
+    public interface IRefRectangularCollection<T> :
+        IEnumerable<T>, IRefIndexable2D<T>, IHasRectangularBoundaries { }
 }
