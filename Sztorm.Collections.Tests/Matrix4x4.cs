@@ -13,7 +13,7 @@ namespace Sztorm.Collections.Tests
     {
         private static readonly Bounds2D Matrix4x4Boundaries = new Bounds2D(4, 4);
 
-        private readonly float[] numbers;
+        internal readonly float[] numbers;
 
         public Matrix4x4() => numbers = new float[Rows * Columns];
 
@@ -62,6 +62,8 @@ namespace Sztorm.Collections.Tests
         public bool IsValidIndex(Index2D index)
             => index.Row >= 0 && index.Row < Rows &&
                index.Column >= 0 && index.Column < Columns;
+
+        public ReadOnlyMatrix4x4 AsReadOnly() => new ReadOnlyMatrix4x4(this);
 
         public static Matrix4x4 CreateIdentityMatrix()
         {

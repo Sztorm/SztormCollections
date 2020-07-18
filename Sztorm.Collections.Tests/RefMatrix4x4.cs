@@ -57,6 +57,8 @@ namespace Sztorm.Collections.Tests
             => index.Row >= 0 && index.Row < Rows &&
                index.Column >= 0 && index.Column < Columns;
 
+        public RefReadOnlyMatrix4x4 AsReadOnly() => new RefReadOnlyMatrix4x4(this);
+
         public static RefMatrix4x4 CreateIdentityMatrix()
         {
             var result = new RefMatrix4x4();
@@ -67,7 +69,5 @@ namespace Sztorm.Collections.Tests
 
             return result;
         }
-
-        public RefReadOnlyMatrix4x4 AsReadOnly() => new RefReadOnlyMatrix4x4(this);
     }
 }
