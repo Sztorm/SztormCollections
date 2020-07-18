@@ -7,15 +7,17 @@ namespace Sztorm.Collections.Tests
     using static RectangularCollectionUtils;
 
     /// <summary>
-    ///     Row-major ref indexed Matrix4x4 of floats.
+    ///     Row-major ref indexed read-only Matrix4x4 of floats.
     /// </summary>
-    public class RefMatrix4x4 : IRefRectangularCollection<float>
+    public class RefReadOnlyMatrix4x4 : IRefReadOnlyRectangularCollection<float>
     {
         private static readonly Bounds2D Matrix4x4Boundaries = new Bounds2D(4, 4);
 
         internal readonly float[] numbers;
 
-        public RefMatrix4x4() => numbers = new float[Rows * Columns];
+        public RefReadOnlyMatrix4x4() => numbers = new float[Rows * Columns];
+
+        public RefReadOnlyMatrix4x4(RefMatrix4x4 matrix) => numbers = matrix.numbers;
 
         public int Rows => 4;
 
@@ -23,7 +25,7 @@ namespace Sztorm.Collections.Tests
 
         public Bounds2D Boundaries => Matrix4x4Boundaries;
 
-        public ref float this[Index2D index]
+        public ref readonly float this[Index2D index]
         {
             get
             {
@@ -35,13 +37,7 @@ namespace Sztorm.Collections.Tests
             }
         }
 
-        public ref float this[int row, int column] => ref this[(row, column)];
-
-        public RefColumn<float, RefMatrix4x4> GetColumn(int index)
-            => new RefColumn<float, RefMatrix4x4>(this, index);
-
-        public RefRow<float, RefMatrix4x4> GetRow(int index)
-            => new RefRow<float, RefMatrix4x4>(this, index);
+        public ref readonly float this[int row, int column] => ref this[(row, column)];
 
         public IEnumerator<float> GetEnumerator()
         {
@@ -57,9 +53,9 @@ namespace Sztorm.Collections.Tests
             => index.Row >= 0 && index.Row < Rows &&
                index.Column >= 0 && index.Column < Columns;
 
-        public static RefMatrix4x4 CreateIdentityMatrix()
+        public static RefReadOnlyMatrix4x4 CreateIdentityMatrix()
         {
-            var result = new RefMatrix4x4();
+            var result = new RefReadOnlyMatrix4x4();
             result[0, 0] = 1;
             result[1, 1] = 1;
             result[2, 2] = 1;
@@ -67,7 +63,5 @@ namespace Sztorm.Collections.Tests
 
             return result;
         }
-
-        public RefReadOnlyMatrix4x4 AsReadOnly() => new RefReadOnlyMatrix4x4(this);
     }
 }
