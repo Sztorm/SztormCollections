@@ -7,15 +7,15 @@ namespace Sztorm.Collections.Tests
     using static RectangularCollectionUtils;
 
     /// <summary>
-    ///     Row-major ref indexed Matrix4x4 of floats.
+    ///     Row-major indexed Matrix4x4 of floats.
     /// </summary>
-    public class RefMatrix4x4 : IRefRectangularCollection<float>
+    public class Matrix4x4 : IRectangularCollection<float>
     {
         private static readonly Bounds2D Matrix4x4Boundaries = new Bounds2D(4, 4);
 
         private readonly float[] numbers;
 
-        public RefMatrix4x4() => numbers = new float[Rows * Columns];
+        public Matrix4x4() => numbers = new float[Rows * Columns];
 
         public int Rows => 4;
 
@@ -23,7 +23,7 @@ namespace Sztorm.Collections.Tests
 
         public Bounds2D Boundaries => Matrix4x4Boundaries;
 
-        public ref float this[Index2D index]
+        public float this[Index2D index]
         {
             get
             {
@@ -31,17 +31,23 @@ namespace Sztorm.Collections.Tests
                 {
                     throw new IndexOutOfRangeException();
                 }
-                return ref numbers[RowMajorIndex2DToInt(index, Columns)];
+                return numbers[RowMajorIndex2DToInt(index, Columns)];
+            }
+            set
+            {
+                if (!IsValidIndex(index))
+                {
+                    throw new IndexOutOfRangeException();
+                }
+                numbers[RowMajorIndex2DToInt(index, Columns)] = value;
             }
         }
 
-        public ref float this[int row, int column] => ref this[(row, column)];
-
-        public RefColumn<float, RefMatrix4x4> GetColumn(int index)
-            => new RefColumn<float, RefMatrix4x4>(this, index);
-
-        public RefRow<float, RefMatrix4x4> GetRow(int index)
-            => new RefRow<float, RefMatrix4x4>(this, index);
+        public float this[int row, int column]
+        {
+            get => this[(row, column)];
+            set => this[(row, column)] = value;
+        }
 
         public IEnumerator<float> GetEnumerator()
         {
@@ -57,9 +63,9 @@ namespace Sztorm.Collections.Tests
             => index.Row >= 0 && index.Row < Rows &&
                index.Column >= 0 && index.Column < Columns;
 
-        public static RefMatrix4x4 CreateIdentityMatrix()
+        public static Matrix4x4 CreateIdentityMatrix()
         {
-            var result = new RefMatrix4x4();
+            var result = new Matrix4x4();
             result[0, 0] = 1;
             result[1, 1] = 1;
             result[2, 2] = 1;
