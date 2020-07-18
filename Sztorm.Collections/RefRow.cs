@@ -49,15 +49,11 @@ namespace Sztorm.Collections
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
-                try
+                if (!IsValidIndex(index))
                 {
-                    return ref collection[new Index2D(Index, index)];
+                    throw new IndexOutOfRangeException("Index is out of row bounds.");
                 }
-                catch (IndexOutOfRangeException)
-                {
-                    throw new IndexOutOfRangeException(
-                        "Index is out of row bounds.");
-                }
+                return ref collection[new Index2D(Index, index)];
             }
         }
 
