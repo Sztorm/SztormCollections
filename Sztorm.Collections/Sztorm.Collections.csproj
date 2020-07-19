@@ -11,17 +11,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="RectangularCollectionRow.generated.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>RectangularCollectionRow.tt</DependentUpon>
-    </None>
-  </ItemGroup>
-
-  <ItemGroup>
     <None Update="RectangularCollectionRow.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>RectangularCollectionRow.generated.cs</LastGenOutput>
+      <LastGenOutput>RectangularCollectionRow.log.cs</LastGenOutput>
     </None>
   </ItemGroup>
 
@@ -30,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="RectangularCollectionRow.generated.cs">
+    <Compile Update="RectangularCollectionRow.log.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>RectangularCollectionRow.tt</DependentUpon>
