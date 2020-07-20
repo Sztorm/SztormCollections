@@ -178,7 +178,7 @@ namespace Sztorm.Collections.Tests
                 yield return new TestCaseData(list3x3, new Predicate<int>(o => o == 2))
                     .Returns(new ItemRequestResult<Index2D>((0, 0)));
                 yield return new TestCaseData(list3x3, new Predicate<int>(o => o == 10))
-                    .Returns(ItemRequestResult<Index2D>.Failed);
+                    .Returns(ItemRequestResult<Index2D>.Fail);
             }
 
             private static IEnumerable<TestCaseData> PredicateIndex2DIntTestCases()
@@ -193,13 +193,13 @@ namespace Sztorm.Collections.Tests
                     .Returns(new ItemRequestResult<Index2D>((1, 1)));
                 yield return new TestCaseData(
                     list2x3, new Index2D(0, 0), 0, new Predicate<int>(o => true))
-                    .Returns(ItemRequestResult<Index2D>.Failed);
+                    .Returns(ItemRequestResult<Index2D>.Fail);
                 yield return new TestCaseData(
                     list2x3, new Index2D(0, 1), 2, new Predicate<int>(o => o == 10))
-                    .Returns(ItemRequestResult<Index2D>.Failed);
+                    .Returns(ItemRequestResult<Index2D>.Fail);
                 yield return new TestCaseData(
                     list2x3, new Index2D(1, 0), 4, new Predicate<int>(o => o == 10))
-                    .Returns(ItemRequestResult<Index2D>.Failed);
+                    .Returns(ItemRequestResult<Index2D>.Fail);
             }
 
             private static IEnumerable<TestCaseData> PredicateIndex2DBounds2DTestCases()
@@ -220,13 +220,13 @@ namespace Sztorm.Collections.Tests
                     new Index2D(1, 2),
                     new Bounds2D(0, 0),
                     new Predicate<int>(o => true))
-                    .Returns(ItemRequestResult<Index2D>.Failed);
+                    .Returns(ItemRequestResult<Index2D>.Fail);
                 yield return new TestCaseData(
                     list2x3,
                     new Index2D(0, 1),
                     new Bounds2D(1, 2),
                     new Predicate<int>(o => o == 10))
-                    .Returns(ItemRequestResult<Index2D>.Failed);
+                    .Returns(ItemRequestResult<Index2D>.Fail);
             }   
             
             private static IEnumerable<TestCaseData> IPredicateTestCases()
@@ -242,7 +242,7 @@ namespace Sztorm.Collections.Tests
                 yield return new TestCaseData(list3x3, new EqualsPredicate<int>(2))
                     .Returns(new ItemRequestResult<Index2D>((0, 0)));
                 yield return new TestCaseData(list3x3, new EqualsPredicate<int>(10))
-                    .Returns(ItemRequestResult<Index2D>.Failed);
+                    .Returns(ItemRequestResult<Index2D>.Fail);
             }
 
             private static IEnumerable<TestCaseData> Index2DIntIPredicateTestCases()
@@ -257,13 +257,13 @@ namespace Sztorm.Collections.Tests
                     .Returns(new ItemRequestResult<Index2D>((1, 1)));
                 yield return new TestCaseData(
                     list2x3, new Index2D(0, 0), 0, new AlwaysTruePredicate<int>())
-                    .Returns(ItemRequestResult<Index2D>.Failed);
+                    .Returns(ItemRequestResult<Index2D>.Fail);
                 yield return new TestCaseData(
                     list2x3, new Index2D(0, 1), 2, new EqualsPredicate<int>(10))
-                    .Returns(ItemRequestResult<Index2D>.Failed);
+                    .Returns(ItemRequestResult<Index2D>.Fail);
                 yield return new TestCaseData(
                     list2x3, new Index2D(1, 0), 4, new EqualsPredicate<int>(10))
-                    .Returns(ItemRequestResult<Index2D>.Failed);
+                    .Returns(ItemRequestResult<Index2D>.Fail);
             }
 
             private static IEnumerable<TestCaseData> Index2DBounds2DIPredicateTestCases()
@@ -284,13 +284,13 @@ namespace Sztorm.Collections.Tests
                     new Index2D(1, 2),
                     new Bounds2D(0, 0),
                     new AlwaysTruePredicate<int>())
-                    .Returns(ItemRequestResult<Index2D>.Failed);
+                    .Returns(ItemRequestResult<Index2D>.Fail);
                 yield return new TestCaseData(
                     list2x3,
                     new Index2D(0, 1),
                     new Bounds2D(1, 2),
                     new EqualsPredicate<int>(10))
-                    .Returns(ItemRequestResult<Index2D>.Failed);
+                    .Returns(ItemRequestResult<Index2D>.Fail);
             }
         }    
     }

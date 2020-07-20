@@ -240,7 +240,7 @@ namespace Sztorm.Collections.Tests
                 yield return new TestCaseData(array3x2, 2)
                     .Returns(new ItemRequestResult<int>(0));
                 yield return new TestCaseData(array3x2, 8)
-                    .Returns(ItemRequestResult<int>.Failed);
+                    .Returns(ItemRequestResult<int>.Fail);
                 yield return new TestCaseData(array3x2, null)
                     .Returns(new ItemRequestResult<int>(5));
             }
@@ -254,9 +254,9 @@ namespace Sztorm.Collections.Tests
                 yield return new TestCaseData(array2x3, 9, new Index2D(1, 2), 6)
                     .Returns(new ItemRequestResult<int>(4));
                 yield return new TestCaseData(array2x3, 2, new Index2D(0, 0), 0)
-                    .Returns(ItemRequestResult<int>.Failed);
+                    .Returns(ItemRequestResult<int>.Fail);
                 yield return new TestCaseData(array2x3, 10, new Index2D(0, 1), 2)
-                    .Returns(ItemRequestResult<int>.Failed);
+                    .Returns(ItemRequestResult<int>.Fail);
             }
 
             private static IEnumerable<TestCaseData> AnyIndex2DBounds2DTestCases()
@@ -268,9 +268,9 @@ namespace Sztorm.Collections.Tests
                 yield return new TestCaseData(array2x3, 9, new Index2D(1, 2), new Bounds2D(2, 3))
                     .Returns(new ItemRequestResult<int>(4));
                 yield return new TestCaseData(array2x3, 2, new Index2D(0, 0), new Bounds2D(0, 0))
-                    .Returns(ItemRequestResult<int>.Failed);
+                    .Returns(ItemRequestResult<int>.Fail);
                 yield return new TestCaseData(array2x3, 10, new Index2D(0, 1), new Bounds2D(1, 2))
-                    .Returns(ItemRequestResult<int>.Failed);
+                    .Returns(ItemRequestResult<int>.Fail);
             }
 
             private static IEnumerable<TestCaseData> EquatableTestCases()
@@ -285,7 +285,7 @@ namespace Sztorm.Collections.Tests
                 yield return new TestCaseData(array3x2, "2")
                     .Returns(new ItemRequestResult<int>(0));
                 yield return new TestCaseData(array3x2, "8")
-                    .Returns(ItemRequestResult<int>.Failed);
+                    .Returns(ItemRequestResult<int>.Fail);
                 yield return new TestCaseData(array3x2, "0")
                     .Returns(new ItemRequestResult<int>(5));
             }
@@ -299,9 +299,9 @@ namespace Sztorm.Collections.Tests
                 yield return new TestCaseData(array2x3, "9", new Index2D(1, 2), 6)
                     .Returns(new ItemRequestResult<int>(4));
                 yield return new TestCaseData(array2x3, "1", new Index2D(1, 2), 0)
-                    .Returns(ItemRequestResult<int>.Failed);
+                    .Returns(ItemRequestResult<int>.Fail);
                 yield return new TestCaseData(array2x3, "10", new Index2D(0, 1), 2)
-                    .Returns(ItemRequestResult<int>.Failed);
+                    .Returns(ItemRequestResult<int>.Fail);
             }
 
             private static IEnumerable<TestCaseData> EquatableIndex2DBounds2DTestCases()
@@ -313,10 +313,10 @@ namespace Sztorm.Collections.Tests
                 yield return new TestCaseData(array2x3, "9", new Index2D(1, 2), new Bounds2D(2, 3))
                     .Returns(new ItemRequestResult<int>(4));
                 yield return new TestCaseData(array2x3, "2", new Index2D(0, 0), new Bounds2D(0, 0))
-                    .Returns(ItemRequestResult<int>.Failed);
+                    .Returns(ItemRequestResult<int>.Fail);
                 yield return new TestCaseData(
                     array2x3, "10", new Index2D(0, 1), new Bounds2D(1, 2))
-                    .Returns(ItemRequestResult<int>.Failed);
+                    .Returns(ItemRequestResult<int>.Fail);
             }
 
             private static IEnumerable<TestCaseData> ComparableTestCases()
@@ -331,7 +331,7 @@ namespace Sztorm.Collections.Tests
                 yield return new TestCaseData(array3x2, 2)
                     .Returns(new ItemRequestResult<int>(0));
                 yield return new TestCaseData(array3x2, 8)
-                    .Returns(ItemRequestResult<int>.Failed);
+                    .Returns(ItemRequestResult<int>.Fail);
                 yield return new TestCaseData(array3x2, 0)
                     .Returns(new ItemRequestResult<int>(5));
             }
@@ -345,9 +345,9 @@ namespace Sztorm.Collections.Tests
                 yield return new TestCaseData(array2x3, 9, new Index2D(1, 2), 6)
                     .Returns(new ItemRequestResult<int>(4));
                 yield return new TestCaseData(array2x3, 2, new Index2D(0, 0), 0)
-                    .Returns(ItemRequestResult<int>.Failed);
+                    .Returns(ItemRequestResult<int>.Fail);
                 yield return new TestCaseData(array2x3, 10, new Index2D(0, 1), 2)
-                    .Returns(ItemRequestResult<int>.Failed);
+                    .Returns(ItemRequestResult<int>.Fail);
             }
 
             private static IEnumerable<TestCaseData> ComparableIndex2DBounds2DTestCases()
@@ -359,9 +359,9 @@ namespace Sztorm.Collections.Tests
                 yield return new TestCaseData(array2x3, 9, new Index2D(1, 2), new Bounds2D(2, 3))
                     .Returns(new ItemRequestResult<int>(4));
                 yield return new TestCaseData(array2x3, 2, new Index2D(0, 0), new Bounds2D(0, 0))
-                    .Returns(ItemRequestResult<int>.Failed);
+                    .Returns(ItemRequestResult<int>.Fail);
                 yield return new TestCaseData(array2x3, 10, new Index2D(0, 1), new Bounds2D(1, 2))
-                    .Returns(ItemRequestResult<int>.Failed);
+                    .Returns(ItemRequestResult<int>.Fail);
             }
         }
     }

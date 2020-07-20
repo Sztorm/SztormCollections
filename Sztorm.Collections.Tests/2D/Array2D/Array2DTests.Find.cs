@@ -57,7 +57,7 @@ namespace Sztorm.Collections.Tests
                 yield return new TestCaseData(array3x3, new Predicate<int>(o => o > 5))
                     .Returns(new ItemRequestResult<int>(9));
                 yield return new TestCaseData(array3x3, new Predicate<int>(o => o == 10))
-                    .Returns(ItemRequestResult<int>.Failed);
+                    .Returns(ItemRequestResult<int>.Fail);
             }
 
             private static IEnumerable<TestCaseData> FirstIPredicateTestCases()
@@ -70,7 +70,7 @@ namespace Sztorm.Collections.Tests
                 yield return new TestCaseData(array3x3, new GreaterThanPredicate<int>(5))
                     .Returns(new ItemRequestResult<int>(9));
                 yield return new TestCaseData(array3x3, new EqualsPredicate<int>(10))
-                    .Returns(ItemRequestResult<int>.Failed);
+                    .Returns(ItemRequestResult<int>.Fail);
             }
 
             private static IEnumerable<TestCaseData> LastTestCases()
@@ -83,7 +83,7 @@ namespace Sztorm.Collections.Tests
                 yield return new TestCaseData(array3x3, new Predicate<int>(o => o > 5))
                     .Returns(new ItemRequestResult<int>(8));
                 yield return new TestCaseData(array3x3, new Predicate<int>(o => o == 10))
-                    .Returns(ItemRequestResult<int>.Failed);
+                    .Returns(ItemRequestResult<int>.Fail);
             }
 
             private static IEnumerable<TestCaseData> LastIPredicateTestCases()
@@ -96,7 +96,7 @@ namespace Sztorm.Collections.Tests
                 yield return new TestCaseData(array3x3, new GreaterThanPredicate<int>(8))
                     .Returns(new ItemRequestResult<int>(9));
                 yield return new TestCaseData(array3x3, new EqualsPredicate<int>(10))
-                    .Returns(ItemRequestResult<int>.Failed);
+                    .Returns(ItemRequestResult<int>.Fail);
             }
         }
     }

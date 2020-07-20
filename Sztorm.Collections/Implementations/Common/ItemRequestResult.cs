@@ -15,7 +15,7 @@ namespace Sztorm.Collections
         /// <summary>
         ///     Represents a failed request. The item has not been delivered.
         /// </summary>
-        public static readonly ItemRequestResult<T> Failed = new ItemRequestResult<T>();
+        public static readonly ItemRequestResult<T> Fail = new ItemRequestResult<T>();
 
         /// <summary>
         ///     Determines whether requested item is delivered.

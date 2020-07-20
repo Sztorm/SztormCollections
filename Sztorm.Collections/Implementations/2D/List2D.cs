@@ -1318,7 +1318,7 @@ namespace Sztorm.Collections
         ///     Searches for an item that matches the conditions defined by the specified
         ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying first
         ///     occurrence searched row by row within the entire <see cref="List2D{T}"/> if found.
-        ///     Otherwise returns <see cref="ItemRequestResult{T}.Failed"/>
+        ///     Otherwise returns <see cref="ItemRequestResult{T}.Fail"/>
         /// </summary>
         /// <typeparam name="TPredicate">
         ///     <typeparamref name = "TPredicate"/> is <see cref="IPredicate{T}"/> and
@@ -1336,14 +1336,14 @@ namespace Sztorm.Collections
 
             return indexRequest.IsSuccess ? 
                 new ItemRequestResult<T>(GetItemInternal(indexRequest.ItemOrDefault)) :
-                ItemRequestResult<T>.Failed;
+                ItemRequestResult<T>.Fail;
         }
 
         /// <summary>
         ///     Searches for an item that matches the conditions defined by the specified
         ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying first
         ///     occurrence searched row by row within the entire <see cref="List2D{T}"/> if found.
-        ///     Otherwise returns <see cref="ItemRequestResult{T}.Failed"/><br/>
+        ///     Otherwise returns <see cref="ItemRequestResult{T}.Fail"/><br/>
         ///     Use <see cref="Find{TPredicate}(TPredicate)"/> to avoid virtual call.
         ///     <para>
         ///         Exceptions:<br/>
@@ -1556,7 +1556,7 @@ namespace Sztorm.Collections
         ///     Searches for an item that matches the conditions defined by the specified
         ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying last
         ///     occurrence searched row by row within the entire <see cref="List2D{T}"/> if found.
-        ///     Otherwise returns <see cref="ItemRequestResult{T}.Failed"/>
+        ///     Otherwise returns <see cref="ItemRequestResult{T}.Fail"/>
         /// </summary>
         /// <typeparam name="TPredicate">
         ///     <typeparamref name = "TPredicate"/> is <see cref="IPredicate{T}"/> and
@@ -1574,14 +1574,14 @@ namespace Sztorm.Collections
 
             return indexRequest.IsSuccess ?
                 new ItemRequestResult<T>(GetItemInternal(indexRequest.ItemOrDefault)) :
-                ItemRequestResult<T>.Failed;
+                ItemRequestResult<T>.Fail;
         }
 
         /// <summary>
         ///     Searches for an item that matches the conditions defined by the specified
         ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying last
         ///     occurrence searched row by row within the entire <see cref="List2D{T}"/> if found.
-        ///     Otherwise returns <see cref="ItemRequestResult{T}.Failed"/><br/>
+        ///     Otherwise returns <see cref="ItemRequestResult{T}.Fail"/><br/>
         ///     Use <see cref="FindLast{TPredicate}(TPredicate)"/> to avoid virtual call.
         ///     <para>
         ///         Exceptions:<br/>
@@ -1639,14 +1639,14 @@ namespace Sztorm.Collections
                     }
                 }
             }
-            return ItemRequestResult<Index2D>.Failed;
+            return ItemRequestResult<Index2D>.Fail;
         }
 
         /// <summary>
         ///     Searches for an item that matches the conditions defined by the specified
         ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying index
         ///     of the first occurrence searched within the entire <see cref="List2D{T}"/> if
-        ///     found. Otherwise returns <see cref="ItemRequestResult{T}.Failed"/>
+        ///     found. Otherwise returns <see cref="ItemRequestResult{T}.Fail"/>
         /// </summary>
         /// <typeparam name="TPredicate">
         ///     <typeparamref name = "TPredicate"/> is <see cref="IPredicate{T}"/> and
@@ -1666,7 +1666,7 @@ namespace Sztorm.Collections
         ///     Searches for an item that matches the conditions defined by the specified
         ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying index
         ///     of the first occurrence searched row by row within the specified range of items if
-        ///     found. Otherwise returns <see cref="ItemRequestResult{T}.Failed"/>
+        ///     found. Otherwise returns <see cref="ItemRequestResult{T}.Fail"/>
         ///     <para>
         ///         Exceptions:<br/>
         ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="startIndex"/> must
@@ -1716,7 +1716,7 @@ namespace Sztorm.Collections
         ///     Searches for an item that matches the conditions defined by the specified
         ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying index
         ///     of the first occurrence searched within the specified sector. Otherwise returns
-        ///     <see cref="ItemRequestResult{T}.Failed"/>
+        ///     <see cref="ItemRequestResult{T}.Fail"/>
         ///     <para>
         ///         Exceptions:<br/>
         ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="startIndex"/> must
@@ -1769,14 +1769,14 @@ namespace Sztorm.Collections
                     }
                 }
             }
-            return ItemRequestResult<Index2D>.Failed;
+            return ItemRequestResult<Index2D>.Fail;
         }
 
         /// <summary>
         ///     Searches for an item that matches the conditions defined by the specified
         ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying index
         ///     of the first occurrence searched within the entire <see cref="List2D{T}"/> if
-        ///     found. Otherwise returns <see cref="ItemRequestResult{T}.Failed"/><br/>
+        ///     found. Otherwise returns <see cref="ItemRequestResult{T}.Fail"/><br/>
         ///     Use <see cref="FindIndex2D{TPredicate}(TPredicate)"/> to avoid virtual call.
         ///     <para>
         ///         Exceptions:<br/>
@@ -1802,7 +1802,7 @@ namespace Sztorm.Collections
         ///     Searches for an item that matches the conditions defined by the specified
         ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying index
         ///     of the first occurrence searched row by row within the specified range of items if
-        ///     found. Otherwise returns <see cref="ItemRequestResult{T}.Failed"/><br/>
+        ///     found. Otherwise returns <see cref="ItemRequestResult{T}.Fail"/><br/>
         ///     Use <see cref="FindIndex2D{TPredicate}(Index2D, int, TPredicate)"/> to avoid
         ///     virtual call.
         ///     <para>
@@ -1844,7 +1844,7 @@ namespace Sztorm.Collections
         ///     Searches for an item that matches the conditions defined by the specified
         ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying index
         ///     of the first occurrence searched within the specified sector. Otherwise returns
-        ///     <see cref="ItemRequestResult{T}.Failed"/><br/>
+        ///     <see cref="ItemRequestResult{T}.Fail"/><br/>
         ///     Use <see cref="FindIndex2D{TPredicate}(Index2D, Bounds2D, TPredicate)"/> to avoid
         ///     virtual call.
         ///     <para>
@@ -1914,7 +1914,7 @@ namespace Sztorm.Collections
                     }
                 }
             }
-            return ItemRequestResult<Index2D>.Failed;   
+            return ItemRequestResult<Index2D>.Fail;   
         }
 
         /// <summary>
@@ -1922,7 +1922,7 @@ namespace Sztorm.Collections
         ///     specified predicate, and returns the <see cref="ItemRequestResult{T}"/> with
         ///     underlying index of the last occurrence searched within the entire
         ///     <see cref="List2D{T}"/> if found. Otherwise returns
-        ///     <see cref="ItemRequestResult{T}.Failed"/>
+        ///     <see cref="ItemRequestResult{T}.Fail"/>
         /// </summary>
         /// <typeparam name="TPredicate">
         ///     <typeparamref name = "TPredicate"/> is <see cref="IPredicate{T}"/> and
@@ -1946,7 +1946,7 @@ namespace Sztorm.Collections
         ///     Searches for an item that matches the conditions defined by the specified
         ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying index
         ///     of the last occurrence searched row by row within the specified range of items if
-        ///     found. Otherwise returns <see cref="ItemRequestResult{T}.Failed"/>
+        ///     found. Otherwise returns <see cref="ItemRequestResult{T}.Fail"/>
         ///     <para>
         ///         Exceptions:<br/>
         ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="startIndex"/> must
@@ -1996,7 +1996,7 @@ namespace Sztorm.Collections
         ///     Searches for an item that matches the conditions defined by the specified
         ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying index
         ///     of the last occurrence searched within the specified sector. Otherwise returns
-        ///     <see cref="ItemRequestResult{T}.Failed"/>
+        ///     <see cref="ItemRequestResult{T}.Fail"/>
         ///     <para>
         ///         Exceptions:<br/>
         ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="startIndex"/> must
@@ -2050,14 +2050,14 @@ namespace Sztorm.Collections
                     }
                 }
             }
-            return ItemRequestResult<Index2D>.Failed;
+            return ItemRequestResult<Index2D>.Fail;
         }
 
         /// <summary>
         ///     Searches for an item that matches the conditions defined by the specified
         ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying index
         ///     of the last occurrence searched within the entire <see cref="List2D{T}"/> if found.
-        ///     Otherwise returns <see cref="ItemRequestResult{T}.Failed"/><br/>
+        ///     Otherwise returns <see cref="ItemRequestResult{T}.Fail"/><br/>
         ///     Use <see cref="FindLastIndex2D{TPredicate}(TPredicate)"/> to avoid virtual call.
         ///     <para>
         ///         Exceptions:<br/>
@@ -2087,7 +2087,7 @@ namespace Sztorm.Collections
         ///     Searches for an item that matches the conditions defined by the specified
         ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying index
         ///     of the last occurrence searched row by row within the specified range of items if
-        ///     found. Otherwise returns <see cref="ItemRequestResult{T}.Failed"/><br/>
+        ///     found. Otherwise returns <see cref="ItemRequestResult{T}.Fail"/><br/>
         ///     Use <see cref="FindLastIndex2D{TPredicate}(Index2D, int, TPredicate)"/> to avoid
         ///     virtual call.
         ///     <para>
@@ -2129,7 +2129,7 @@ namespace Sztorm.Collections
         ///     Searches for an item that matches the conditions defined by the specified
         ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying index
         ///     of the last occurrence searched within the specified sector. Otherwise returns
-        ///     <see cref="ItemRequestResult{T}.Failed"/><br/>
+        ///     <see cref="ItemRequestResult{T}.Fail"/><br/>
         ///     Use <see cref="FindLastIndex2D{TPredicate}(Index2D, Bounds2D, TPredicate)"/> to avoid
         ///     virtual call.
         ///     <para>
@@ -2419,7 +2419,7 @@ namespace Sztorm.Collections
         /// <summary>
         ///     Returns the <see cref="ItemRequestResult{T}"/> with underlying index of the first
         ///     occurrence of item searched within the entire <see cref="List2D{T}"/> if found.
-        ///     Otherwise returns <see cref="ItemRequestResult{T}.Failed"/><br/>
+        ///     Otherwise returns <see cref="ItemRequestResult{T}.Fail"/><br/>
         ///     Use <see cref="Index2DOfEquatable{U}(U)"/> or
         ///     <see cref="Index2DOfComparable{U}(U)"/> to avoid unnecessary boxing if stored type
         ///     is <see cref="IEquatable{T}"/> or <see cref="IComparable{T}"/>.
@@ -2433,7 +2433,7 @@ namespace Sztorm.Collections
         /// <summary>
         ///     Returns the <see cref="ItemRequestResult{T}"/> with underlying index of the first
         ///     occurrence of item searched row by row within the specified range of items if
-        ///     found. Otherwise returns <see cref="ItemRequestResult{T}.Failed"/><br/>
+        ///     found. Otherwise returns <see cref="ItemRequestResult{T}.Fail"/><br/>
         ///     Use <see cref="Index2DOfEquatable{U}(U, Index2D, int)"/> or
         ///     <see cref="Index2DOfComparable{U}(U, Index2D, int)"/> to avoid unnecessary boxing
         ///     if stored type is <see cref="IEquatable{T}"/> or <see cref="IComparable{T}"/>.
@@ -2466,7 +2466,7 @@ namespace Sztorm.Collections
         /// <summary>
         ///     Returns the <see cref="ItemRequestResult{T}"/> with underlying index of the first
         ///     occurrence of item searched searched within the specified sector if found.
-        ///     Otherwise returns <see cref="ItemRequestResult{T}.Failed"/><br/>
+        ///     Otherwise returns <see cref="ItemRequestResult{T}.Fail"/><br/>
         ///     Use <see cref="Index2DOfEquatable{U}(U, Index2D, Bounds2D)"/> or
         ///     <see cref="Index2DOfComparable{U}(U, Index2D, Bounds2D)"/> to avoid unnecessary
         ///     boxing if stored type is <see cref="IEquatable{T}"/> or
@@ -2500,7 +2500,7 @@ namespace Sztorm.Collections
         /// <summary>
         ///     Returns the <see cref="ItemRequestResult{T}"/> with underlying index of the first
         ///     occurrence of item searched within the entire <see cref="List2D{T}"/> if found.
-        ///     Otherwise returns <see cref="ItemRequestResult{T}.Failed"/><br/>
+        ///     Otherwise returns <see cref="ItemRequestResult{T}.Fail"/><br/>
         ///     To search for <see langword="null"/> use <see cref="Index2DOf(T)"/>
         ///     <para>
         ///         Exceptions:<br/>
@@ -2531,7 +2531,7 @@ namespace Sztorm.Collections
         /// <summary>
         ///     Returns the <see cref="ItemRequestResult{T}"/> with underlying index of the first
         ///     occurrence of item searched row by row within the specified range of items if
-        ///     found. Otherwise returns <see cref="ItemRequestResult{T}.Failed"/><br/>
+        ///     found. Otherwise returns <see cref="ItemRequestResult{T}.Fail"/><br/>
         ///     To search for <see langword="null"/> use <see cref="Index2DOf(T, Index2D, int)"/>
         ///     <para>
         ///         Exceptions:<br/>
@@ -2574,7 +2574,7 @@ namespace Sztorm.Collections
         /// <summary>
         ///     Returns the <see cref="ItemRequestResult{T}"/> with underlying index of the first
         ///     occurrence of item searched searched within the specified sector if found.
-        ///     Otherwise returns <see cref="ItemRequestResult{T}.Failed"/><br/>
+        ///     Otherwise returns <see cref="ItemRequestResult{T}.Fail"/><br/>
         ///     To search for <see langword="null"/> use
         ///     <see cref="Index2DOf(T, Index2D, Bounds2D)"/>
         ///     <para>
@@ -2613,7 +2613,7 @@ namespace Sztorm.Collections
         /// <summary>
         ///     Returns the <see cref="ItemRequestResult{T}"/> with underlying index of the first
         ///     occurrence of item searched within the entire <see cref="List2D{T}"/> if found.
-        ///     Otherwise returns <see cref="ItemRequestResult{T}.Failed"/><br/>
+        ///     Otherwise returns <see cref="ItemRequestResult{T}.Fail"/><br/>
         ///     To search for <see langword="null"/> use <see cref="Index2DOf(T)"/>
         ///     <para>
         ///         Exceptions:<br/>
@@ -2644,7 +2644,7 @@ namespace Sztorm.Collections
         /// <summary>
         ///     Returns the <see cref="ItemRequestResult{T}"/> with underlying index of the first
         ///     occurrence of item searched row by row within the specified range of items if
-        ///     found. Otherwise returns <see cref="ItemRequestResult{T}.Failed"/><br/>
+        ///     found. Otherwise returns <see cref="ItemRequestResult{T}.Fail"/><br/>
         ///     To search for <see langword="null"/> use <see cref="Index2DOf(T, Index2D, int)"/>
         ///     <para>
         ///         Exceptions:<br/>
@@ -2687,7 +2687,7 @@ namespace Sztorm.Collections
         /// <summary>
         ///     Returns the <see cref="ItemRequestResult{T}"/> with underlying index of the first
         ///     occurrence of item searched searched within the specified sector if found.
-        ///     Otherwise returns <see cref="ItemRequestResult{T}.Failed"/><br/>
+        ///     Otherwise returns <see cref="ItemRequestResult{T}.Fail"/><br/>
         ///     To search for <see langword="null"/> use
         ///     <see cref="Index2DOf(T, Index2D, Bounds2D)"/>
         ///     <para>
@@ -3064,7 +3064,7 @@ namespace Sztorm.Collections
         /// <summary>
         ///     Returns the <see cref="ItemRequestResult{T}"/> with underlying index of the last
         ///     occurrence of item searched within the entire <see cref="List2D{T}"/> if found.
-        ///     Otherwise returns <see cref="ItemRequestResult{T}.Failed"/><br/>
+        ///     Otherwise returns <see cref="ItemRequestResult{T}.Fail"/><br/>
         ///     Use <see cref="LastIndex2DOfEquatable{U}(U)"/> or
         ///     <see cref="LastIndex2DOfComparable{U}(U)"/> to avoid unnecessary boxing if stored
         ///     type is <see cref="IEquatable{T}"/> or <see cref="IComparable{T}"/>.
@@ -3078,7 +3078,7 @@ namespace Sztorm.Collections
         /// <summary>
         ///     Returns the <see cref="ItemRequestResult{T}"/> with underlying index of the last
         ///     occurrence of item searched row by row within the specified range of items if
-        ///     found. Otherwise returns <see cref="ItemRequestResult{T}.Failed"/><br/>
+        ///     found. Otherwise returns <see cref="ItemRequestResult{T}.Fail"/><br/>
         ///     Use <see cref="LastIndex2DOfEquatable{U}(U, Index2D, int)"/> or
         ///     <see cref="LastIndex2DOfComparable{U}(U, Index2D, int)"/> to avoid unnecessary
         ///     boxing if stored type is <see cref="IEquatable{T}"/> or
@@ -3112,7 +3112,7 @@ namespace Sztorm.Collections
         /// <summary>
         ///     Returns the <see cref="ItemRequestResult{T}"/> with underlying index of the last
         ///     occurrence of item searched searched within the specified sector if found.
-        ///     Otherwise returns <see cref="ItemRequestResult{T}.Failed"/><br/>
+        ///     Otherwise returns <see cref="ItemRequestResult{T}.Fail"/><br/>
         ///     Use <see cref="LastIndex2DOfEquatable{U}(U, Index2D, Bounds2D)"/> or
         ///     <see cref="LastIndex2DOfComparable{U}(U, Index2D, Bounds2D)"/> to avoid unnecessary
         ///     boxing if stored type is <see cref="IEquatable{T}"/> or
@@ -3146,7 +3146,7 @@ namespace Sztorm.Collections
         /// <summary>
         ///     Returns the <see cref="ItemRequestResult{T}"/> with underlying index of the last
         ///     occurrence of item searched within the entire <see cref="List2D{T}"/> if found.
-        ///     Otherwise returns <see cref="ItemRequestResult{T}.Failed"/><br/>
+        ///     Otherwise returns <see cref="ItemRequestResult{T}.Fail"/><br/>
         ///     To search for <see langword="null"/> use <see cref="LastIndex2DOf(T)"/>
         ///     <para>
         ///         Exceptions:<br/>
@@ -3177,7 +3177,7 @@ namespace Sztorm.Collections
         /// <summary>
         ///     Returns the <see cref="ItemRequestResult{T}"/> with underlying index of the last
         ///     occurrence of item searched row by row within the specified range of items if
-        ///     found. Otherwise returns <see cref="ItemRequestResult{T}.Failed"/><br/>
+        ///     found. Otherwise returns <see cref="ItemRequestResult{T}.Fail"/><br/>
         ///     To search for <see langword="null"/> use
         ///     <see cref="LastIndex2DOf(T, Index2D, int)"/>
         ///     <para>
@@ -3221,7 +3221,7 @@ namespace Sztorm.Collections
         /// <summary>
         ///     Returns the <see cref="ItemRequestResult{T}"/> with underlying index of the last
         ///     occurrence of item searched searched within the specified sector if found.
-        ///     Otherwise returns <see cref="ItemRequestResult{T}.Failed"/><br/>
+        ///     Otherwise returns <see cref="ItemRequestResult{T}.Fail"/><br/>
         ///     To search for <see langword="null"/> use
         ///     <see cref="LastIndex2DOf(T, Index2D, Bounds2D)"/>
         ///     <para>
@@ -3260,7 +3260,7 @@ namespace Sztorm.Collections
         /// <summary>
         ///     Returns the <see cref="ItemRequestResult{T}"/> with underlying index of the last
         ///     occurrence of item searched within the entire <see cref="List2D{T}"/> if found.
-        ///     Otherwise returns <see cref="ItemRequestResult{T}.Failed"/><br/>
+        ///     Otherwise returns <see cref="ItemRequestResult{T}.Fail"/><br/>
         ///     To search for <see langword="null"/> use <see cref="LastIndex2DOf(T)"/>
         ///     <para>
         ///         Exceptions:<br/>
@@ -3290,7 +3290,7 @@ namespace Sztorm.Collections
         /// <summary>
         ///     Returns the <see cref="ItemRequestResult{T}"/> with underlying index of the last
         ///     occurrence of item searched row by row within the specified range of items if
-        ///     found. Otherwise returns <see cref="ItemRequestResult{T}.Failed"/><br/>
+        ///     found. Otherwise returns <see cref="ItemRequestResult{T}.Fail"/><br/>
         ///     To search for <see langword="null"/> use
         ///     <see cref="LastIndex2DOf(T, Index2D, int)"/>
         ///     <para>
@@ -3334,7 +3334,7 @@ namespace Sztorm.Collections
         /// <summary>
         ///     Returns the <see cref="ItemRequestResult{T}"/> with underlying index of the last
         ///     occurrence of item searched searched within the specified sector if found.
-        ///     Otherwise returns <see cref="ItemRequestResult{T}.Failed"/><br/>
+        ///     Otherwise returns <see cref="ItemRequestResult{T}.Fail"/><br/>
         ///     To search for <see langword="null"/> use
         ///     <see cref="LastIndex2DOf(T, Index2D, Bounds2D)"/>
         ///     <para>
