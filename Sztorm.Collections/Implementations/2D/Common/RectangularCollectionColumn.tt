@@ -1,0 +1,403 @@
+﻿<#@ template debug="false" hostspecific="true" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System" #>
+<#@ import namespace="System.IO" #>
+<#@ output extension=".log.cs" #>
+<#
+    Initialize();
+
+    for (int i = 0; i < TypeNames.Length; i++)
+    {
+        WriteClass(i);
+        SaveOutput(TypeNames[i] + ".generated.cs");
+    }
+    WriteLine("// Auto-generation successful.");
+#>
+<#+
+    private static readonly string[] TypeNames =
+    {
+        "Column",
+        "RefColumn",
+        "ReadOnlyColumn",
+        "RefReadOnlyColumn",
+    };
+
+    private static readonly string[] TypeInterfaceNames =
+    {
+        "IIndexable",
+        "IRefIndexable",
+        "IReadOnlyIndexable",
+        "IRefReadOnlyIndexable",
+    };
+
+    private static readonly string[] InterfaceCollectionNames =
+    {
+        "IRectangularCollection",
+        "IRefRectangularCollection",
+        "IReadOnlyRectangularCollection",
+        "IRefReadOnlyRectangularCollection",
+    };
+
+    private readonly Action[] writeTypeSummaryMethods = new Action[4];
+
+    private readonly Action[] writeContructorSummaryMethods = new Action[4];
+
+    private readonly Action[] writeIndexerMethods = new Action[4];
+
+    private void SaveOutput(string outputFileName) 
+    {
+        string templateDirectory = Path.GetDirectoryName(Host.TemplateFile);
+        string outputFilePath = Path.Combine(templateDirectory, outputFileName);
+        File.WriteAllText(outputFilePath, this.GenerationEnvironment.ToString()); 
+        this.GenerationEnvironment.Remove(0, this.GenerationEnvironment.Length);
+    }
+
+    public override void Initialize()
+    {
+        writeTypeSummaryMethods[0] = WriteColumnSummary;
+        writeTypeSummaryMethods[1] = WriteRefColumnSummary;
+        writeTypeSummaryMethods[2] = WriteReadOnlyColumnSummary;
+        writeTypeSummaryMethods[3] = WriteRefReadOnlyColumnSummary;
+
+        writeContructorSummaryMethods[0] = WriteColumnConstructorSummary;
+        writeContructorSummaryMethods[1] = WriteRefColumnConstructorSummary;
+        writeContructorSummaryMethods[2] = WriteReadOnlyColumnConstructorSummary;
+        writeContructorSummaryMethods[3] = WriteRefReadOnlyColumnConstructorSummary;
+
+        writeIndexerMethods[0] = WriteColumnIndexer;
+        writeIndexerMethods[1] = WriteRefColumnIndexer;
+        writeIndexerMethods[2] = WriteReadOnlyColumnIndexer;
+        writeIndexerMethods[3] = WriteRefReadOnlyColumnIndexer;
+    }
+
+    private void WriteClass(int typeIndex)
+    {
+#>
+// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
+// File is auto-generated. Do not modify as changes may be overwritten.
+// If you want to modify this file, edit template file with the same name and .tt extension.
+// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
+
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+
+namespace Sztorm.Collections
+{
+<#+
+    PushIndent("    ");
+    writeTypeSummaryMethods[typeIndex]();
+    ClearIndent();
+#>
+    public readonly partial struct <#= TypeNames[typeIndex] #><T, TCollection> :
+        IEnumerable<T>, <#= TypeInterfaceNames[typeIndex] #><T>
+        where TCollection : <#= InterfaceCollectionNames[typeIndex] #><T>
+    {
+        private readonly TCollection collection;
+
+        /// <summary>
+        ///     Returns index of column in provided <typeparamref name="TCollection"/>.
+        /// </summary>
+        public int Index { get; }
+
+        /// <summary>
+        ///     Returns number of elements stored in this column.
+        /// </summary>
+        public int Count
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => collection.Boundaries.Length1;
+        }
+
+        /// <summary>
+        ///     Returns value indicating whether specified index exists in this instance.
+        /// </summary>
+        /// <param name="index"></param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool IsValidIndex(int index) => collection.IsValidIndex(new Index2D(index, Index));
+
+<#+
+    PushIndent("    ");
+    PushIndent("    ");
+
+    writeIndexerMethods[typeIndex]();
+    WriteLine("");
+    writeContructorSummaryMethods[typeIndex]();
+
+    ClearIndent();
+#>
+        public <#= TypeNames[typeIndex] #>(TCollection collection, int index)
+        {
+            if (!collection.IsValidIndex(new Index2D(0, index)))
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(index), "Index is out of boundaries of the column count.");
+            }
+            this.collection = collection;
+            this.Index = index;
+        }
+
+        /// <summary>
+        ///     Returns an <see cref="IEnumerator{T}"/> for the <see cref="<#= TypeNames[typeIndex] #>{T, TCollection}"/>.
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerator<T> GetEnumerator()
+        {
+            for (int i = 0, length = Count; i < length; i++)
+            {
+                yield return this[i];
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+
+        /// <summary>
+        ///     Creates a <typeparamref name = "T"/>[] from this <see cref="<#= TypeNames[typeIndex] #>{T, TCollection}"/> instance.
+        /// </summary>
+        /// <returns></returns>
+        public T[] ToArray()
+        {
+            int length = Count;
+            var result = new T[length];
+
+            for (int i = 0; i < length; i++)
+            {
+                result[i] = this[i];
+            }
+            return result;
+        }
+    }
+}
+<#+
+    }
+
+    private void WriteColumnIndexer()
+    {
+#>
+/// <summary>
+///     Gets or sets an item stored at given index.
+///     <para>
+///         Exceptions:<br/>
+///         <see cref="IndexOutOfRangeException"/>: Index is out of column bounds.
+///     </para>
+/// </summary>
+/// <param name="index"></param>
+/// <returns></returns>
+public T this[int index]
+{
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    get
+    {
+        if (!IsValidIndex(index))
+        {
+            throw new IndexOutOfRangeException("Index is out of column bounds.");
+        }
+        return collection[new Index2D(index, Index)];
+    }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    set
+    {
+        if (!IsValidIndex(index))
+        {
+            throw new IndexOutOfRangeException("Index is out of column bounds.");
+        }
+        collection[new Index2D(index, Index)] = value;
+    }
+}
+<#+
+    }
+
+    private void WriteRefColumnIndexer()
+    {
+#>
+/// <summary>
+///     Returns an item stored at given index.
+///     <para>
+///         Exceptions:<br/>
+///         <see cref="IndexOutOfRangeException"/>: Index is out of column bounds.
+///     </para>
+/// </summary>
+/// <param name="index"></param>
+/// <returns></returns>
+public ref T this[int index]
+{
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    get
+    {
+        if (!IsValidIndex(index))
+        {
+            throw new IndexOutOfRangeException("Index is out of column bounds.");
+        }
+        return ref collection[new Index2D(index, Index)];
+    }
+}
+<#+
+    }
+
+    private void WriteReadOnlyColumnIndexer()
+    {
+#>
+/// <summary>
+///     Gets an item stored at given index.
+///     <para>
+///         Exceptions:<br/>
+///         <see cref="IndexOutOfRangeException"/>: Index is out of column bounds.
+///     </para>
+/// </summary>
+/// <param name="index"></param>
+/// <returns></returns>
+public T this[int index]
+{
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    get
+    {
+        if (!IsValidIndex(index))
+        {
+            throw new IndexOutOfRangeException("Index is out of column bounds.");
+        }
+        return collection[new Index2D(index, Index)];
+    }
+}
+<#+
+    }
+
+    private void WriteRefReadOnlyColumnIndexer()
+    {
+#>
+/// <summary>
+///     Returns an item stored at given index.
+///     <para>
+///         Exceptions:<br/>
+///         <see cref="IndexOutOfRangeException"/>: Index is out of column bounds.
+///     </para>
+/// </summary>
+/// <param name="index"></param>
+/// <returns></returns>
+public ref readonly T this[int index]
+{
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    get
+    {
+        if (!IsValidIndex(index))
+        {
+            throw new IndexOutOfRangeException("Index is out of column bounds.");
+        }
+        return ref collection[new Index2D(index, Index)];
+    }
+}
+<#+
+    }
+
+    private void WriteColumnSummary()
+    {
+#>
+/// <summary>
+///     Represents specific column of rectangular collection.
+/// </summary>
+<#+
+    }
+
+    private void WriteRefColumnSummary()
+    {
+#>
+/// <summary>
+///     Represents specific column of reference-indexable rectangular collection.
+/// </summary>
+<#+
+    }
+
+    private void WriteReadOnlyColumnSummary()
+    {
+#>
+/// <summary>
+///     Represents specific column of read-only rectangular collection.
+/// </summary>
+<#+
+    }
+    private void WriteRefReadOnlyColumnSummary()
+    {
+#>
+/// <summary>
+///     Represents specific column of read-only reference-indexable rectangular collection.
+/// </summary>
+<#+
+    }
+
+    private void WriteColumnConstructorSummary()
+    {
+#>
+/// <summary>
+///     Constructs index-specified indexable column of indexable rectangular collection.<br/>
+///     Changes done in provided <typeparamref name="TCollection"/> are reflected in this
+///     instance.
+///     <para>
+///         Exceptions:<br/>
+///         <see cref="ArgumentOutOfRangeException"/>: Index is out of boundaries of the
+///         column count.
+///     </para>
+/// </summary>
+/// <param name="collection">A collection from which this instance uses reference.</param>
+/// <param name="index">An index that determines which column is to take.</param>
+<#+
+    }
+
+    private void WriteRefColumnConstructorSummary()
+    {
+#>
+/// <summary>
+///     Constructs index-specified reference-indexable column of reference-indexable
+///     rectangular collection.<br/>
+///     Changes done in provided <typeparamref name="TCollection"/> are reflected in this
+///     instance.
+///     <para>
+///         Exceptions:<br/>
+///         <see cref="ArgumentOutOfRangeException"/>: Index is out of boundaries of the
+///         column count.
+///     </para>
+/// </summary>
+/// <param name="collection">A collection from which this instance uses reference.</param>
+/// <param name="index">An index that determines which column is to take.</param>
+<#+
+    }
+
+    private void WriteReadOnlyColumnConstructorSummary()
+    {
+#>
+/// <summary>
+///     Constructs index-specified indexable read-only column of indexable read-only
+///     rectangular collection.<br/>
+///     Changes done in provided <typeparamref name="TCollection"/> are reflected in this
+///     instance.
+///     <para>
+///         Exceptions:<br/>
+///         <see cref="ArgumentOutOfRangeException"/>: Index is out of boundaries of the
+///         column count.
+///     </para>
+/// </summary>
+/// <param name="collection">A collection from which this instance uses reference.</param>
+/// <param name="index">An index that determines which column is to take.</param>
+<#+
+    }
+
+    private void WriteRefReadOnlyColumnConstructorSummary()
+    {
+#>
+/// <summary>
+///     Constructs index-specified reference-indexable read-only column of
+///     reference-indexable read-only rectangular collection.<br/>
+///     Changes done in provided <typeparamref name="TCollection"/> are reflected in this
+///     instance.
+///     <para>
+///         Exceptions:<br/>
+///         <see cref="ArgumentOutOfRangeException"/>: Index is out of boundaries of the
+///         column count.
+///     </para>
+/// </summary>
+/// <param name="collection">A collection from which this instance uses reference.</param>
+/// <param name="index">An index that determines which column is to take.</param>
+<#+
+    }
+#>

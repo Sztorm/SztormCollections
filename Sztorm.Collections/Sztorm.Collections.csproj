@@ -11,6 +11,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Update="Implementations\2D\Common\RectangularCollectionColumn.tt">
+      <LastGenOutput>RectangularCollectionColumn.log.cs</LastGenOutput>
+      <Generator>TextTemplatingFileGenerator</Generator>
+    </None>
     <None Update="Implementations\2D\Common\RectangularCollectionRow.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>RectangularCollectionRow.log.cs</LastGenOutput>
@@ -23,6 +27,14 @@
 
   <ItemGroup>
     <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Implementations\2D\Common\RectangularCollectionColumn.log.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>RectangularCollectionColumn.tt</DependentUpon>
+    </Compile>
   </ItemGroup>
 
 </Project>
