@@ -35,6 +35,11 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>RectangularCollectionColumn.tt</DependentUpon>
     </Compile>
+    <Compile Update="Implementations\2D\Common\RectangularCollectionRow.log.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>RectangularCollectionRow.tt</DependentUpon>
+    </Compile>
   </ItemGroup>
 
 </Project>

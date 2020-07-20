@@ -8,7 +8,6 @@
 
     for (int i = 0; i < TypeNames.Length; i++)
     {
-        WriteLine("");
         WriteClass(i);
         SaveOutput(TypeNames[i] + ".generated.cs");
     }
