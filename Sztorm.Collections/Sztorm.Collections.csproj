@@ -11,9 +11,21 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="Implementations\2D\Common\RectangularCollectionExtensions.log.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>RectangularCollectionExtensions.tt</DependentUpon>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="Implementations\2D\Common\RectangularCollectionColumn.tt">
       <LastGenOutput>RectangularCollectionColumn.log.cs</LastGenOutput>
       <Generator>TextTemplatingFileGenerator</Generator>
+    </None>
+    <None Update="Implementations\2D\Common\RectangularCollectionExtensions.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>RectangularCollectionExtensions.log.cs</LastGenOutput>
     </None>
     <None Update="Implementations\2D\Common\RectangularCollectionRow.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
@@ -34,6 +46,11 @@
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>RectangularCollectionColumn.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Implementations\2D\Common\RectangularCollectionExtensions.log.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>RectangularCollectionExtensions.tt</DependentUpon>
     </Compile>
     <Compile Update="Implementations\2D\Common\RectangularCollectionRow.log.cs">
       <DesignTime>True</DesignTime>
