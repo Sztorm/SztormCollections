@@ -49,6 +49,8 @@ namespace Sztorm.Collections.Tests
             set => this[(row, column)] = value;
         }
 
+        public ReadOnlyMatrix4x4 AsReadOnly() => new ReadOnlyMatrix4x4(this);
+
         public Column<float, Matrix4x4> GetColumn(int index)
             => new Column<float, Matrix4x4>(this, index);
 
@@ -69,8 +71,6 @@ namespace Sztorm.Collections.Tests
             => index.Row >= 0 && index.Row < Rows &&
                index.Column >= 0 && index.Column < Columns;
 
-        public ReadOnlyMatrix4x4 AsReadOnly() => new ReadOnlyMatrix4x4(this);
-
         public static Matrix4x4 CreateIdentityMatrix()
         {
             var result = new Matrix4x4();
@@ -79,6 +79,40 @@ namespace Sztorm.Collections.Tests
             result[2, 2] = 1;
             result[3, 3] = 1;
 
+            return result;
+        }
+
+        /// <summary>
+        ///     Creates a <see cref="Matrix4x4"/> from <see cref="float"/>[,] instance.
+        /// <para>
+        ///     Exceptions:<br/>
+        ///     <see cref="ArgumentNullException"/>: Array cannot be null.<br/>
+        ///     <see cref="ArgumentException"/>: Array must have length of 4 in both dimensions.
+        /// </para>
+        /// </summary>
+        /// <param name="array"></param>
+        /// <returns></returns>
+        public static Matrix4x4 FromSystem2DArray(float[,] array)
+        {
+            if (array == null)
+            {
+                throw new ArgumentNullException(nameof(array), "Array cannot be null.");
+            }
+            if (array.GetLength(0) != Matrix4x4Boundaries.Rows ||
+                array.GetLength(1) != Matrix4x4Boundaries.Columns)
+            {
+                throw new ArgumentException(
+                    nameof(array), "Array must have length of 4 in both dimensions");
+            }
+            var result = new Matrix4x4();
+
+            for (int i = 0; i < result.Rows; i++)
+            {
+                for (int j = 0; j < result.Columns; j++)
+                {
+                    result[i, j] = array[i, j];
+                }
+            }
             return result;
         }
     }

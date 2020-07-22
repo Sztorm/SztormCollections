@@ -11,7 +11,7 @@ namespace Sztorm.Collections.Tests
     /// </summary>
     public class ReadOnlyMatrix4x4 : IReadOnlyRectangularCollection<float>
     {
-        private static readonly Bounds2D ReadOnlyMatrix4x4Boundaries = new Bounds2D(4, 4);
+        private static readonly Bounds2D Matrix4x4Boundaries = new Bounds2D(4, 4);
 
         internal readonly float[] numbers;
 
@@ -23,7 +23,7 @@ namespace Sztorm.Collections.Tests
 
         public int Columns => 4;
 
-        public Bounds2D Boundaries => ReadOnlyMatrix4x4Boundaries;
+        public Bounds2D Boundaries => Matrix4x4Boundaries;
 
         public float this[Index2D index]
         {
@@ -61,5 +61,18 @@ namespace Sztorm.Collections.Tests
 
         public static ReadOnlyMatrix4x4 CreateIdentityMatrix() 
             => Matrix4x4.CreateIdentityMatrix().AsReadOnly();
+
+        /// <summary>
+        ///     Creates a <see cref="ReadOnlyMatrix4x4"/> from <see cref="float"/>[,] instance.
+        /// <para>
+        ///     Exceptions:<br/>
+        ///     <see cref="ArgumentNullException"/>: Array cannot be null.<br/>
+        ///     <see cref="ArgumentException"/>: Array must have length of 4 in both dimensions.
+        /// </para>
+        /// </summary>
+        /// <param name="array"></param>
+        /// <returns></returns>
+        public static ReadOnlyMatrix4x4 FromSystem2DArray(float[,] array)
+            => Matrix4x4.FromSystem2DArray(array).AsReadOnly();
     }
 }

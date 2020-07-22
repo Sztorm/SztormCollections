@@ -61,5 +61,18 @@ namespace Sztorm.Collections.Tests
 
         public static RefReadOnlyMatrix4x4 CreateIdentityMatrix()
             => RefMatrix4x4.CreateIdentityMatrix().AsReadOnly();
+
+        /// <summary>
+        ///     Creates a <see cref="RefReadOnlyMatrix4x4"/> from <see cref="float"/>[,] instance.
+        /// <para>
+        ///     Exceptions:<br/>
+        ///     <see cref="ArgumentNullException"/>: Array cannot be null.<br/>
+        ///     <see cref="ArgumentException"/>: Array must have length of 4 in both dimensions.
+        /// </para>
+        /// </summary>
+        /// <param name="array"></param>
+        /// <returns></returns>
+        public static RefReadOnlyMatrix4x4 FromSystem2DArray(float[,] array)
+            => RefMatrix4x4.FromSystem2DArray(array).AsReadOnly();
     }
 }
