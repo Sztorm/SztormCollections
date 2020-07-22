@@ -49,6 +49,12 @@ namespace Sztorm.Collections.Tests
             set => this[(row, column)] = value;
         }
 
+        public Column<float, Matrix4x4> GetColumn(int index)
+            => new Column<float, Matrix4x4>(this, index);
+
+        public Row<float, Matrix4x4> GetRow(int index)
+            => new Row<float, Matrix4x4>(this, index);
+
         public IEnumerator<float> GetEnumerator()
         {
             for (int i = 0; i < Rows * Columns; i++)
