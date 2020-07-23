@@ -9,53 +9,53 @@ namespace Sztorm.Collections.Tests
 {
     public partial class List2DTests
     {
-        public static class LastIndex2DOf
+        public static class LastIndexOf
         {
             public static class Any
             {
-                [TestCaseSource(typeof(LastIndex2DOf), nameof(AnyTestCases))]
-                [TestCaseSource(typeof(LastIndex2DOf), nameof(EquatableTestCases))]
-                [TestCaseSource(typeof(LastIndex2DOf), nameof(ComparableTestCases))]
+                [TestCaseSource(typeof(LastIndexOf), nameof(AnyTestCases))]
+                [TestCaseSource(typeof(LastIndexOf), nameof(EquatableTestCases))]
+                [TestCaseSource(typeof(LastIndexOf), nameof(ComparableTestCases))]
                 public static ItemRequestResult<Index2D> Test<T>(List2D<T> list, T item)
-                    => list.LastIndex2DOf(item);
+                    => list.LastIndexOf(item);
 
-                [TestCaseSource(typeof(LastIndex2DOf), nameof(InvalidStartIndexCases))]
+                [TestCaseSource(typeof(LastIndexOf), nameof(InvalidStartIndexCases))]
                 public static void Index2DIntThrowsExceptionIfStartIndexIsOutOfBounds<T>(
                     List2D<T> list, Index2D startIndex)
                     => Assert.Throws<ArgumentOutOfRangeException>(
-                        () => list.LastIndex2DOf(default, startIndex, 0));
+                        () => list.LastIndexOf(default, startIndex, 0));
 
-                [TestCaseSource(typeof(LastIndex2DOf), nameof(InvalidCountTestCases))]
+                [TestCaseSource(typeof(LastIndexOf), nameof(InvalidCountTestCases))]
                 public static void Index2DIntThrowsExceptionIfCountExceedsList2DCount<T>(
                     List2D<T> list, Index2D startIndex, int count)
                     => Assert.Throws<ArgumentOutOfRangeException>(
-                        () => list.LastIndex2DOf(default, startIndex, count));
+                        () => list.LastIndexOf(default, startIndex, count));
 
-                [TestCaseSource(typeof(LastIndex2DOf), nameof(AnyIndex2DIntTestCases))]
-                [TestCaseSource(typeof(LastIndex2DOf), nameof(EquatableIndex2DIntTestCases))]
-                [TestCaseSource(typeof(LastIndex2DOf), nameof(ComparableIndex2DIntTestCases))]
+                [TestCaseSource(typeof(LastIndexOf), nameof(AnyIndex2DIntTestCases))]
+                [TestCaseSource(typeof(LastIndexOf), nameof(EquatableIndex2DIntTestCases))]
+                [TestCaseSource(typeof(LastIndexOf), nameof(ComparableIndex2DIntTestCases))]
                 public static ItemRequestResult<Index2D> Test<T>(
                     List2D<T> list, T item, Index2D startIndex, int count)
-                    => list.LastIndex2DOf(item, startIndex, count);
+                    => list.LastIndexOf(item, startIndex, count);
 
-                [TestCaseSource(typeof(LastIndex2DOf), nameof(InvalidStartIndexCases))]
+                [TestCaseSource(typeof(LastIndexOf), nameof(InvalidStartIndexCases))]
                 public static void Index2DBounds2DThrowsExceptionIfStartIndexIsOutOfBounds<T>(
                     List2D<T> list, Index2D startIndex)
                     => Assert.Throws<ArgumentOutOfRangeException>(
-                        () => list.LastIndex2DOf(default, startIndex, new Bounds2D()));
+                        () => list.LastIndexOf(default, startIndex, new Bounds2D()));
 
-                [TestCaseSource(typeof(LastIndex2DOf), nameof(InvalidSectorTestCases))]
+                [TestCaseSource(typeof(LastIndexOf), nameof(InvalidSectorTestCases))]
                 public static void Index2DBounds2DThrowsExceptionIfSectorIsOutOfBounds<T>(
                     List2D<T> list, Index2D startIndex, Bounds2D sector)
                     => Assert.Throws<ArgumentOutOfRangeException>(
-                        () => list.LastIndex2DOf(default, startIndex, sector));
+                        () => list.LastIndexOf(default, startIndex, sector));
 
-                [TestCaseSource(typeof(LastIndex2DOf), nameof(AnyIndex2DBounds2DTestCases))]
-                [TestCaseSource(typeof(LastIndex2DOf), nameof(EquatableIndex2DBounds2DTestCases))]
-                [TestCaseSource(typeof(LastIndex2DOf), nameof(ComparableIndex2DBounds2DTestCases))]
+                [TestCaseSource(typeof(LastIndexOf), nameof(AnyIndex2DBounds2DTestCases))]
+                [TestCaseSource(typeof(LastIndexOf), nameof(EquatableIndex2DBounds2DTestCases))]
+                [TestCaseSource(typeof(LastIndexOf), nameof(ComparableIndex2DBounds2DTestCases))]
                 public static ItemRequestResult<Index2D> Test<T>(
                     List2D<T> list, T item, Index2D startIndex, Bounds2D sector)
-                    => list.LastIndex2DOf(item, startIndex, sector);
+                    => list.LastIndexOf(item, startIndex, sector);
             }
 
             public static class Equatable
@@ -63,64 +63,64 @@ namespace Sztorm.Collections.Tests
                 [Test]
                 public static void ThrowsExceptionIfItemIsNull()
                     => Assert.Throws<ArgumentNullException>(
-                        () => new List2D<string>(0, 0).LastIndex2DOfEquatable<string>(item: null));
+                        () => new List2D<string>(0, 0).LastIndexOfEquatable<string>(item: null));
 
-                [TestCaseSource(typeof(LastIndex2DOf), nameof(EquatableTestCases))]
+                [TestCaseSource(typeof(LastIndexOf), nameof(EquatableTestCases))]
                 public static ItemRequestResult<Index2D> Test<T>(
                     List2D<T> list, T item)
                     where T : IEquatable<T>
-                    => list.LastIndex2DOfEquatable(item);
+                    => list.LastIndexOfEquatable(item);
 
                 [Test]
                 public static void Index2DIntThrowsExceptionIfItemIsNull()
                     => Assert.Throws<ArgumentNullException>(
-                        () => new List2D<string>(1, 1).LastIndex2DOfEquatable<string>(null, (0, 0), 0));
+                        () => new List2D<string>(1, 1).LastIndexOfEquatable<string>(null, (0, 0), 0));
 
-                [TestCaseSource(typeof(LastIndex2DOf), nameof(InvalidStartIndexCases))]
+                [TestCaseSource(typeof(LastIndexOf), nameof(InvalidStartIndexCases))]
                 public static void Index2DIntThrowsExceptionIfStartIndexIsOutOfBounds<T>(
                     List2D<T> list, Index2D startIndex)
                     where T : IEquatable<T>, new()
                     => Assert.Throws<ArgumentOutOfRangeException>(
-                        () => list.LastIndex2DOfEquatable(new T(), startIndex, 0));
+                        () => list.LastIndexOfEquatable(new T(), startIndex, 0));
 
-                [TestCaseSource(typeof(LastIndex2DOf), nameof(InvalidCountTestCases))]
+                [TestCaseSource(typeof(LastIndexOf), nameof(InvalidCountTestCases))]
                 public static void Index2DIntThrowsExceptionIfCountExceedsList2DCount<T>(
                     List2D<T> list, Index2D startIndex, int count)
                     where T : IEquatable<T>, new()
                     => Assert.Throws<ArgumentOutOfRangeException>(
-                        () => list.LastIndex2DOfEquatable(new T(), startIndex, count));
+                        () => list.LastIndexOfEquatable(new T(), startIndex, count));
 
-                [TestCaseSource(typeof(LastIndex2DOf), nameof(EquatableIndex2DIntTestCases))]
+                [TestCaseSource(typeof(LastIndexOf), nameof(EquatableIndex2DIntTestCases))]
                 public static ItemRequestResult<Index2D> Test<T>(
                     List2D<T> list, T item, Index2D startIndex, int count)
                     where T : IEquatable<T>
-                    => list.LastIndex2DOfEquatable(item, startIndex, count);
+                    => list.LastIndexOfEquatable(item, startIndex, count);
 
                 [Test]
                 public static void Index2DBounds2DThrowsExceptionIfItemIsNull()
                     => Assert.Throws<ArgumentNullException>(
-                        () => new List2D<string>(1, 1).LastIndex2DOfEquatable<string>(
+                        () => new List2D<string>(1, 1).LastIndexOfEquatable<string>(
                             null, (0, 0), new Bounds2D(1, 1)));
 
-                [TestCaseSource(typeof(LastIndex2DOf), nameof(InvalidStartIndexCases))]
+                [TestCaseSource(typeof(LastIndexOf), nameof(InvalidStartIndexCases))]
                 public static void Index2DBounds2DThrowsExceptionIfStartIndexIsOutOfBounds<T>(
                     List2D<T> list, Index2D startIndex)
                     where T : IEquatable<T>, new()
                     => Assert.Throws<ArgumentOutOfRangeException>(
-                        () => list.LastIndex2DOfEquatable(new T(), startIndex, new Bounds2D()));
+                        () => list.LastIndexOfEquatable(new T(), startIndex, new Bounds2D()));
 
-                [TestCaseSource(typeof(LastIndex2DOf), nameof(InvalidSectorTestCases))]
+                [TestCaseSource(typeof(LastIndexOf), nameof(InvalidSectorTestCases))]
                 public static void Index2DBounds2DThrowsExceptionIfSectorIsOutOfBounds<T>(
                     List2D<T> list, Index2D startIndex, Bounds2D sector)
                     where T : IEquatable<T>, new()
                     => Assert.Throws<ArgumentOutOfRangeException>(
-                        () => list.LastIndex2DOfEquatable(new T(), startIndex, sector));
+                        () => list.LastIndexOfEquatable(new T(), startIndex, sector));
 
-                [TestCaseSource(typeof(LastIndex2DOf), nameof(EquatableIndex2DBounds2DTestCases))]
+                [TestCaseSource(typeof(LastIndexOf), nameof(EquatableIndex2DBounds2DTestCases))]
                 public static ItemRequestResult<Index2D> Test<T>(
                     List2D<T> list, T item, Index2D startIndex, Bounds2D sector)
                     where T : IEquatable<T>
-                    => list.LastIndex2DOfEquatable(item, startIndex, sector);
+                    => list.LastIndexOfEquatable(item, startIndex, sector);
             }
 
             public static class Comparable
@@ -128,65 +128,65 @@ namespace Sztorm.Collections.Tests
                 [Test]
                 public static void ThrowsExceptionIfItemIsNull()
                     => Assert.Throws<ArgumentNullException>(
-                        () => new List2D<string>(0, 0).LastIndex2DOfComparable<string>(item: null));
+                        () => new List2D<string>(0, 0).LastIndexOfComparable<string>(item: null));
 
-                [TestCaseSource(typeof(LastIndex2DOf), nameof(ComparableTestCases))]
+                [TestCaseSource(typeof(LastIndexOf), nameof(ComparableTestCases))]
                 public static ItemRequestResult<Index2D> Test<T>(
                     List2D<T> list, T item)
                     where T : IComparable<T>
-                    => list.LastIndex2DOfComparable(item);
+                    => list.LastIndexOfComparable(item);
 
                 [Test]
                 public static void Index2DIntThrowsExceptionIfItemIsNull()
                     => Assert.Throws<ArgumentNullException>(
-                        () => new List2D<string>(1, 1).LastIndex2DOfComparable<string>(
+                        () => new List2D<string>(1, 1).LastIndexOfComparable<string>(
                             null, (0, 0), 0));
 
-                [TestCaseSource(typeof(LastIndex2DOf), nameof(InvalidStartIndexCases))]
+                [TestCaseSource(typeof(LastIndexOf), nameof(InvalidStartIndexCases))]
                 public static void Index2DIntThrowsExceptionIfStartIndexIsOutOfBounds<T>(
                     List2D<T> list, Index2D startIndex)
                     where T : IComparable<T>, new()
                     => Assert.Throws<ArgumentOutOfRangeException>(
-                        () => list.LastIndex2DOfComparable(new T(), startIndex, 0));
+                        () => list.LastIndexOfComparable(new T(), startIndex, 0));
 
-                [TestCaseSource(typeof(LastIndex2DOf), nameof(InvalidCountTestCases))]
+                [TestCaseSource(typeof(LastIndexOf), nameof(InvalidCountTestCases))]
                 public static void Index2DIntThrowsExceptionIfCountExceedsList2DCount<T>(
                     List2D<T> list, Index2D startIndex, int count)
                     where T : IComparable<T>, new()
                     => Assert.Throws<ArgumentOutOfRangeException>(
-                        () => list.LastIndex2DOfComparable(new T(), startIndex, count));
+                        () => list.LastIndexOfComparable(new T(), startIndex, count));
 
-                [TestCaseSource(typeof(LastIndex2DOf), nameof(ComparableIndex2DIntTestCases))]
+                [TestCaseSource(typeof(LastIndexOf), nameof(ComparableIndex2DIntTestCases))]
                 public static ItemRequestResult<Index2D> Test<T>(
                     List2D<T> list, T item, Index2D startIndex, int count)
                     where T : IComparable<T>
-                    => list.LastIndex2DOfComparable(item, startIndex, count);
+                    => list.LastIndexOfComparable(item, startIndex, count);
 
                 [Test]
                 public static void Index2DBounds2DThrowsExceptionIfItemIsNull()
                     => Assert.Throws<ArgumentNullException>(
-                        () => new List2D<string>(1, 1).LastIndex2DOfComparable<string>(
+                        () => new List2D<string>(1, 1).LastIndexOfComparable<string>(
                             null, (0, 0), new Bounds2D(1, 1)));
 
-                [TestCaseSource(typeof(LastIndex2DOf), nameof(InvalidStartIndexCases))]
+                [TestCaseSource(typeof(LastIndexOf), nameof(InvalidStartIndexCases))]
                 public static void Index2DBounds2DThrowsExceptionIfStartIndexIsOutOfBounds<T>(
                     List2D<T> list, Index2D startIndex)
                     where T : IComparable<T>, new()
                     => Assert.Throws<ArgumentOutOfRangeException>(
-                        () => list.LastIndex2DOfComparable(new T(), startIndex, new Bounds2D()));
+                        () => list.LastIndexOfComparable(new T(), startIndex, new Bounds2D()));
 
-                [TestCaseSource(typeof(LastIndex2DOf), nameof(InvalidSectorTestCases))]
+                [TestCaseSource(typeof(LastIndexOf), nameof(InvalidSectorTestCases))]
                 public static void Index2DBounds2DThrowsExceptionIfSectorIsOutOfBounds<T>(
                     List2D<T> list, Index2D startIndex, Bounds2D sector)
                     where T : IComparable<T>, new()
                     => Assert.Throws<ArgumentOutOfRangeException>(
-                        () => list.LastIndex2DOfComparable(new T(), startIndex, sector));
+                        () => list.LastIndexOfComparable(new T(), startIndex, sector));
 
-                [TestCaseSource(typeof(LastIndex2DOf), nameof(ComparableIndex2DBounds2DTestCases))]
+                [TestCaseSource(typeof(LastIndexOf), nameof(ComparableIndex2DBounds2DTestCases))]
                 public static ItemRequestResult<Index2D> Test<T>(
                     List2D<T> list, T item, Index2D startIndex, Bounds2D sector)
                     where T : IComparable<T>
-                    => list.LastIndex2DOfComparable(item, startIndex, sector);
+                    => list.LastIndexOfComparable(item, startIndex, sector);
             }
 
             private static IEnumerable<TestCaseData> InvalidStartIndexCases()
