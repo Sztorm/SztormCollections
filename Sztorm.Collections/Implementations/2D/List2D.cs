@@ -23,8 +23,7 @@ namespace Sztorm.Collections
         private int version;
 
         /// <summary>
-        ///     Returns total number of rows in this <see cref="List2D{T}"/> instance. This
-        ///     property is equal to <see cref="Length1"/>
+        ///     Returns total number of rows in this <see cref="List2D{T}"/> instance.
         /// </summary>
         public int Rows
         {
@@ -33,33 +32,12 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        ///     Returns total number of columns in this <see cref="List2D{T}"/> instance. This
-        ///     property is equal to <see cref="Length2"/>
+        ///     Returns total number of columns in this <see cref="List2D{T}"/> instance.
         /// </summary>
         public int Columns
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get => bounds.Columns;
-        }
-
-        /// <summary>
-        ///     Returns length of the first dimension of current <see cref="List2D{T}"/> instance.
-        ///     This property is equal to <see cref="Rows"/>.
-        /// </summary>
-        public int Length1
-        {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => bounds.Length1;
-        }
-
-        /// <summary>
-        ///     Returns length of the second dimension of current <see cref="List2D{T}"/> instance.
-        ///     This property is equal to <see cref="Columns"/>
-        /// </summary>
-        public int Length2
-        {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => bounds.Length2;
         }
 
         /// <summary>
@@ -525,19 +503,6 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        ///     Adds specified number of columns to the end of the <see cref="List2D{T}"/>. This
-        ///     method is equivalent to <see cref="AddColumns(int)"/>.
-        ///     <para>
-        ///         Exceptions:<br/>
-        ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="count"/> must
-        ///         greater or equal to zero.
-        ///     </para>
-        /// </summary>
-        /// <param name="count">The number of columns to add.</param>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void AddLength2(int count) => AddColumns(count);
-
-        /// <summary>
         ///     Adds one column to the end of the <see cref="List2D{T}"/>.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -576,19 +541,6 @@ namespace Sztorm.Collections
             bounds = new Bounds2D(new Box<int>(newRows), new Box<int>(newCols));
             version++;
         }
-
-        /// <summary>
-        ///     Adds specified number of rows to the end of the <see cref="List2D{T}"/>. This
-        ///     method is equivalent to <see cref="AddRows(int)"/>.
-        ///     <para>
-        ///         Exceptions:<br/>
-        ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="count"/> must
-        ///         greater or equal to zero.
-        ///     </para>
-        /// </summary>
-        /// <param name="count">The number of rows to add.</param>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void AddLength1(int count) => AddRows(count);
 
         /// <summary>
         ///     Adds one row to the end of the <see cref="List2D{T}"/>.

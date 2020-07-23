@@ -44,7 +44,7 @@ namespace Sztorm.Collections.Tests
 
         public static void WriteTable<T>(Array2D<T> array, string format = "")
         {
-            int len1 = array.Length1;
+            int len1 = array.Rows;
             int lastColIndex = array.Columns - 1;
 
             for (int i = 0; i < len1; i++)
@@ -63,7 +63,7 @@ namespace Sztorm.Collections.Tests
             {
                 return;
             }
-            int len1 = list.Length1;
+            int len1 = list.Rows;
             int lastColIndex = list.Columns - 1;
 
             for (int i = 0; i < len1; i++)

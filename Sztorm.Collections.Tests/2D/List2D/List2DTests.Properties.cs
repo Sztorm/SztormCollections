@@ -21,7 +21,6 @@ namespace Sztorm.Collections.Tests
                 list.AddRows(rows);
 
                 Assert.AreEqual(rows, list.Rows);
-                Assert.AreEqual(rows, list.Length1);
             }
 
             [TestCase(0)]
@@ -33,7 +32,6 @@ namespace Sztorm.Collections.Tests
                 list.AddColumns(columns);
 
                 Assert.AreEqual(columns, list.Columns);
-                Assert.AreEqual(columns, list.Length2);
             }
 
             [TestCase(0, 0)]
