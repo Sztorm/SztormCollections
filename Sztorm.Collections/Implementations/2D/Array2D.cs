@@ -23,8 +23,7 @@ namespace Sztorm.Collections
         private readonly Bounds2D bounds;
 
         /// <summary>
-        ///     Returns total number of rows in this two-dimensional array instance. This
-        ///     property is equal to <see cref="Length1"/>.
+        ///     Returns total number of rows in this two-dimensional array instance.
         /// </summary>
         public int Rows
         {
@@ -33,33 +32,12 @@ namespace Sztorm.Collections
         }
 
         /// <summary>
-        ///     Returns total number of columns in this two-dimensional array instance. This
-        ///     property is equal to <see cref="Length2"/>.
+        ///     Returns total number of columns in this two-dimensional array instance.
         /// </summary>
         public int Columns
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get => bounds.Columns;
-        }
-
-        /// <summary>
-        ///     Returns length of the first dimension in this two-dimensional array instance. This
-        ///     property is equal to <see cref="Rows"/>.
-        /// </summary>
-        public int Length1
-        {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => bounds.Length1;
-        }
-
-        /// <summary>
-        ///     Returns length of the second dimension in this two-dimensional array instance. This
-        ///     property is equal to <see cref="Columns"/>.
-        /// </summary>
-        public int Length2
-        {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => bounds.Length2;
         }
 
         /// <summary>

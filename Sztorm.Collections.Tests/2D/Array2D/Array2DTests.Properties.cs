@@ -20,7 +20,6 @@ namespace Sztorm.Collections.Tests
                 var array = new Array2D<int>(rows, 1);
 
                 Assert.AreEqual(rows, array.Rows);
-                Assert.AreEqual(rows, array.Length1);
             }
 
             [TestCase(0)]
@@ -31,7 +30,6 @@ namespace Sztorm.Collections.Tests
                 var array = new Array2D<int>(1, columns);
 
                 Assert.AreEqual(columns, array.Columns);
-                Assert.AreEqual(columns, array.Length2);
             }
 
             [TestCase(0, 0)]
