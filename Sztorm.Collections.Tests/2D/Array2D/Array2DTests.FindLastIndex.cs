@@ -21,7 +21,7 @@ namespace Sztorm.Collections.Tests
                         () => new Array2D<int>(0, 0).FindLastIndex(match: null));
 
                 [TestCaseSource(typeof(FindLastIndex), nameof(PredicateTestCases))]
-                public static ItemRequestResult<int> Test<T>(
+                public static ItemRequestResult<Index2D> Test<T>(
                     Array2D<T> array, Predicate<T> match)
                     => array.FindLastIndex(match);
 
@@ -43,7 +43,7 @@ namespace Sztorm.Collections.Tests
                         () => array.FindLastIndex(startIndex, count, o => true));
 
                 [TestCaseSource(typeof(FindLastIndex), nameof(PredicateIndex2DIntTestCases))]
-                public static ItemRequestResult<int> Test<T>(
+                public static ItemRequestResult<Index2D> Test<T>(
                     Array2D<T> array, Index2D startIndex, int count, Predicate<T> match)
                     => array.FindLastIndex(startIndex, count, match);
 
@@ -65,7 +65,7 @@ namespace Sztorm.Collections.Tests
                         () => array.FindLastIndex(startIndex, sector, o => true));
 
                 [TestCaseSource(typeof(FindLastIndex), nameof(PredicateIndex2DBounds2DTestCases))]
-                public static ItemRequestResult<int> TestFindLastIndex<T>(
+                public static ItemRequestResult<Index2D> TestFindLastIndex<T>(
                     Array2D<T> array, Index2D startIndex, Bounds2D sector, Predicate<T> match)
                     => array.FindLastIndex(startIndex, sector, match);
             }
@@ -73,7 +73,7 @@ namespace Sztorm.Collections.Tests
             public static class IPredicate
             {
                 [TestCaseSource(typeof(FindLastIndex), nameof(IPredicateTestCases))]
-                public static ItemRequestResult<int> Test<T, TPredicate>(
+                public static ItemRequestResult<Index2D> Test<T, TPredicate>(
                     Array2D<T> array, TPredicate match)
                     where TPredicate : struct, IPredicate<T>
                     => array.FindLastIndex(match);
@@ -92,7 +92,7 @@ namespace Sztorm.Collections.Tests
                             startIndex, count, new AlwaysTruePredicate<T>()));
 
                 [TestCaseSource(typeof(FindLastIndex), nameof(Index2DIntIPredicateTestCases))]
-                public static ItemRequestResult<int> Test<T, TPredicate>(
+                public static ItemRequestResult<Index2D> Test<T, TPredicate>(
                     Array2D<T> array, Index2D startIndex, int count, TPredicate match)
                     where TPredicate : struct, IPredicate<T>
                     => array.FindLastIndex(startIndex, count, match);
@@ -111,8 +111,9 @@ namespace Sztorm.Collections.Tests
                         () => array.FindLastIndex(
                             startIndex, sector, new AlwaysTruePredicate<T>()));
 
-                [TestCaseSource(typeof(FindLastIndex), nameof(Index2DBounds2DIPredicateTestCases))]
-                public static ItemRequestResult<int> Test<T, TPredicate>(
+                [TestCaseSource(
+                    typeof(FindLastIndex), nameof(Index2DBounds2DIPredicateTestCases))]
+                public static ItemRequestResult<Index2D> Test<T, TPredicate>(
                     Array2D<T> array, Index2D startIndex, Bounds2D sector, TPredicate match)
                     where TPredicate : struct, IPredicate<T>
                     => array.FindLastIndex(startIndex, sector, match);
@@ -165,11 +166,11 @@ namespace Sztorm.Collections.Tests
                                  { 8, 0, 3 } });
 
                 yield return new TestCaseData(array3x3, new Predicate<int>(o => o > 5))
-                    .Returns(new ItemRequestResult<int>(6));
+                    .Returns(new ItemRequestResult<Index2D>((2, 0)));
                 yield return new TestCaseData(array3x3, new Predicate<int>(o => o == 2))
-                    .Returns(new ItemRequestResult<int>(0));
+                    .Returns(new ItemRequestResult<Index2D>((0, 0)));
                 yield return new TestCaseData(array3x3, new Predicate<int>(o => o == 10))
-                    .Returns(ItemRequestResult<int>.Fail);
+                    .Returns(ItemRequestResult<Index2D>.Fail);
             }
 
             private static IEnumerable<TestCaseData> PredicateIndex2DIntTestCases()
@@ -180,13 +181,13 @@ namespace Sztorm.Collections.Tests
 
                 yield return new TestCaseData(
                     array2x3, new Index2D(1, 2), 6, new Predicate<int>(o => o > 5))
-                    .Returns(new ItemRequestResult<int>(4));
+                    .Returns(new ItemRequestResult<Index2D>((1, 1)));
                 yield return new TestCaseData(
                     array2x3, new Index2D(0, 0), 0, new Predicate<int>(o => true))
-                    .Returns(ItemRequestResult<int>.Fail);
+                    .Returns(ItemRequestResult<Index2D>.Fail);
                 yield return new TestCaseData(
                     array2x3, new Index2D(0, 1), 2, new Predicate<int>(o => o == 10))
-                    .Returns(ItemRequestResult<int>.Fail);
+                    .Returns(ItemRequestResult<Index2D>.Fail);
             }
 
             private static IEnumerable<TestCaseData> PredicateIndex2DBounds2DTestCases()
@@ -200,19 +201,19 @@ namespace Sztorm.Collections.Tests
                     new Index2D(1, 2),
                     new Bounds2D(2, 3),
                     new Predicate<int>(o => o > 5))
-                    .Returns(new ItemRequestResult<int>(4));
+                    .Returns(new ItemRequestResult<Index2D>((1, 1)));
                 yield return new TestCaseData(
                     array2x3,
                     new Index2D(1, 2),
                     new Bounds2D(0, 0),
                     new Predicate<int>(o => true))
-                    .Returns(ItemRequestResult<int>.Fail);
+                    .Returns(ItemRequestResult<Index2D>.Fail);
                 yield return new TestCaseData(
                     array2x3,
                     new Index2D(0, 1),
                     new Bounds2D(1, 2),
                     new Predicate<int>(o => o == 10))
-                    .Returns(ItemRequestResult<int>.Fail);
+                    .Returns(ItemRequestResult<Index2D>.Fail);
             }   
             
             private static IEnumerable<TestCaseData> IPredicateTestCases()
@@ -223,11 +224,11 @@ namespace Sztorm.Collections.Tests
                                  { 8, 0, 3 } });
 
                 yield return new TestCaseData(array3x3, new GreaterThanPredicate<int>(5))
-                    .Returns(new ItemRequestResult<int>(6));
+                    .Returns(new ItemRequestResult<Index2D>((2, 0)));
                 yield return new TestCaseData(array3x3, new EqualsPredicate<int>(2))
-                    .Returns(new ItemRequestResult<int>(0));
+                    .Returns(new ItemRequestResult<Index2D>((0, 0)));
                 yield return new TestCaseData(array3x3, new EqualsPredicate<int>(10))
-                    .Returns(ItemRequestResult<int>.Fail);
+                    .Returns(ItemRequestResult<Index2D>.Fail);
             }
 
             private static IEnumerable<TestCaseData> Index2DIntIPredicateTestCases()
@@ -238,13 +239,13 @@ namespace Sztorm.Collections.Tests
 
                 yield return new TestCaseData(
                     array2x3, new Index2D(1, 2), 6, new GreaterThanPredicate<int>(5))
-                    .Returns(new ItemRequestResult<int>(4));
+                    .Returns(new ItemRequestResult<Index2D>((1, 1)));
                 yield return new TestCaseData(
                     array2x3, new Index2D(0, 0), 0, new AlwaysTruePredicate<int>())
-                    .Returns(ItemRequestResult<int>.Fail);
+                    .Returns(ItemRequestResult<Index2D>.Fail);
                 yield return new TestCaseData(
                     array2x3, new Index2D(0, 1), 2, new EqualsPredicate<int>(10))
-                    .Returns(ItemRequestResult<int>.Fail);
+                    .Returns(ItemRequestResult<Index2D>.Fail);
             }
 
             private static IEnumerable<TestCaseData> Index2DBounds2DIPredicateTestCases()
@@ -258,19 +259,19 @@ namespace Sztorm.Collections.Tests
                     new Index2D(1, 2),
                     new Bounds2D(2, 3),
                     new GreaterThanPredicate<int>(5))
-                    .Returns(new ItemRequestResult<int>(4));
+                    .Returns(new ItemRequestResult<Index2D>((1, 1)));
                 yield return new TestCaseData(
                     array2x3,
                     new Index2D(1, 2),
                     new Bounds2D(0, 0),
                     new AlwaysTruePredicate<int>())
-                    .Returns(ItemRequestResult<int>.Fail);
+                    .Returns(ItemRequestResult<Index2D>.Fail);
                 yield return new TestCaseData(
                     array2x3,
                     new Index2D(0, 1),
                     new Bounds2D(1, 2),
                     new EqualsPredicate<int>(10))
-                    .Returns(ItemRequestResult<int>.Fail);
+                    .Returns(ItemRequestResult<Index2D>.Fail);
             }
         }    
     }
