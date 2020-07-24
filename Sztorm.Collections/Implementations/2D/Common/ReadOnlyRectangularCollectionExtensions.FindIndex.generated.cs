@@ -129,15 +129,19 @@ namespace Sztorm.Collections.Extensions
         /// <summary>
         ///     Searches for an item that matches the conditions defined by the specified
         ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying index
-        ///     of the first occurrence searched within the entire 
-        ///     <typeparamref name="TReadOnlyRectCollection"/> if found. Otherwise
-        ///     returns <see cref="ItemRequestResult{T}.Fail"/><br/>
+        ///     of the first occurrence searched within the specified sector. Otherwise returns
+        ///     <see cref="ItemRequestResult{T}.Fail"/><br/>
         ///     Use <see cref="FindIndex{T, TReadOnlyRectCollection, TPredicate}
-        ///     (TReadOnlyRectCollection, TPredicate)"/> to avoid virtual call.
+        ///     (TReadOnlyRectCollection, Index2D, Bounds2D, TPredicate)"/> to avoid
+        ///     virtual call.
         ///     <para>
         ///         Exceptions:<br/>
-        ///         <see cref="ArgumentNullException"/> <paramref name="match"/> cannot be
-        ///         <see langword="null"/>.
+        ///         <see cref="ArgumentNullException"/>: <paramref name="match"/> cannot be
+        ///         <see langword="null"/>.<br/>
+        ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="startIndex"/> must
+        ///         be within collection bounds;<br/>
+        ///         <paramref name="sectorSize"/> must be within collection bounds, beginning from
+        ///         <paramref name="startIndex"/>.
         ///     </para>
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -146,6 +150,8 @@ namespace Sztorm.Collections.Extensions
         ///     <see cref="IReadOnlyRectangularCollection{T}"/>
         /// </typeparam>
         /// <param name="source">The collection in which the operation takes place.</param>
+        /// <param name="startIndex">Zero-based index from which searching starts.</param>
+        /// <param name="sectorSize">The rectangular sector size to be searched.</param>
         /// <param name="match">
         ///     The <see cref="Predicate{T}"/> delegate that defines the conditions of the element
         ///     to search for.
@@ -178,19 +184,15 @@ namespace Sztorm.Collections.Extensions
         /// <summary>
         ///     Searches for an item that matches the conditions defined by the specified
         ///     predicate, and returns the <see cref="ItemRequestResult{T}"/> with underlying index
-        ///     of the first occurrence searched within the specified sector. Otherwise returns
-        ///     <see cref="ItemRequestResult{T}.Fail"/><br/>
+        ///     of the first occurrence searched within the entire 
+        ///     <typeparamref name="TReadOnlyRectCollection"/> if found. Otherwise
+        ///     returns <see cref="ItemRequestResult{T}.Fail"/><br/>
         ///     Use <see cref="FindIndex{T, TReadOnlyRectCollection, TPredicate}
-        ///     (TReadOnlyRectCollection, Index2D, Bounds2D, TPredicate)"/> to avoid
-        ///     virtual call.
+        ///     (TReadOnlyRectCollection, TPredicate)"/> to avoid virtual call.
         ///     <para>
         ///         Exceptions:<br/>
-        ///         <see cref="ArgumentNullException"/>: <paramref name="match"/> cannot be
-        ///         <see langword="null"/>.<br/>
-        ///         <see cref="ArgumentOutOfRangeException"/>: <paramref name="startIndex"/> must
-        ///         be within collection bounds;<br/>
-        ///         <paramref name="sectorSize"/> must be within collection bounds, beginning from
-        ///         <paramref name="startIndex"/>.
+        ///         <see cref="ArgumentNullException"/> <paramref name="match"/> cannot be
+        ///         <see langword="null"/>.
         ///     </para>
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -199,8 +201,6 @@ namespace Sztorm.Collections.Extensions
         ///     <see cref="IReadOnlyRectangularCollection{T}"/>
         /// </typeparam>
         /// <param name="source">The collection in which the operation takes place.</param>
-        /// <param name="startIndex">Zero-based index from which searching starts.</param>
-        /// <param name="sectorSize">The rectangular sector size to be searched.</param>
         /// <param name="match">
         ///     The <see cref="Predicate{T}"/> delegate that defines the conditions of the element
         ///     to search for.
