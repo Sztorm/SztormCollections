@@ -1,0 +1,198 @@
+﻿using System;
+using System.Linq;
+using System.Collections.Generic;
+using NUnit.Framework.Api;
+using NUnit.Framework;
+using Sztorm.Collections.Extensions;
+
+namespace Sztorm.Collections.Tests
+{
+    using static TestUtils;
+
+    public partial class RefRectangularCollectionTests
+    {
+        public static class FindLastIndex
+        {
+            public static class Predicate
+            {
+                [Test]
+                public static void ThrowsExceptionIfMatchIsNull()
+                    => Assert.Throws<ArgumentNullException>(
+                        () => new RefMatrix4x4().FindLastIndex<float, RefMatrix4x4>(
+                            match: null));
+
+                [TestCaseSource(typeof(FindLastIndex), nameof(PredicateTestCases))]
+                public static ItemRequestResult<Index2D> Test(
+                    RefMatrix4x4 matrix, Predicate<float> match)
+                    => matrix.FindLastIndex(match);
+
+                [Test]
+                public static void Index2DBounds2DThrowsExceptionIfMatchIsNull()
+                    => Assert.Throws<ArgumentNullException>(
+                        () => new RefMatrix4x4().FindLastIndex<float, RefMatrix4x4>(
+                            (0, 0), new Bounds2D(), match: null));
+
+                [TestCaseSource(typeof(FindLastIndex), nameof(InvalidStartIndexTestCases))]
+                public static void Index2DBounds2DThrowsExceptionIfStartIndexIsOutOfBounds(
+                    RefMatrix4x4 matrix, Index2D startIndex)
+                    => Assert.Throws<ArgumentOutOfRangeException>(
+                        () => matrix.FindLastIndex<float, RefMatrix4x4>(
+                            startIndex, new Bounds2D(), o => true));
+
+                [TestCaseSource(typeof(FindLastIndex), nameof(InvalidSectorTestCases))]
+                public static void Index2DBounds2DThrowsExceptionIfSectorIsOutOfBounds(
+                    RefMatrix4x4 matrix, Index2D startIndex, Bounds2D sector)
+                    => Assert.Throws<ArgumentOutOfRangeException>(
+                        () => matrix.FindLastIndex<float, RefMatrix4x4>(
+                            startIndex, sector, o => true));
+
+                [TestCaseSource(typeof(FindLastIndex), nameof(PredicateIndex2DBounds2DTestCases))]
+                public static ItemRequestResult<Index2D> Test(
+                    RefMatrix4x4 matrix,
+                    Index2D startIndex,
+                    Bounds2D sector,
+                    Predicate<float> match)
+                    => matrix.FindLastIndex(startIndex, sector, match);
+            }
+
+            public static class IPredicate
+            {
+                [TestCaseSource(typeof(FindLastIndex), nameof(IPredicateTestCases))]
+                public static ItemRequestResult<Index2D> Test<FloatPredicate>(
+                    RefMatrix4x4 matrix, FloatPredicate match)
+                    where FloatPredicate : struct, IPredicate<float>
+                    => matrix.FindLastIndex<float, RefMatrix4x4, FloatPredicate>(match);
+
+                [TestCaseSource(typeof(FindLastIndex), nameof(InvalidStartIndexTestCases))]
+                public static void Index2DBounds2DThrowsExceptionIfStartIndexIsOutOfBounds(
+                    RefMatrix4x4 matrix, Index2D startIndex)
+                    => Assert.Throws<ArgumentOutOfRangeException>(
+                        () => matrix.FindLastIndex<
+                            float, RefMatrix4x4, AlwaysTruePredicate<float>>(
+                            startIndex, new Bounds2D(), new AlwaysTruePredicate<float>()));
+
+                [TestCaseSource(typeof(FindLastIndex), nameof(InvalidSectorTestCases))]
+                public static void Index2DBounds2DThrowsExceptionIfSectorIsOutOfBounds(
+                    RefMatrix4x4 matrix, Index2D startIndex, Bounds2D sector)
+                    => Assert.Throws<ArgumentOutOfRangeException>(
+                        () => matrix.FindLastIndex<
+                            float, RefMatrix4x4, AlwaysTruePredicate<float>>(
+                            startIndex, sector, new AlwaysTruePredicate<float>()));
+
+                [TestCaseSource(typeof(FindLastIndex), nameof(IPredicateIndex2DBounds2DTestCases))]
+                public static ItemRequestResult<Index2D> Test<FloatPredicate>(
+                    RefMatrix4x4 matrix,
+                    Index2D startIndex,
+                    Bounds2D sector,
+                    FloatPredicate match)
+                    where FloatPredicate : struct, IPredicate<float>
+                    => matrix.FindLastIndex<float, RefMatrix4x4, FloatPredicate>(
+                        startIndex, sector, match);
+            }
+
+            private static IEnumerable<TestCaseData> InvalidStartIndexTestCases()
+            {
+                yield return new TestCaseData(new RefMatrix4x4(), new Index2D(-1, 0));
+                yield return new TestCaseData(new RefMatrix4x4(), new Index2D(0, -1));
+                yield return new TestCaseData(new RefMatrix4x4(), new Index2D(4, 0));
+                yield return new TestCaseData(new RefMatrix4x4(), new Index2D(0, 4));
+            }
+
+            private static IEnumerable<TestCaseData> InvalidSectorTestCases()
+            {
+                yield return new TestCaseData(
+                    new RefMatrix4x4(), new Index2D(3, 0), new Bounds2D(5, 0));
+                yield return new TestCaseData(
+                    new RefMatrix4x4(), new Index2D(0, 3), new Bounds2D(0, 5));
+                yield return new TestCaseData(
+                    new RefMatrix4x4(), new Index2D(2, 0), new Bounds2D(4, 0));
+                yield return new TestCaseData(
+                    new RefMatrix4x4(), new Index2D(0, 2), new Bounds2D(0, 4));
+            }
+
+            private static IEnumerable<TestCaseData> PredicateTestCases()
+            {
+                var matrix = RefMatrix4x4.FromSystem2DArray(
+                    new float[,] { { 1, 2, 3, 4 },
+                                   { 9, 8, 7, 6 },
+                                   { 3, 6, 12, 24 },
+                                   { 5, 25, 125, 625 } });
+
+                yield return new TestCaseData(matrix, new Predicate<float>(o => o < 2))
+                    .Returns(new ItemRequestResult<Index2D>((0, 0)));
+                yield return new TestCaseData(matrix, new Predicate<float>(o => o == 10))
+                    .Returns(ItemRequestResult<Index2D>.Fail);
+            }
+
+            private static IEnumerable<TestCaseData> PredicateIndex2DBounds2DTestCases()
+            {
+                var matrix = RefMatrix4x4.FromSystem2DArray(
+                    new float[,] { { 1, 2, 3, 4 },
+                                   { 9, 8, 7, 6 },
+                                   { 3, 6, 12, 24 },
+                                   { 5, 25, 125, 625 } });
+
+                yield return new TestCaseData(
+                    matrix,
+                    new Index2D(3, 3),
+                    new Bounds2D(4, 4),
+                    new Predicate<float>(o => o < 2))
+                    .Returns(new ItemRequestResult<Index2D>((0, 0)));
+                yield return new TestCaseData(
+                    matrix,
+                    new Index2D(0, 0),
+                    new Bounds2D(0, 0),
+                    new Predicate<float>(o => true))
+                    .Returns(ItemRequestResult<Index2D>.Fail);
+                yield return new TestCaseData(
+                    matrix,
+                    new Index2D(1, 1),
+                    new Bounds2D(2, 2),
+                    new Predicate<float>(o => o == 10))
+                    .Returns(ItemRequestResult<Index2D>.Fail);
+            }
+
+            private static IEnumerable<TestCaseData> IPredicateTestCases()
+            {
+                var matrix = RefMatrix4x4.FromSystem2DArray(
+                    new float[,] { { 1, 2, 3, 4 },
+                                   { 9, 8, 7, 6 },
+                                   { 3, 6, 12, 24 },
+                                   { 5, 25, 125, 625 } });
+
+                yield return new TestCaseData(matrix, new LessThanPredicate<float>(2))
+                    .Returns(new ItemRequestResult<Index2D>((0, 0)));
+                yield return new TestCaseData(matrix, new EqualsPredicate<float>(10))
+                    .Returns(ItemRequestResult<Index2D>.Fail);
+            }
+
+            private static IEnumerable<TestCaseData> IPredicateIndex2DBounds2DTestCases()
+            {
+                var matrix = RefMatrix4x4.FromSystem2DArray(
+                    new float[,] { { 1, 2, 3, 4 },
+                                   { 9, 8, 7, 6 },
+                                   { 3, 6, 12, 24 },
+                                   { 5, 25, 125, 625 } });
+
+                yield return new TestCaseData(
+                    matrix,
+                    new Index2D(3, 3),
+                    new Bounds2D(4, 4),
+                    new LessThanPredicate<float>(2))
+                    .Returns(new ItemRequestResult<Index2D>((0, 0)));
+                yield return new TestCaseData(
+                    matrix,
+                    new Index2D(0, 0),
+                    new Bounds2D(0, 0),
+                    new AlwaysTruePredicate<float>())
+                    .Returns(ItemRequestResult<Index2D>.Fail);
+                yield return new TestCaseData(
+                    matrix,
+                    new Index2D(1, 1),
+                    new Bounds2D(2, 2),
+                    new EqualsPredicate<float>(10))
+                    .Returns(ItemRequestResult<Index2D>.Fail);
+            }
+        }
+    }
+}
