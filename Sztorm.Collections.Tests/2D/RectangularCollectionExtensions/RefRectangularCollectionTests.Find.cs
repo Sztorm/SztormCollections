@@ -30,6 +30,25 @@ namespace Sztorm.Collections.Tests
                     => matrix.Find<float, RefMatrix4x4, FloatPredicate>(match);
             }
 
+            public static class Last
+            {
+                [Test]
+                public static void ThrowsExceptionIfMatchIsNull()
+                    => Assert.Throws<ArgumentNullException>(
+                        () => new RefMatrix4x4().FindLast(match: null as Predicate<float>));
+
+                [TestCaseSource(typeof(Find), nameof(LastTestCases))]
+                public static ItemRequestResult<float> Test(
+                    RefMatrix4x4 matrix, Predicate<float> match)
+                    => matrix.FindLast(match);
+
+                [TestCaseSource(typeof(Find), nameof(LastIPredicateTestCases))]
+                public static ItemRequestResult<float> Test<FloatPredicate>(
+                    RefMatrix4x4 matrix, FloatPredicate match)
+                    where FloatPredicate : struct, IPredicate<float>
+                    => matrix.FindLast<float, RefMatrix4x4, FloatPredicate>(match);
+            }
+
             private static IEnumerable<TestCaseData> FirstTestCases()
             {
                 var matrix = RefMatrix4x4.FromSystem2DArray(
@@ -54,6 +73,34 @@ namespace Sztorm.Collections.Tests
 
                 yield return new TestCaseData(matrix, new GreaterThanPredicate<float>(125))
                     .Returns(new ItemRequestResult<float>(625));
+                yield return new TestCaseData(matrix, new EqualsPredicate<float>(10))
+                    .Returns(ItemRequestResult<float>.Fail);
+            }
+
+            private static IEnumerable<TestCaseData> LastTestCases()
+            {
+                var matrix = RefMatrix4x4.FromSystem2DArray(
+                    new float[,] { { 1, 2, 3, 4 },
+                                   { 9, 8, 7, 6 },
+                                   { 3, 6, 12, 24 },
+                                   { 5, 25, 125, 625 } });
+
+                yield return new TestCaseData(matrix, new Predicate<float>(o => o < 2))
+                    .Returns(new ItemRequestResult<float>(1));
+                yield return new TestCaseData(matrix, new Predicate<float>(o => o == 10))
+                    .Returns(ItemRequestResult<float>.Fail);
+            }
+
+            private static IEnumerable<TestCaseData> LastIPredicateTestCases()
+            {
+                var matrix = RefMatrix4x4.FromSystem2DArray(
+                    new float[,] { { 1, 2, 3, 4 },
+                                   { 9, 8, 7, 6 },
+                                   { 3, 6, 12, 24 },
+                                   { 5, 25, 125, 625 } });
+
+                yield return new TestCaseData(matrix, new LessThanPredicate<float>(2))
+                    .Returns(new ItemRequestResult<float>(1));
                 yield return new TestCaseData(matrix, new EqualsPredicate<float>(10))
                     .Returns(ItemRequestResult<float>.Fail);
             }
