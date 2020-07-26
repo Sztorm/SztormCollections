@@ -16,6 +16,11 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>RectangularCollectionExtensions.Exists.tt</DependentUpon>
     </None>
+    <None Include="Implementations\2D\Common\RectangularCollectionExtensions.Find.log.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>RectangularCollectionExtensions.Find.tt</DependentUpon>
+    </None>
     <None Include="Implementations\2D\Common\RectangularCollectionExtensions.FindLastIndex.log.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -31,6 +36,10 @@
     <None Update="Implementations\2D\Common\RectangularCollectionExtensions.Exists.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>RectangularCollectionExtensions.Exists.log.cs</LastGenOutput>
+    </None>
+    <None Update="Implementations\2D\Common\RectangularCollectionExtensions.Find.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>RectangularCollectionExtensions.Find.log.cs</LastGenOutput>
     </None>
     <None Update="Implementations\2D\Common\RectangularCollectionExtensions.FindIndex.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
@@ -64,6 +73,11 @@
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>RectangularCollectionExtensions.Exists.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Implementations\2D\Common\RectangularCollectionExtensions.Find.log.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>RectangularCollectionExtensions.Find.tt</DependentUpon>
     </Compile>
     <Compile Update="Implementations\2D\Common\RectangularCollectionExtensions.FindIndex.log.cs">
       <DesignTime>True</DesignTime>
