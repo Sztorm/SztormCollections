@@ -26,6 +26,11 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>RectangularCollectionExtensions.FindLastIndex.tt</DependentUpon>
     </None>
+    <None Include="Implementations\2D\Common\RectangularCollectionExtensions.TrueForAll.log.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>RectangularCollectionExtensions.TrueForAll.tt</DependentUpon>
+    </None>
     <None Include="Implementations\2D\Common\RectangularCollectionsExtensions.FindLast.log.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -53,6 +58,10 @@
     <None Update="Implementations\2D\Common\RectangularCollectionExtensions.FindLastIndex.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>RectangularCollectionExtensions.FindLastIndex.log.cs</LastGenOutput>
+    </None>
+    <None Update="Implementations\2D\Common\RectangularCollectionExtensions.TrueForAll.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>RectangularCollectionExtensions.TrueForAll.log.cs</LastGenOutput>
     </None>
     <None Update="Implementations\2D\Common\RectangularCollectionRow.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
@@ -102,6 +111,11 @@
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>RectangularCollectionExtensions.FindLastIndex.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Implementations\2D\Common\RectangularCollectionExtensions.TrueForAll.log.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>RectangularCollectionExtensions.TrueForAll.tt</DependentUpon>
     </Compile>
     <Compile Update="Implementations\2D\Common\RectangularCollectionRow.log.cs">
       <DesignTime>True</DesignTime>
