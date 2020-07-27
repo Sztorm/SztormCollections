@@ -29,7 +29,7 @@ namespace Sztorm.Collections.Extensions
         ///     A <see langword="struct"/> implementing <see cref="IPredicate{T}"/> that defines
         ///     the conditions to check against the items.
         /// </param>
-        /// <returns>true</returns>
+        /// <returns></returns>
         public static bool TrueForAll<T, TRefReadOnlyRectCollection, TPredicate>(
             this TRefReadOnlyRectCollection source, TPredicate match)
             where TRefReadOnlyRectCollection : IRefReadOnlyRectangularCollection<T>
