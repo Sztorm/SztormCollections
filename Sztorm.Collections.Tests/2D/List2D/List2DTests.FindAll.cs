@@ -7,7 +7,7 @@ using NUnit.Framework;
 
 namespace Sztorm.Collections.Tests
 {
-    public partial class List2DTest
+    public partial class List2DTests
     {
         public static class FindAll
         {
