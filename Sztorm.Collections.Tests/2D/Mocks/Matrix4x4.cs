@@ -51,9 +51,6 @@ namespace Sztorm.Collections.Tests
 
         public ReadOnlyMatrix4x4 AsReadOnly() => new ReadOnlyMatrix4x4(this);
 
-        public Row<float, Matrix4x4> GetRow(int index)
-            => new Row<float, Matrix4x4>(this, index);
-
         public IEnumerator<float> GetEnumerator()
         {
             for (int i = 0; i < Rows * Columns; i++)

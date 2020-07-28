@@ -41,6 +41,11 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>RectangularCollectionExtensions.GetColumn.tt</DependentUpon>
     </None>
+    <None Include="Implementations\2D\Common\RectangularCollectionExtensions.GetRow.log.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>RectangularCollectionExtensions.GetRow.tt</DependentUpon>
+    </None>
     <None Include="Implementations\2D\Common\RectangularCollectionExtensions.TrueForAll.log.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -85,6 +90,10 @@
     <None Update="Implementations\2D\Common\RectangularCollectionExtensions.GetColumn.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>RectangularCollectionExtensions.GetColumn.log.cs</LastGenOutput>
+    </None>
+    <None Update="Implementations\2D\Common\RectangularCollectionExtensions.GetRow.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>RectangularCollectionExtensions.GetRow.log.cs</LastGenOutput>
     </None>
     <None Update="Implementations\2D\Common\RectangularCollectionExtensions.TrueForAll.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
@@ -153,6 +162,11 @@
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>RectangularCollectionExtensions.GetColumn.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Implementations\2D\Common\RectangularCollectionExtensions.GetRow.log.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>RectangularCollectionExtensions.GetRow.tt</DependentUpon>
     </Compile>
     <Compile Update="Implementations\2D\Common\RectangularCollectionExtensions.TrueForAll.log.cs">
       <DesignTime>True</DesignTime>
