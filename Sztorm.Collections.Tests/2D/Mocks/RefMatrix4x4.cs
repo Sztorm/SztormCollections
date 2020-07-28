@@ -39,9 +39,6 @@ namespace Sztorm.Collections.Tests
 
         public RefReadOnlyMatrix4x4 AsReadOnly() => new RefReadOnlyMatrix4x4(this);
 
-        public RefColumn<float, RefMatrix4x4> GetColumn(int index)
-            => new RefColumn<float, RefMatrix4x4>(this, index);
-
         public RefRow<float, RefMatrix4x4> GetRow(int index)
             => new RefRow<float, RefMatrix4x4>(this, index);
 

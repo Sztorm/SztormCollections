@@ -1,0 +1,109 @@
+﻿<#@ template debug="false" hostspecific="true" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System" #>
+<#@ import namespace="System.IO" #>
+<#@ output extension=".log.cs" #>
+<#
+    Initialize();
+
+    for (int i = 0; i < GeneratedTypeNames.Length; i++)
+    {
+        WriteFile(i);
+        SaveOutput(GeneratedTypeNames[i] + ".GetColumn.generated.cs");
+    }
+    WriteLine("// Auto-generation successful.");
+#>
+<#+
+    private static readonly string[] GeneratedTypeNames =
+    {
+        "RectangularCollectionExtensions", 
+        "RefRectangularCollectionExtensions",
+        "ReadOnlyRectangularCollectionExtensions",
+        "RefReadOnlyRectangularCollectionExtensions",
+    };
+
+    private static readonly string[] InterfaceTypeNames = 
+    {
+        "IRectangularCollection", 
+        "IRefRectangularCollection",
+        "IReadOnlyRectangularCollection",
+        "IRefReadOnlyRectangularCollection",
+    };
+
+    private static readonly string[] GenericTypeNames = 
+    {
+        "TRectCollection", 
+        "TRefRectCollection",
+        "TReadOnlyRectCollection",
+        "TRefReadOnlyRectCollection",
+    };
+
+    private static readonly string[] ColumnTypeNames = 
+    {
+        "Column", 
+        "RefColumn",
+        "ReadOnlyColumn",
+        "RefReadOnlyColumn",
+    };
+
+    private void SaveOutput(string outputFileName) 
+    {
+        string templateDirectory = Path.GetDirectoryName(Host.TemplateFile);
+        string outputFilePath = Path.Combine(templateDirectory, outputFileName);
+        File.WriteAllText(outputFilePath, this.GenerationEnvironment.ToString()); 
+        this.GenerationEnvironment.Remove(0, this.GenerationEnvironment.Length);
+    }
+
+    public override void Initialize()
+    {
+    }
+
+    private void WriteFile(int typeIndex)
+    {
+#>
+// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
+// File is auto-generated. Do not modify as changes may be overwritten.
+// If you want to modify this file, edit template file with the same name and .tt extension.
+// // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // // //
+
+using System;
+using System.Runtime.CompilerServices;
+
+namespace Sztorm.Collections.Extensions
+{
+    public static partial class <#= GeneratedTypeNames[typeIndex] #>
+    {
+        /// <summary>
+        ///     Returns a column at specified index. Indexing start at zero.
+        ///     <para>
+        ///         Exceptions:<br/>
+        ///         <see cref="ArgumentOutOfRangeException"/>: Index is out of boundaries of the
+        ///         column count.
+        ///     </para>
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="<#= GenericTypeNames[typeIndex] #>">
+        ///     <typeparamref name="<#= GenericTypeNames[typeIndex] #>"/> is 
+        ///     <see cref="<#= InterfaceTypeNames[typeIndex] #>{T}"/>
+        /// </typeparam>
+        /// <param name="index">A zero-based index that determines which column is to take.</param> 
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static <#= ColumnTypeNames[typeIndex] #><T, <#= GenericTypeNames[typeIndex] #>> GetColumn<T, <#= GenericTypeNames[typeIndex] #>>(
+            this <#= GenericTypeNames[typeIndex] #> source, int index)
+            where <#= GenericTypeNames[typeIndex] #> : <#= InterfaceTypeNames[typeIndex] #><T>
+        {
+            try
+            {
+                return new <#= ColumnTypeNames[typeIndex] #><T, <#= GenericTypeNames[typeIndex] #>>(source, index);
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                throw;
+            }
+        }
+    }
+}
+<#+
+    }
+#>
