@@ -34,6 +34,9 @@ namespace Sztorm.Collections.Tests
                                  { 8, 2, 3 } });
                 list3x3.IncreaseCapacity(list3x3.Boundaries);
 
+                yield return new TestCaseData(
+                    new List2D<int>(0, 0), new Predicate<int>(o => o == 42))
+                    .Returns(false);
                 yield return new TestCaseData(list3x3, new Predicate<int>(o => o > 5))
                     .Returns(true);
                 yield return new TestCaseData(list3x3, new Predicate<int>(o => o == 10))
@@ -48,6 +51,8 @@ namespace Sztorm.Collections.Tests
                                  { 8, 2, 3 } });
                 list3x3.IncreaseCapacity(list3x3.Boundaries);
 
+                yield return new TestCaseData(new List2D<int>(0, 0), new EqualsPredicate<int>(42))
+                    .Returns(false);
                 yield return new TestCaseData(list3x3, new GreaterThanPredicate<int>(5))
                     .Returns(true);
                 yield return new TestCaseData(list3x3, new EqualsPredicate<int>(10))
