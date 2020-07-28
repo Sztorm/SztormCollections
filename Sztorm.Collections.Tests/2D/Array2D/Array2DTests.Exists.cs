@@ -33,6 +33,9 @@ namespace Sztorm.Collections.Tests
                                  { 4, 9, 1 },
                                  { 8, 2, 3 } });
 
+                yield return new TestCaseData(
+                    new Array2D<int>(0, 0), new Predicate<int>(o => o == 42))
+                    .Returns(false);
                 yield return new TestCaseData(array3x3, new Predicate<int>(o => o > 5))
                     .Returns(true);
                 yield return new TestCaseData(array3x3, new Predicate<int>(o => o == 10))
@@ -46,6 +49,9 @@ namespace Sztorm.Collections.Tests
                                  { 4, 9, 1 },
                                  { 8, 2, 3 } });
 
+                yield return new TestCaseData(
+                    new Array2D<int>(0, 0), new EqualsPredicate<int>(42))
+                    .Returns(false);
                 yield return new TestCaseData(array3x3, new GreaterThanPredicate<int>(5))
                     .Returns(true);
                 yield return new TestCaseData(array3x3, new EqualsPredicate<int>(10))
