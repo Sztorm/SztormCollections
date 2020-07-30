@@ -15,7 +15,7 @@ Set of collections that are more specialized than .Net ones.
 ## Examples
 <details>    
     <summary>2D collections</summary>
-In order to make every example work, the following namespaces need to be imported:
+In order to make every example work, the following namespaces must be imported:
 
 ```csharp
 using System;
@@ -33,9 +33,9 @@ int counter = 0;
 
 for (int i = 0; i < array.Rows; i++)
 {
-    for (int j = 0; j < array.Columns; j++)
+    for (int j = 0; j < array.Columns; j++, counter++)
     {
-        array[i, j] = counter++;
+        array[i, j] = counter;
         Console.Write($"{array[i, j]:00}, ");
     }
     Console.WriteLine();
@@ -160,15 +160,15 @@ var list = List2D<int>.FromSystem2DArray(new int[,]
 
 Console.WriteLine(list.Boundaries.ToValueTuple());
 
-list.AddColumns(4);
+list.AddColumns(count: 4);
 
 Console.WriteLine(list.Boundaries.ToValueTuple());
 
-list.InsertRows(4, 3);
+list.InsertRows(startIndex: 4, count: 3);
 
 Console.WriteLine(list.Boundaries.ToValueTuple());
 
-list.RemoveColumn(2);
+list.RemoveColumn(index: 2);
 
 Console.WriteLine(list.Boundaries.ToValueTuple());
 ```
@@ -225,7 +225,7 @@ public class Matrix3x3 : IRectangularCollection<float>
         set => this[(row, column)] = value;
     }
 
-    public Matrix3x3() => items = new float[9];
+    public Matrix3x3() => items = new float[Rows * Columns];
 
     public Bounds2D Boundaries => Matrix3x3Boundaries;
 
