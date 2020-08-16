@@ -1,0 +1,746 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Struct ItemRequestResult&lt;T&gt;
+   </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Struct ItemRequestResult&lt;T&gt;
+   ">
+    <meta name="generator" content="docfx 2.56.2.0">
+    
+    <link rel="shortcut icon" href="../favicon.ico">
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="Sztorm.Collections.ItemRequestResult`1">
+  
+  
+  <h1 id="Sztorm_Collections_ItemRequestResult_1" data-uid="Sztorm.Collections.ItemRequestResult`1" class="text-break">Struct ItemRequestResult&lt;T&gt;
+  </h1>
+  <div class="markdown level0 summary"><p>Represent result of requesting an item.</p>
+</div>
+  <div class="markdown level0 conceptual"></div>
+  <div classs="implements">
+    <h5>Implements</h5>
+    <div><span class="xref">System.IEquatable</span>&lt;<a class="xref" href="Sztorm.Collections.ItemRequestResult-1.html">ItemRequestResult</a>&lt;T&gt;&gt;</div>
+  </div>
+  <div class="inheritedMembers">
+    <h5>Inherited Members</h5>
+    <div>
+      <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
+    </div>
+    <div>
+      <span class="xref">System.Object.GetType()</span>
+    </div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="Sztorm.Collections.html">Sztorm.Collections</a></h6>
+  <h6><strong>Assembly</strong>: cs.temp.dll.dll</h6>
+  <h5 id="Sztorm_Collections_ItemRequestResult_1_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public struct ItemRequestResult&lt;T&gt; : IEquatable&lt;ItemRequestResult&lt;T&gt;&gt;</code></pre>
+  </div>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">T</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="constructors">Constructors
+  </h3>
+  
+  
+  <a id="Sztorm_Collections_ItemRequestResult_1__ctor_" data-uid="Sztorm.Collections.ItemRequestResult`1.#ctor*"></a>
+  <h4 id="Sztorm_Collections_ItemRequestResult_1__ctor__0_" data-uid="Sztorm.Collections.ItemRequestResult`1.#ctor(`0)">ItemRequestResult(T)</h4>
+  <div class="markdown level1 summary"><p>Initializes a new instance of <a class="xref" href="Sztorm.Collections.ItemRequestResult-1.html">ItemRequestResult&lt;T&gt;</a> indicating that the item
+has been delivered.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ItemRequestResult(T item)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">T</span></td>
+        <td><span class="parametername">item</span></td>
+        <td><p>Delivered item.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="fields">Fields
+  </h3>
+  
+  
+  <h4 id="Sztorm_Collections_ItemRequestResult_1_Fail" data-uid="Sztorm.Collections.ItemRequestResult`1.Fail">Fail</h4>
+  <div class="markdown level1 summary"><p>Represents a failed request. The item has not been delivered.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly ItemRequestResult&lt;T&gt; Fail</code></pre>
+  </div>
+  <h5 class="fieldValue">Field Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Sztorm.Collections.ItemRequestResult-1.html">ItemRequestResult</a>&lt;T&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="properties">Properties
+  </h3>
+  
+  
+  <a id="Sztorm_Collections_ItemRequestResult_1_IsSuccess_" data-uid="Sztorm.Collections.ItemRequestResult`1.IsSuccess*"></a>
+  <h4 id="Sztorm_Collections_ItemRequestResult_1_IsSuccess" data-uid="Sztorm.Collections.ItemRequestResult`1.IsSuccess">IsSuccess</h4>
+  <div class="markdown level1 summary"><p>Determines whether requested item is delivered.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool IsSuccess { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sztorm_Collections_ItemRequestResult_1_Item_" data-uid="Sztorm.Collections.ItemRequestResult`1.Item*"></a>
+  <h4 id="Sztorm_Collections_ItemRequestResult_1_Item" data-uid="Sztorm.Collections.ItemRequestResult`1.Item">Item</h4>
+  <div class="markdown level1 summary"><p>Returns current instance underlying item if it has been delivered.</p>
+<p>
+    Exceptions:<br>
+<span class="xref">System.InvalidOperationException</span> Item must be delivered to be able to
+use it.
+</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public T Item { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">T</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sztorm_Collections_ItemRequestResult_1_ItemOrDefault_" data-uid="Sztorm.Collections.ItemRequestResult`1.ItemOrDefault*"></a>
+  <h4 id="Sztorm_Collections_ItemRequestResult_1_ItemOrDefault" data-uid="Sztorm.Collections.ItemRequestResult`1.ItemOrDefault">ItemOrDefault</h4>
+  <div class="markdown level1 summary"><p>Returns current instance underlying item or its default value if it has not been
+delivered.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public T ItemOrDefault { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">T</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="methods">Methods
+  </h3>
+  
+  
+  <a id="Sztorm_Collections_ItemRequestResult_1_Equals_" data-uid="Sztorm.Collections.ItemRequestResult`1.Equals*"></a>
+  <h4 id="Sztorm_Collections_ItemRequestResult_1_Equals_System_Object_" data-uid="Sztorm.Collections.ItemRequestResult`1.Equals(System.Object)">Equals(Object)</h4>
+  <div class="markdown level1 summary"><p>Returns a value indicating whether this instance is equal to a specified
+<a class="xref" href="Sztorm.Collections.ItemRequestResult-1.html">ItemRequestResult&lt;T&gt;</a> value.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override bool Equals(object other)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Object</span></td>
+        <td><span class="parametername">other</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><span class="xref">System.ValueType.Equals(System.Object)</span></div>
+  
+  
+  <a id="Sztorm_Collections_ItemRequestResult_1_Equals_" data-uid="Sztorm.Collections.ItemRequestResult`1.Equals*"></a>
+  <h4 id="Sztorm_Collections_ItemRequestResult_1_Equals_Sztorm_Collections_ItemRequestResult__0__" data-uid="Sztorm.Collections.ItemRequestResult`1.Equals(Sztorm.Collections.ItemRequestResult{`0})">Equals(ItemRequestResult&lt;T&gt;)</h4>
+  <div class="markdown level1 summary"><p>Returns a value indicating whether this instance is equal to a specified
+<a class="xref" href="Sztorm.Collections.ItemRequestResult-1.html">ItemRequestResult&lt;T&gt;</a> value.<br>
+Use <a class="xref" href="Sztorm.Collections.ItemRequestResult-1.html#Sztorm_Collections_ItemRequestResult_1_Equals__1_Sztorm_Collections_ItemRequestResult___0__">Equals&lt;U&gt;(ItemRequestResult&lt;U&gt;)</a> if the parameter underlying value is
+<span class="xref">System.IEquatable&lt;T&gt;</span> to avoid boxing.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Equals(ItemRequestResult&lt;T&gt; other)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Sztorm.Collections.ItemRequestResult-1.html">ItemRequestResult</a>&lt;T&gt;</td>
+        <td><span class="parametername">other</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sztorm_Collections_ItemRequestResult_1_Equals_" data-uid="Sztorm.Collections.ItemRequestResult`1.Equals*"></a>
+  <h4 id="Sztorm_Collections_ItemRequestResult_1_Equals__1_Sztorm_Collections_ItemRequestResult___0__" data-uid="Sztorm.Collections.ItemRequestResult`1.Equals``1(Sztorm.Collections.ItemRequestResult{``0})">Equals&lt;U&gt;(ItemRequestResult&lt;U&gt;)</h4>
+  <div class="markdown level1 summary"><p>Returns a value indicating whether this instance is equal to a specified
+<a class="xref" href="Sztorm.Collections.ItemRequestResult-1.html">ItemRequestResult&lt;T&gt;</a> value.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Equals&lt;U&gt;(ItemRequestResult&lt;U&gt; other)
+
+    where U : T, IEquatable&lt;T&gt;</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Sztorm.Collections.ItemRequestResult-1.html">ItemRequestResult</a>&lt;U&gt;</td>
+        <td><span class="parametername">other</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">U</span></td>
+        <td><p><code data-dev-comment-type="typeparamref" class="typeparamref">U</code> is <span class="xref">System.IEquatable&lt;T&gt;</span> and
+<code data-dev-comment-type="typeparamref" class="typeparamref">T</code></p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sztorm_Collections_ItemRequestResult_1_GetHashCode_" data-uid="Sztorm.Collections.ItemRequestResult`1.GetHashCode*"></a>
+  <h4 id="Sztorm_Collections_ItemRequestResult_1_GetHashCode" data-uid="Sztorm.Collections.ItemRequestResult`1.GetHashCode">GetHashCode()</h4>
+  <div class="markdown level1 summary"><p>Returns the hashcode for this instance.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override int GetHashCode()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><span class="xref">System.ValueType.GetHashCode()</span></div>
+  
+  
+  <a id="Sztorm_Collections_ItemRequestResult_1_GetItemOrDefault_" data-uid="Sztorm.Collections.ItemRequestResult`1.GetItemOrDefault*"></a>
+  <h4 id="Sztorm_Collections_ItemRequestResult_1_GetItemOrDefault__0_" data-uid="Sztorm.Collections.ItemRequestResult`1.GetItemOrDefault(`0)">GetItemOrDefault(T)</h4>
+  <div class="markdown level1 summary"><p>Returns current instance underlying item or specified default value if the item has
+not been delivered.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public T GetItemOrDefault(T defaultValue)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">T</span></td>
+        <td><span class="parametername">defaultValue</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">T</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sztorm_Collections_ItemRequestResult_1_ToNullable_" data-uid="Sztorm.Collections.ItemRequestResult`1.ToNullable*"></a>
+  <h4 id="Sztorm_Collections_ItemRequestResult_1_ToNullable__1" data-uid="Sztorm.Collections.ItemRequestResult`1.ToNullable``1">ToNullable&lt;U&gt;()</h4>
+  <div class="markdown level1 summary"><p>Returns a <span class="xref">System.Nullable&lt;T&gt;</span> representation of this instance.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public U? ToNullable&lt;U&gt;()
+
+    where U : struct, T</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Nullable</span>&lt;U&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">U</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sztorm_Collections_ItemRequestResult_1_ToString_" data-uid="Sztorm.Collections.ItemRequestResult`1.ToString*"></a>
+  <h4 id="Sztorm_Collections_ItemRequestResult_1_ToString" data-uid="Sztorm.Collections.ItemRequestResult`1.ToString">ToString()</h4>
+  <div class="markdown level1 summary"><p>Returns a <span class="xref">System.String</span> representation of current instance underlying item
+if it has been delivered.</p>
+<p>
+    Exceptions:<br>
+<span class="xref">System.InvalidOperationException</span> Item must be delivered to be able to
+use it.
+</p>    
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override string ToString()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><span class="xref">System.ValueType.ToString()</span></div>
+  <h3 id="operators">Operators
+  </h3>
+  
+  
+  <a id="Sztorm_Collections_ItemRequestResult_1_op_Equality_" data-uid="Sztorm.Collections.ItemRequestResult`1.op_Equality*"></a>
+  <h4 id="Sztorm_Collections_ItemRequestResult_1_op_Equality_Sztorm_Collections_ItemRequestResult__0__Sztorm_Collections_ItemRequestResult__0__" data-uid="Sztorm.Collections.ItemRequestResult`1.op_Equality(Sztorm.Collections.ItemRequestResult{`0},Sztorm.Collections.ItemRequestResult{`0})">Equality(ItemRequestResult&lt;T&gt;, ItemRequestResult&lt;T&gt;)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static bool operator ==(ItemRequestResult&lt;T&gt; left, ItemRequestResult&lt;T&gt; right)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Sztorm.Collections.ItemRequestResult-1.html">ItemRequestResult</a>&lt;T&gt;</td>
+        <td><span class="parametername">left</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Sztorm.Collections.ItemRequestResult-1.html">ItemRequestResult</a>&lt;T&gt;</td>
+        <td><span class="parametername">right</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sztorm_Collections_ItemRequestResult_1_op_Explicit_" data-uid="Sztorm.Collections.ItemRequestResult`1.op_Explicit*"></a>
+  <h4 id="Sztorm_Collections_ItemRequestResult_1_op_Explicit_Sztorm_Collections_ItemRequestResult__0____0" data-uid="Sztorm.Collections.ItemRequestResult`1.op_Explicit(Sztorm.Collections.ItemRequestResult{`0})~`0">Explicit(ItemRequestResult&lt;T&gt; to T)</h4>
+  <div class="markdown level1 summary"><p>Casts current instance to its underlying item or default value if it has not been
+delivered.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static explicit operator T(ItemRequestResult&lt;T&gt; result)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Sztorm.Collections.ItemRequestResult-1.html">ItemRequestResult</a>&lt;T&gt;</td>
+        <td><span class="parametername">result</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">T</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sztorm_Collections_ItemRequestResult_1_op_Inequality_" data-uid="Sztorm.Collections.ItemRequestResult`1.op_Inequality*"></a>
+  <h4 id="Sztorm_Collections_ItemRequestResult_1_op_Inequality_Sztorm_Collections_ItemRequestResult__0__Sztorm_Collections_ItemRequestResult__0__" data-uid="Sztorm.Collections.ItemRequestResult`1.op_Inequality(Sztorm.Collections.ItemRequestResult{`0},Sztorm.Collections.ItemRequestResult{`0})">Inequality(ItemRequestResult&lt;T&gt;, ItemRequestResult&lt;T&gt;)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static bool operator !=(ItemRequestResult&lt;T&gt; left, ItemRequestResult&lt;T&gt; right)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Sztorm.Collections.ItemRequestResult-1.html">ItemRequestResult</a>&lt;T&gt;</td>
+        <td><span class="parametername">left</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Sztorm.Collections.ItemRequestResult-1.html">ItemRequestResult</a>&lt;T&gt;</td>
+        <td><span class="parametername">right</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="implements">Implements</h3>
+  <div>
+      <span class="xref">System.IEquatable&lt;T&gt;</span>
+  </div>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>

@@ -1,0 +1,714 @@
+{
+  "homepages": [],
+  "source_base_path": "D:/Repos/Sztorm/SztormCollections/DocFiles",
+  "xrefmap": "xrefmap.yml",
+  "files": [
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sztorm.Collections.Array2D-1.Enumerator.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sztorm.Collections.Array2D-1.Enumerator.html",
+          "hash": "zxrslp0r7LB6Pan2WUDaRw=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sztorm.Collections.Array2D-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sztorm.Collections.Array2D-1.html",
+          "hash": "Xb+N9ltJvtgj3OF6bY3nLA=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sztorm.Collections.Bounds2D.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sztorm.Collections.Bounds2D.html",
+          "hash": "KeCc84zfeRptO/RVyMCXdQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sztorm.Collections.Column-2.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sztorm.Collections.Column-2.html",
+          "hash": "e1+2JTatgKy2s2t/tl4x3A=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sztorm.Collections.ConsoleWriteLineAction-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sztorm.Collections.ConsoleWriteLineAction-1.html",
+          "hash": "PtqZdqEeyu5xJf3ptjHXog=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sztorm.Collections.EqualsComparablePredicate-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sztorm.Collections.EqualsComparablePredicate-1.html",
+          "hash": "M4vv3eibelnwCg8Q8gTVdA=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sztorm.Collections.EqualsComparablePredicate-2.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sztorm.Collections.EqualsComparablePredicate-2.html",
+          "hash": "24a1Yydh9BH2yfoNrEzR+Q=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sztorm.Collections.EqualsObjectPredicate-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sztorm.Collections.EqualsObjectPredicate-1.html",
+          "hash": "UApSVOfzLYNvoGynwE3URQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sztorm.Collections.EqualsPredicate-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sztorm.Collections.EqualsPredicate-1.html",
+          "hash": "fKrf4fSQL6YpYyOB2v07Fw=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sztorm.Collections.EqualsPredicate-2.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sztorm.Collections.EqualsPredicate-2.html",
+          "hash": "nAxzKAQyUHWiY4EV08psuA=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sztorm.Collections.Extensions.ReadOnlyRectangularCollectionExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sztorm.Collections.Extensions.ReadOnlyRectangularCollectionExtensions.html",
+          "hash": "3YuoTLxtkP6GICO7AvELxA=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sztorm.Collections.Extensions.RectangularCollectionExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sztorm.Collections.Extensions.RectangularCollectionExtensions.html",
+          "hash": "ahKGDkYkABSLjhkYio/gfg=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sztorm.Collections.Extensions.RefReadOnlyRectangularCollectionExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sztorm.Collections.Extensions.RefReadOnlyRectangularCollectionExtensions.html",
+          "hash": "rDVkNSziy2UVE9gFf5qfiA=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sztorm.Collections.Extensions.RefRectangularCollectionExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sztorm.Collections.Extensions.RefRectangularCollectionExtensions.html",
+          "hash": "Z/vAIHwX9zOkrdVM4lk7Lw=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sztorm.Collections.Extensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sztorm.Collections.Extensions.html",
+          "hash": "TR+qDxKm5KJ8JvF4DaDA6w=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sztorm.Collections.GreaterThanOrEqualToPredicate-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sztorm.Collections.GreaterThanOrEqualToPredicate-1.html",
+          "hash": "1QCl1tf8USeRaS4wiNoRgA=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sztorm.Collections.GreaterThanPredicate-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sztorm.Collections.GreaterThanPredicate-1.html",
+          "hash": "uq5wkAIzV7MqpSR/in5qPg=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sztorm.Collections.IAction-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sztorm.Collections.IAction-1.html",
+          "hash": "8StdUx7oolMOO9yP/iimmQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sztorm.Collections.IConverter-2.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sztorm.Collections.IConverter-2.html",
+          "hash": "lx0jkJ8403EULYjKvS2Pkg=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sztorm.Collections.IHasRectangularBoundaries.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sztorm.Collections.IHasRectangularBoundaries.html",
+          "hash": "at6v2gX8i3/fjVVNG2g1Bw=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sztorm.Collections.IIndexable-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sztorm.Collections.IIndexable-1.html",
+          "hash": "oWUVrAjLL1vYh5HZUBplnw=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sztorm.Collections.IIndexable2D-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sztorm.Collections.IIndexable2D-1.html",
+          "hash": "DwTybuNX9NFhYmO3AlRycA=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sztorm.Collections.IPredicate-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sztorm.Collections.IPredicate-1.html",
+          "hash": "KQCAZwBvXIWMfB1r/yFEAQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sztorm.Collections.IReadOnlyIndexable-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sztorm.Collections.IReadOnlyIndexable-1.html",
+          "hash": "cjYnBr33yhL2jU7d5iAQtA=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sztorm.Collections.IReadOnlyIndexable2D-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sztorm.Collections.IReadOnlyIndexable2D-1.html",
+          "hash": "CFXtjW0IEAkePSgQPkx46A=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sztorm.Collections.IReadOnlyRectangularCollection-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sztorm.Collections.IReadOnlyRectangularCollection-1.html",
+          "hash": "8+ZmcEcUnWBwGt2U5cJ8Pg=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sztorm.Collections.IRectangularCollection-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sztorm.Collections.IRectangularCollection-1.html",
+          "hash": "IKCHllkdueqOonkpBtHk8Q=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sztorm.Collections.IRefIndexable-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sztorm.Collections.IRefIndexable-1.html",
+          "hash": "bIJ/j0dJQdd1AMN3Rq4jRQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sztorm.Collections.IRefIndexable2D-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sztorm.Collections.IRefIndexable2D-1.html",
+          "hash": "6GCGMPVJ9Qs5WlDQLYC7sA=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sztorm.Collections.IRefReadOnlyIndexable-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sztorm.Collections.IRefReadOnlyIndexable-1.html",
+          "hash": "HD3WTt7nTtCSWif5QaksBw=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sztorm.Collections.IRefReadOnlyIndexable2D-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sztorm.Collections.IRefReadOnlyIndexable2D-1.html",
+          "hash": "AaPGrapxSUckbBatXO2u3g=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sztorm.Collections.IRefReadOnlyRectangularCollection-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sztorm.Collections.IRefReadOnlyRectangularCollection-1.html",
+          "hash": "6O4mWPclZcuHZCFJ0kzW+A=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sztorm.Collections.IRefRectangularCollection-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sztorm.Collections.IRefRectangularCollection-1.html",
+          "hash": "UkvmzffhysrRNS4DHq4mCg=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sztorm.Collections.Index2D.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sztorm.Collections.Index2D.html",
+          "hash": "3R0n8c7y+SLGb/FWkO0wvQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sztorm.Collections.ItemRequestResult-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sztorm.Collections.ItemRequestResult-1.html",
+          "hash": "Xjth4RACfNdVEZC1gxQoAA=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sztorm.Collections.LessThanOrEqualToPredicate-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sztorm.Collections.LessThanOrEqualToPredicate-1.html",
+          "hash": "CaWYrizgQJXVIDRBVDeEWg=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sztorm.Collections.LessThanPredicate-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sztorm.Collections.LessThanPredicate-1.html",
+          "hash": "GScCk269J1lnKUwQhPKGdQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sztorm.Collections.List2D-1.Enumerator.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sztorm.Collections.List2D-1.Enumerator.html",
+          "hash": "mEDVDDhWyQUux79xsPu7Lg=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sztorm.Collections.List2D-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sztorm.Collections.List2D-1.html",
+          "hash": "y733jK4fzlnqUoajkUeDdQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sztorm.Collections.ReadOnlyColumn-2.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sztorm.Collections.ReadOnlyColumn-2.html",
+          "hash": "j3fxBAKHz3nA2sGMAuxyPA=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sztorm.Collections.ReadOnlyRow-2.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sztorm.Collections.ReadOnlyRow-2.html",
+          "hash": "DSRZP+brHX8388pp4Lt3Cg=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sztorm.Collections.RectangularCollectionUtils.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sztorm.Collections.RectangularCollectionUtils.html",
+          "hash": "AMC2RZcyOTAOwSl5rghmow=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sztorm.Collections.RefColumn-2.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sztorm.Collections.RefColumn-2.html",
+          "hash": "fyA056/hUZS0iCqRboJBBw=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sztorm.Collections.RefReadOnlyColumn-2.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sztorm.Collections.RefReadOnlyColumn-2.html",
+          "hash": "CxczpD1HCK7Xt/CWHeFTcQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sztorm.Collections.RefReadOnlyRow-2.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sztorm.Collections.RefReadOnlyRow-2.html",
+          "hash": "8nHKm0TTOEfSzKw/Df6krw=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sztorm.Collections.RefRow-2.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sztorm.Collections.RefRow-2.html",
+          "hash": "CwpKfrWUts/ANptlr4oAmg=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sztorm.Collections.Row-2.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sztorm.Collections.Row-2.html",
+          "hash": "yHDqDhR/D+1aYLU0q9D2/Q=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sztorm.Collections.ToStringConverter-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sztorm.Collections.ToStringConverter-1.html",
+          "hash": "4xYGLAVFTMEGcJAlcOzm4w=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sztorm.Collections.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sztorm.Collections.html",
+          "hash": "ujWkLp2s8fbWdnuEVY2q3A=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "api/index.md",
+      "output": {
+        ".html": {
+          "relative_path": "api/index.html",
+          "hash": "AYWHye6XCdYhfrQnbGYw2g=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "api/toc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/toc.html",
+          "hash": "JXvPBjlq8tLxKac5MS1ffA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/intro.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/intro.html",
+          "hash": "ipAwl08ETUErJGAe2EVuCg=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "articles/toc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "articles/toc.html",
+          "hash": "gB8AESyvNru97tzIZofEEg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "index.md",
+      "output": {
+        ".html": {
+          "relative_path": "index.html",
+          "hash": "SNgXlb4q1ES6rLMBf0D9Sg=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "toc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "toc.html",
+          "hash": "+rHUkRZHZRi5gd1aTU6lJA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    }
+  ],
+  "incremental_info": [
+    {
+      "status": {
+        "can_incremental": true,
+        "incrementalPhase": "build",
+        "total_file_count": 0,
+        "skipped_file_count": 0
+      },
+      "processors": {
+        "ConceptualDocumentProcessor": {
+          "can_incremental": true,
+          "incrementalPhase": "build",
+          "total_file_count": 3,
+          "skipped_file_count": 3
+        },
+        "ManagedReferenceDocumentProcessor": {
+          "can_incremental": true,
+          "incrementalPhase": "build",
+          "total_file_count": 49,
+          "skipped_file_count": 49
+        },
+        "TocDocumentProcessor": {
+          "can_incremental": false,
+          "details": "Processor TocDocumentProcessor cannot support incremental build because the processor doesn't implement ISupportIncrementalDocumentProcessor interface.",
+          "incrementalPhase": "build",
+          "total_file_count": 0,
+          "skipped_file_count": 0
+        }
+      }
+    },
+    {
+      "status": {
+        "can_incremental": true,
+        "details": "Can support incremental post processing.",
+        "incrementalPhase": "postProcessing",
+        "total_file_count": 0,
+        "skipped_file_count": 0
+      },
+      "processors": {}
+    }
+  ],
+  "version_info": {},
+  "groups": [
+    {
+      "xrefmap": "xrefmap.yml"
+    }
+  ]
+}
