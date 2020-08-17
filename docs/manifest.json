@@ -617,6 +617,66 @@
     },
     {
       "type": "Conceptual",
+      "source_relative_path": "articles/classes/array2D.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/classes/array2D.html",
+          "hash": "32ohzsJldPqR/g93JHyAtw=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/classes/intro.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/classes/intro.html",
+          "hash": "HkCo6X9EYPYu3ClD+cTNQw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/classes/list2D.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/classes/list2D.html",
+          "hash": "rav5tyKsCXav8LAxCud+uw=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/designing/intro.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/designing/intro.html",
+          "hash": "rdqE04vKYV0xY0JhnCY7pw=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/designing/rectangularCollection.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/designing/rectangularCollection.html",
+          "hash": "PE3LDr3T9hypwFF65mNkFg=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
       "source_relative_path": "articles/intro.md",
       "output": {
         ".html": {
@@ -628,12 +688,48 @@
       "version": ""
     },
     {
+      "type": "Conceptual",
+      "source_relative_path": "articles/optimization/avoidingVirtueCalls.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/optimization/avoidingVirtueCalls.html",
+          "hash": "cRqQpO9AAnWzVx7NTyx5CQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/optimization/intro.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/optimization/intro.html",
+          "hash": "DvQUQ/7rvCu+lxutCYm5Hg=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/optimization/useCorrectOrder.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/optimization/useCorrectOrder.html",
+          "hash": "WuJPcdhV+UkGFDZEVblfoA=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
       "type": "Toc",
       "source_relative_path": "articles/toc.yml",
       "output": {
         ".html": {
           "relative_path": "articles/toc.html",
-          "hash": "gB8AESyvNru97tzIZofEEg=="
+          "hash": "z9E1JqhQJyRGZappPttuKg=="
         }
       },
       "is_incremental": false,
@@ -645,10 +741,10 @@
       "output": {
         ".html": {
           "relative_path": "index.html",
-          "hash": "JH8YpMg38dXtg0uyFS3jZg=="
+          "hash": "gZmrhfSbSrhs0Q3jLxJkBg=="
         }
       },
-      "is_incremental": false,
+      "is_incremental": true,
       "version": ""
     },
     {
@@ -676,8 +772,8 @@
         "ConceptualDocumentProcessor": {
           "can_incremental": true,
           "incrementalPhase": "build",
-          "total_file_count": 3,
-          "skipped_file_count": 2
+          "total_file_count": 11,
+          "skipped_file_count": 10
         },
         "ManagedReferenceDocumentProcessor": {
           "can_incremental": true,

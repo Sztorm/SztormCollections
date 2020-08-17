@@ -1,2 +1,24 @@
 - name: Introduction
   href: intro.md
+
+- name: Classes
+  href: classes/intro.md
+  items:
+    - name: Array2D
+      href: classes/array2D.md
+    - name: List2D
+      href: classes/list2D.md
+
+- name: Designing
+  href: designing/intro.md
+  items:
+    - name: RectangularCollection
+      href: designing/rectangularCollection.md
+
+- name: Optimization
+  href: optimization/intro.md
+  items: 
+    - name: Avoiding virtue calls of delegates
+      href: optimization/avoidingVirtueCalls.md
+    - name: Use correct order when iterating through collection
+      href: optimization/useCorrectOrder.md
