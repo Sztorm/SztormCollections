@@ -4,9 +4,9 @@
 - name: Classes
   href: classes/intro.md
   items:
-    - name: Array2D
+    - name: Array2D<T>
       href: classes/array2D.md
-    - name: List2D
+    - name: List2D<T>
       href: classes/list2D.md
 
 - name: Designing
