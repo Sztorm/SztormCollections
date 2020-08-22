@@ -5,9 +5,9 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>List2D </title>
+    <title>List2D&lt;T&gt; </title>
     <meta name="viewport" content="width=device-width">
-    <meta name="title" content="List2D ">
+    <meta name="title" content="List2D&lt;T&gt; ">
     <meta name="generator" content="docfx 2.56.2.0">
     
     <link rel="shortcut icon" href="../../favicon.ico">
@@ -67,8 +67,295 @@
         <div class="article row grid-right">
           <div class="col-md-10">
             <article class="content wrap" id="_content" data-uid="">
-<h2 id="list2d">List2D</h2>
+<h2 id="list2dt">List2D&lt;T&gt;</h2>
 
+<ul>
+<li><a class="xref" href="../../api/Sztorm.Collections.List2D-1.html">API</a></li>
+<li><a href="https://github.com/Sztorm/SztormCollections/blob/master/Sztorm.Collections/Implementations/2D/List2D.cs">Source code</a></li>
+</ul>
+<h3 id="initialization">Initialization</h3>
+<p><strong>List2D&lt;T&gt;</strong> can be initialized with <a class="xref" href="../../api/Sztorm.Collections.List2D-1.html#Sztorm_Collections_List2D_1__ctor">parameterless constructor</a>:</p>
+<pre><code class="lang-csharp">var list = new List2D&lt;T&gt;();
+</code></pre>
+<p>However if the collection size is more or less known, it is recommended to specify initial capacity
+in order to prevent unnecessary memory copying and improve performance.</p>
+<pre><code class="lang-csharp">int predictedMaxRows = 5;
+int predictedMaxColumns = 7;
+var list = new List2D&lt;T&gt;(predictedMaxRows, predictedMaxColumns);
+</code></pre>
+<p>or</p>
+<pre><code class="lang-csharp">var predictedMaxBoundaries = new Bounds2D(5, 7);
+var list = new List2D&lt;T&gt;(predictedMaxBoundaries);
+</code></pre>
+<p>Note that the list <strong>capacity</strong> is not the list <strong>boundaries</strong>. You can specify initial capacity
+but the created list will have <strong>zero</strong> rows and columns. For more information read about resizing
+below.</p>
+<h3 id="resizing">Resizing</h3>
+<p><strong>List2D&lt;T&gt;</strong> can be resized in many ways. Rows and columns can be added, inserted, and removed.
+Before proceeding further, you should distinguish between <strong>capacity</strong> and <strong>boundaries</strong>.</p>
+<ul>
+<li><a class="xref" href="../../api/Sztorm.Collections.List2D-1.html#Sztorm_Collections_List2D_1_Capacity"><strong>capacity</strong></a> is the number of rows and columns the
+list <strong>may</strong> have before the resizing happens. When more rows or columns are added to the list (or
+inserted into) and they exceed existing capacity, the list capacity and memory usage is increased
+automatically.</li>
+<li><a class="xref" href="../../api/Sztorm.Collections.List2D-1.html#Sztorm_Collections_List2D_1_Boundaries"><strong>boundaries</strong></a> are the rows and columns the list
+<strong>currently</strong> have. Resizing always affect the boundaries (assuming you are adding, removing or
+inserting more than zero rows or columns) but not always affect the list capacity.</li>
+</ul>
+<p>Generally you should not bother how the list works internally but knowing the difference between
+capacity and boundaries can help you make fewer mistakes like initializing list with specified
+capacity and expect it to be the list boundaries.</p>
+<p>Resizing methods overview</p>
+<p>Group of methods that increases the list boundaries:</p>
+<ul>
+<li><a class="xref" href="../../api/Sztorm.Collections.List2D-1.html#Sztorm_Collections_List2D_1_AddColumn">AddColumn</a></li>
+<li><a class="xref" href="../../api/Sztorm.Collections.List2D-1.html#Sztorm_Collections_List2D_1_AddColumns_System_Int32_">AddColumns(Int32)</a></li>
+<li><a class="xref" href="../../api/Sztorm.Collections.List2D-1.html#Sztorm_Collections_List2D_1_AddRow">AddRow</a></li>
+<li><a class="xref" href="../../api/Sztorm.Collections.List2D-1.html#Sztorm_Collections_List2D_1_AddRows_System_Int32_">AddRows(Int32)</a></li>
+<li><a class="xref" href="../../api/Sztorm.Collections.List2D-1.html#Sztorm_Collections_List2D_1_IncreaseBounds_System_Int32_System_Int32_">IncreaseBounds(Int32, Int32)</a></li>
+<li><a class="xref" href="../../api/Sztorm.Collections.List2D-1.html#Sztorm_Collections_List2D_1_IncreaseBounds_Sztorm_Collections_Bounds2D_">IncreaseBounds(Bounds2D)</a></li>
+<li><a class="xref" href="../../api/Sztorm.Collections.List2D-1.html#Sztorm_Collections_List2D_1_InsertColumn_System_Int32_">InsertColumn(Int32)</a></li>
+<li><a class="xref" href="../../api/Sztorm.Collections.List2D-1.html#Sztorm_Collections_List2D_1_InsertColumns_System_Int32_System_Int32_">InsertColumns(Int32, Int32)</a></li>
+<li><a class="xref" href="../../api/Sztorm.Collections.List2D-1.html#Sztorm_Collections_List2D_1_InsertRow_System_Int32_">InsertRow(Int32)</a></li>
+<li><a class="xref" href="../../api/Sztorm.Collections.List2D-1.html#Sztorm_Collections_List2D_1_InsertRows_System_Int32_System_Int32_">InsertRows(Int32, Int32)</a></li>
+</ul>
+<p>Group of methods that shrinks the list boundaries:</p>
+<ul>
+<li><a class="xref" href="../../api/Sztorm.Collections.List2D-1.html#Sztorm_Collections_List2D_1_Clear">Clear</a></li>
+<li><a class="xref" href="../../api/Sztorm.Collections.List2D-1.html#Sztorm_Collections_List2D_1_RemoveColumn_System_Int32_">RemoveColumn(Int32)</a></li>
+<li><a class="xref" href="../../api/Sztorm.Collections.List2D-1.html#Sztorm_Collections_List2D_1_RemoveColumns_System_Int32_System_Int32_">RemoveColumns(Int32, Int32)</a></li>
+<li><a class="xref" href="../../api/Sztorm.Collections.List2D-1.html#Sztorm_Collections_List2D_1_RemoveRow_System_Int32_">RemoveRow(Int32)</a></li>
+<li><a class="xref" href="../../api/Sztorm.Collections.List2D-1.html#Sztorm_Collections_List2D_1_RemoveRows_System_Int32_System_Int32_">RemoveRows(Int32, Int32)</a></li>
+</ul>
+<p>For better view what happens with list after performing some of these methods on it, see the
+examples:</p>
+<p>Consider that you have a 3x3 list of various ints that can be presented as below:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;"><strong>1</strong></th>
+<th style="text-align: center;"><strong>2</strong></th>
+<th style="text-align: center;"><strong>3</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;"><strong>4</strong></td>
+<td style="text-align: center;"><strong>5</strong></td>
+<td style="text-align: center;"><strong>6</strong></td>
+</tr>
+<tr>
+<td style="text-align: center;"><strong>7</strong></td>
+<td style="text-align: center;"><strong>8</strong></td>
+<td style="text-align: center;"><strong>9</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Which can be coded like that:</p>
+<pre><code class="lang-csharp">var list = new List2D&lt;int&gt;(new int[,] 
+{
+    { 1, 2, 3 },
+    { 4, 5, 6 },
+    { 7, 8, 9 },
+});
+</code></pre>
+<p>Assume that the above piece of code is ran before every method example.</p>
+<p><em>AddColumn</em></p>
+<pre><code class="lang-csharp">list.AddColumn();
+</code></pre>
+<p>Result: A 3x4 list with the last column that is filled with default value.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;"><strong>1</strong></th>
+<th style="text-align: center;"><strong>2</strong></th>
+<th style="text-align: center;"><strong>3</strong></th>
+<th style="text-align: center;"><strong><em>0</em></strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;"><strong>4</strong></td>
+<td style="text-align: center;"><strong>5</strong></td>
+<td style="text-align: center;"><strong>6</strong></td>
+<td style="text-align: center;"><strong><em>0</em></strong></td>
+</tr>
+<tr>
+<td style="text-align: center;"><strong>7</strong></td>
+<td style="text-align: center;"><strong>8</strong></td>
+<td style="text-align: center;"><strong>9</strong></td>
+<td style="text-align: center;"><strong><em>0</em></strong></td>
+</tr>
+</tbody>
+</table>
+<p><em>AddRows</em></p>
+<pre><code class="lang-csharp">list.AddRows(count: 2);
+</code></pre>
+<p>Result: A 5x3 list with the last two rows that are filled with default value.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;"><strong>1</strong></th>
+<th style="text-align: center;"><strong>2</strong></th>
+<th style="text-align: center;"><strong>3</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;"><strong>4</strong></td>
+<td style="text-align: center;"><strong>5</strong></td>
+<td style="text-align: center;"><strong>6</strong></td>
+</tr>
+<tr>
+<td style="text-align: center;"><strong>7</strong></td>
+<td style="text-align: center;"><strong>8</strong></td>
+<td style="text-align: center;"><strong>9</strong></td>
+</tr>
+<tr>
+<td style="text-align: center;"><strong><em>0</em></strong></td>
+<td style="text-align: center;"><strong><em>0</em></strong></td>
+<td style="text-align: center;"><strong><em>0</em></strong></td>
+</tr>
+<tr>
+<td style="text-align: center;"><strong><em>0</em></strong></td>
+<td style="text-align: center;"><strong><em>0</em></strong></td>
+<td style="text-align: center;"><strong><em>0</em></strong></td>
+</tr>
+</tbody>
+</table>
+<p>You can use both <em>AddRows</em> and <em>AddColumns</em> one after another but it's better to use
+<em>IncreaseBounds</em> instead for better performance and readability.</p>
+<pre><code class="lang-csharp">list.IncreaseBounds(rows: 1, columns: 3);
+</code></pre>
+<p>Result: A 4x6 list with new rows and columns that are filled with default value.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;"><strong>1</strong></th>
+<th style="text-align: center;"><strong>2</strong></th>
+<th style="text-align: center;"><strong>3</strong></th>
+<th style="text-align: center;"><strong><em>0</em></strong></th>
+<th style="text-align: center;"><strong><em>0</em></strong></th>
+<th style="text-align: center;"><strong><em>0</em></strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;"><strong>4</strong></td>
+<td style="text-align: center;"><strong>5</strong></td>
+<td style="text-align: center;"><strong>6</strong></td>
+<td style="text-align: center;"><strong><em>0</em></strong></td>
+<td style="text-align: center;"><strong><em>0</em></strong></td>
+<td style="text-align: center;"><strong><em>0</em></strong></td>
+</tr>
+<tr>
+<td style="text-align: center;"><strong>7</strong></td>
+<td style="text-align: center;"><strong>8</strong></td>
+<td style="text-align: center;"><strong>9</strong></td>
+<td style="text-align: center;"><strong><em>0</em></strong></td>
+<td style="text-align: center;"><strong><em>0</em></strong></td>
+<td style="text-align: center;"><strong><em>0</em></strong></td>
+</tr>
+<tr>
+<td style="text-align: center;"><strong><em>0</em></strong></td>
+<td style="text-align: center;"><strong><em>0</em></strong></td>
+<td style="text-align: center;"><strong><em>0</em></strong></td>
+<td style="text-align: center;"><strong><em>0</em></strong></td>
+<td style="text-align: center;"><strong><em>0</em></strong></td>
+<td style="text-align: center;"><strong><em>0</em></strong></td>
+</tr>
+</tbody>
+</table>
+<p><em>InsertColumns</em></p>
+<pre><code class="lang-csharp">list.InsertColumns(startIndex: 1, count: 2)
+</code></pre>
+<p>Result: A 3x5 list with two columns at index of 1 that are filled with default value.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;"><strong>1</strong></th>
+<th style="text-align: center;"><strong><em>0</em></strong></th>
+<th style="text-align: center;"><strong><em>0</em></strong></th>
+<th style="text-align: center;"><strong>2</strong></th>
+<th style="text-align: center;"><strong>3</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;"><strong>4</strong></td>
+<td style="text-align: center;"><strong><em>0</em></strong></td>
+<td style="text-align: center;"><strong><em>0</em></strong></td>
+<td style="text-align: center;"><strong>5</strong></td>
+<td style="text-align: center;"><strong>6</strong></td>
+</tr>
+<tr>
+<td style="text-align: center;"><strong>7</strong></td>
+<td style="text-align: center;"><strong><em>0</em></strong></td>
+<td style="text-align: center;"><strong><em>0</em></strong></td>
+<td style="text-align: center;"><strong>8</strong></td>
+<td style="text-align: center;"><strong>9</strong></td>
+</tr>
+</tbody>
+</table>
+<p>That should clear things up a bit, so let us proceed to shrinking methods.</p>
+<p><em>Clear</em></p>
+<pre><code class="lang-csharp">list.Clear();
+</code></pre>
+<p>Result: As expected, <em>Clear</em> clears out the list so it is empty and has boundaries of 0x0.</p>
+<p><em>RemoveColumn</em></p>
+<pre><code class="lang-csharp">list.RemoveColumn(index: 0);
+</code></pre>
+<p>Result: A 3x2 list that has the first column just removed.</p>
+<p><em>RemoveRows</em></p>
+<pre><code class="lang-csharp">list.RemoveRows(startIndex: 1, count: 2);
+</code></pre>
+<p>Result: A 1x3 list that has the last two rows removed.</p>
+<h3 id="memory-layout">Memory layout</h3>
+<p>Like <a class="xref" href="../../api/Sztorm.Collections.Array2D-1.html"><strong>Array2D&lt;T&gt;</strong></a>, <strong>List2D&lt;T&gt;</strong> is row-major ordered
+which means that every item is accessed by specyfying a row, then column.</p>
+<p>A visual example is the best way to explain how the items are stored in the list. Consider that you
+have a list with capacity of 3x3 and boundaries of 3x2, the numbers other than zero show the order
+of access to to each next item in the foreach loop:</p>
+<p>Representation:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;"><strong>1</strong></th>
+<th style="text-align: center;"><strong>2</strong></th>
+<th style="text-align: center;"><strong>0</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;"><strong>3</strong></td>
+<td style="text-align: center;"><strong>4</strong></td>
+<td style="text-align: center;"><strong>0</strong></td>
+</tr>
+<tr>
+<td style="text-align: center;"><strong>5</strong></td>
+<td style="text-align: center;"><strong>6</strong></td>
+<td style="text-align: center;"><strong>0</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Memory layout:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;"><strong>1</strong></th>
+<th style="text-align: center;"><strong>2</strong></th>
+<th style="text-align: center;"><strong>0</strong></th>
+<th style="text-align: center;"><strong>3</strong></th>
+<th style="text-align: center;"><strong>4</strong></th>
+<th style="text-align: center;"><strong>0</strong></th>
+<th style="text-align: center;"><strong>5</strong></th>
+<th style="text-align: center;"><strong>6</strong></th>
+<th style="text-align: center;"><strong>0</strong></th>
+</tr>
+</thead>
+</table>
+<p>Memory layout shows that <strong>List2D&lt;T&gt;</strong> is allocated within contiguous memory block, but the
+layout itself may contain gaps between the items.</p>
 </article>
           </div>
           
