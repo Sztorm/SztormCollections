@@ -5,12 +5,14 @@
 
 ### Initialization
 **List2D\<T\>** can be initialized with [parameterless constructor](xref:Sztorm.Collections.List2D`1.%23ctor):
+
 ```csharp
 var list = new List2D<T>();
 ```
 
 However if the collection size is more or less known, it is recommended to specify initial capacity
 in order to prevent unnecessary memory copying and improve performance.
+
 ```csharp
 int predictedMaxRows = 5;
 int predictedMaxColumns = 7;
@@ -75,7 +77,7 @@ Consider that you have a 3x3 list of various ints that can be presented as below
 Which can be coded like that:
 
 ```csharp
-var list = new List2D<int>(new int[,] 
+var list = List2D<int>.FromSystem2DArray(new int[,] 
 {
     { 1, 2, 3 },
     { 4, 5, 6 },
@@ -90,6 +92,7 @@ _AddColumn_
 ```csharp
 list.AddColumn();
 ```
+
 Result: A 3x4 list with the last column that is filled with default value.
 
 | **1** | **2** | **3** | **_0_** |
@@ -102,6 +105,7 @@ _AddRows_
 ```csharp
 list.AddRows(count: 2);
 ```
+
 Result: A 5x3 list with the last two rows that are filled with default value.
 
 |  **1**  |  **2**  |  **3**  |
@@ -117,6 +121,7 @@ _IncreaseBounds_ instead for better performance and readability.
 ```csharp
 list.IncreaseBounds(rows: 1, columns: 3);
 ```
+
 Result: A 4x6 list with new rows and columns that are filled with default value.
 
 |  **1**  |  **2**  |  **3**  | **_0_** | **_0_** | **_0_** |
@@ -130,6 +135,7 @@ _InsertColumns_
 ```csharp
 list.InsertColumns(startIndex: 1, count: 2)
 ```
+
 Result: A 3x5 list with two columns at index of 1 that are filled with default value.
 
 | **1** | **_0_** | **_0_** | **2** | **3** |
@@ -144,6 +150,7 @@ _Clear_
 ```csharp
 list.Clear();
 ```
+
 Result: As expected, _Clear_ clears out the list so it is empty and has boundaries of 0x0.
 
 _RemoveColumn_
@@ -151,6 +158,7 @@ _RemoveColumn_
 ```csharp
 list.RemoveColumn(index: 0);
 ```
+
 Result: A 3x2 list that has the first column just removed.
 
 _RemoveRows_
@@ -158,6 +166,7 @@ _RemoveRows_
 ```csharp
 list.RemoveRows(startIndex: 1, count: 2);
 ```
+
 Result: A 1x3 list that has the last two rows removed.
 
 ### Memory layout

@@ -150,7 +150,7 @@ Console.WriteLine(string.Join(&quot;, &quot;, itemsFrom3to7));
 </code></pre>
 <p>That is it. However repetition of <em>RangeFrom3To7Predicate</em> may look ugly from readability stance.
 For functors that offer <strong>only</strong> the parameterless constructor such as the one showed in the
-example, you can use the <strong>default</strong> keyword which is a equivalent of calling the parameterless
+example, you can use the <strong>default</strong> keyword which is an equivalent of calling the parameterless
 constructor in this case.</p>
 <pre><code class="lang-csharp">List&lt;int&gt; itemsFrom3to7 = array.FindAll&lt;List&lt;int&gt;, RangeFrom3To7Predicate&gt;(default);
 </code></pre>

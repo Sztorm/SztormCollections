@@ -645,10 +645,10 @@
       "output": {
         ".html": {
           "relative_path": "articles/classes/list2D.html",
-          "hash": "lp9rzqJ2DtXX7f3eUoGeVQ=="
+          "hash": "m2B44wcFAkECuJeV1DtYXg=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -693,7 +693,7 @@
       "output": {
         ".html": {
           "relative_path": "articles/optimization/avoidingVirtualCalls.html",
-          "hash": "45HPE7rkP6ove+DZmKoSng=="
+          "hash": "63tTFeSgNetD3jt3zioWuw=="
         }
       },
       "is_incremental": false,
@@ -773,7 +773,7 @@
           "can_incremental": true,
           "incrementalPhase": "build",
           "total_file_count": 11,
-          "skipped_file_count": 10
+          "skipped_file_count": 9
         },
         "ManagedReferenceDocumentProcessor": {
           "can_incremental": true,
