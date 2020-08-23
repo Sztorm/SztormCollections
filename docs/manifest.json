@@ -621,7 +621,7 @@
       "output": {
         ".html": {
           "relative_path": "articles/classes/array2D.html",
-          "hash": "brl6FH5MlVzOsoJAu4rClg=="
+          "hash": "lcCm674yNFj+tvO3V1LsSA=="
         }
       },
       "is_incremental": true,
@@ -648,7 +648,7 @@
           "hash": "lp9rzqJ2DtXX7f3eUoGeVQ=="
         }
       },
-      "is_incremental": false,
+      "is_incremental": true,
       "version": ""
     },
     {
@@ -689,14 +689,14 @@
     },
     {
       "type": "Conceptual",
-      "source_relative_path": "articles/optimization/avoidingVirtueCalls.md",
+      "source_relative_path": "articles/optimization/avoidingVirtualCalls.md",
       "output": {
         ".html": {
-          "relative_path": "articles/optimization/avoidingVirtueCalls.html",
-          "hash": "cRqQpO9AAnWzVx7NTyx5CQ=="
+          "relative_path": "articles/optimization/avoidingVirtualCalls.html",
+          "hash": "45HPE7rkP6ove+DZmKoSng=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -729,7 +729,7 @@
       "output": {
         ".html": {
           "relative_path": "articles/toc.html",
-          "hash": "/7JXG9DwFWMMffxScYamRQ=="
+          "hash": "tIlf+Z0u3bcdsVlXKdXf0g=="
         }
       },
       "is_incremental": false,
@@ -741,7 +741,7 @@
       "output": {
         ".html": {
           "relative_path": "index.html",
-          "hash": "gZmrhfSbSrhs0Q3jLxJkBg=="
+          "hash": "idJnesuDlLLfd+E/b0m3ww=="
         }
       },
       "is_incremental": true,
@@ -753,7 +753,7 @@
       "output": {
         ".html": {
           "relative_path": "toc.html",
-          "hash": "+rHUkRZHZRi5gd1aTU6lJA=="
+          "hash": "G2AoE5T/2VarbHvzLEo4TQ=="
         }
       },
       "is_incremental": false,

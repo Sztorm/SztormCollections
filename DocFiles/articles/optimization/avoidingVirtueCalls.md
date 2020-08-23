@@ -1,1 +1,0 @@
-## Avoiding virtue calls of delegates

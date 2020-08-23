@@ -18,7 +18,7 @@
 - name: Optimization
   href: optimization/intro.md
   items: 
-    - name: Avoiding virtue calls of delegates
-      href: optimization/avoidingVirtueCalls.md
+    - name: Avoiding virtual calls of delegates
+      href: optimization/avoidingVirtualCalls.md
     - name: Use correct order when iterating through collection
       href: optimization/useCorrectOrder.md

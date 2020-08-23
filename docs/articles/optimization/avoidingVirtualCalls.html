@@ -1,0 +1,191 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Avoiding virtual calls of delegates </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Avoiding virtual calls of delegates ">
+    <meta name="generator" content="docfx 2.56.2.0">
+    
+    <link rel="shortcut icon" href="../../favicon.ico">
+    <link rel="stylesheet" href="../../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../../styles/docfx.css">
+    <link rel="stylesheet" href="../../styles/main.css">
+    <meta property="docfx:navrel" content="../../toc.html">
+    <meta property="docfx:tocrel" content="../toc.html">
+    
+    
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../../index.html">
+                <img id="logo" class="svg" src="../../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="">
+<h2 id="avoiding-virtual-calls-of-delegates">Avoiding virtual calls of delegates</h2>
+
+<p>Methods which offers delegates as paramaters, usually do offer generic object equivalents of them.
+Those are methods that perform some operation on a specific object defined by delegate like find,
+convert and so on. These object equivalents of delegates can be passed instead for strictly
+performance reasons. For the sake of clarity, let us call them <strong>functors</strong>.</p>
+<h3 id="how-do-functors-improve-performance">How do functors improve performance</h3>
+<p>Functors are called directly or even be inlined by a good JIT compiler. Direct calls are preferred
+over the virtual calls as they avoid indirection which is what their name suggests. The indirection
+in case of virtual calls may lead to many cache misses for a single method call. Virtual calls are
+also very often not inlined which is important in many algorithms that call function arguments in a
+loop and operate on massive data.</p>
+<p>More about virtual call and it's problems:</p>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Virtual_function">Virtual function</a></li>
+<li><a href="https://en.wikipedia.org/wiki/CPU_cache#Cache_miss">Cache miss</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Late_binding">Dynamic binding</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Dynamic_dispatch">Dynamic dispatch</a></li>
+</ul>
+<h3 id="when-do-not-use-functors">When do not use functors</h3>
+<p>Do not use functors when the they need to modify itself during execution of a function that is
+using them because it is technically impossible as they would need to bind proper methods
+dynamically while their method is bound statically (assuming they do not use delegates or other
+virtually called functions internally). But this case almost never happens in typical collection
+queries.</p>
+<p>A more practical argument is that they can hurt readability (imagine a LINQ method chain with
+delegates replaced into functors). Generic arguments would often need to be specified and basic
+functors that come with library may not suffice which leads to many functors defined for every
+small purpose which can effectively clutter the codebase.</p>
+<p>Also defining a functor may be not worth for a rarely called method and is often a sign of
+premature optimization.</p>
+<h3 id="examples">Examples</h3>
+<p>The following array is used for the next examples.</p>
+<pre><code class="lang-csharp">var array = Array2D&lt;int&gt;.FromSystem2DArray(new int[,]
+{
+    { 1, 2, 3 },
+    { 4, 5, 6 },
+    { 7, 8, 9 },
+});
+</code></pre>
+<p>Finding the index of first item that has value of 5 by using the predicate delegate.</p>
+<pre><code class="lang-csharp">ItemRequestResult&lt;Index2D&gt; possibleIndexOf5 = array.FindIndex(o =&gt; o == 5);
+
+Console.WriteLine(possibleIndexOf5.Item);
+</code></pre>
+<p>The optimized way.</p>
+<pre><code class="lang-csharp">ItemRequestResult&lt;Index2D&gt; possibleIndexOf5 = array.FindIndex(new EqualsPredicate&lt;int&gt;(5));
+
+Console.WriteLine(possibleIndexOf5.Item);
+</code></pre>
+<p>Output:</p>
+<pre><code>(1, 1)
+</code></pre>
+<p>Consider that you want a range of ints that matches the items from 3 to 7.</p>
+<p>By using the delegate it is simple enough:</p>
+<pre><code class="lang-csharp">List&lt;int&gt; itemsFrom3to7 = array.FindAll&lt;List&lt;int&gt;&gt;(o =&gt; o &gt;= 3 &amp;&amp; o &lt;= 7);
+
+Console.WriteLine(string.Join(&quot;, &quot;, itemsFrom3to7));
+</code></pre>
+<p>The optimized way is a bit more complicated as there is no predefined type in library that
+represents the range predicate.</p>
+<p>Firstly, define a struct which is equivalent to the delegate that is to be replaced. The delegate
+is type of <em>Predicate&lt;T&gt;</em>, so the struct shall need to implement the
+<a class="xref" href="../../api/Sztorm.Collections.IPredicate-1.html"><em>IPredicate&lt;T&gt;</em></a> interface. One of the generic constraints
+on the delegate equivalent is that the type must be struct. The reason for this requirement is that
+it makes sure the call is direct (structs do not support inheritance) and structs as arguments do
+not involve managed heap allocation (assuming they do not instantiate any class types internally)
+which is another optimization.</p>
+<pre><code class="lang-csharp">struct RangeFrom3To7Predicate : IPredicate&lt;int&gt;
+{
+    public bool Invoke(int o) =&gt; o &gt;= 3 &amp;&amp; o &lt;= 7;
+}
+</code></pre>
+<p>As you have may noticed, the Invoke method is almost identical to the lambda expression which
+makes defining own functors more convenient.</p>
+<p>Functor in action:</p>
+<pre><code class="lang-csharp">List&lt;int&gt; itemsFrom3to7 = array.FindAll&lt;List&lt;int&gt;, RangeFrom3To7Predicate&gt;(
+    new RangeFrom3To7Predicate());
+
+Console.WriteLine(string.Join(&quot;, &quot;, itemsFrom3to7));
+</code></pre>
+<p>That is it. However repetition of <em>RangeFrom3To7Predicate</em> may look ugly from readability stance.
+For functors that offer <strong>only</strong> the parameterless constructor such as the one showed in the
+example, you can use the <strong>default</strong> keyword which is a equivalent of calling the parameterless
+constructor in this case.</p>
+<pre><code class="lang-csharp">List&lt;int&gt; itemsFrom3to7 = array.FindAll&lt;List&lt;int&gt;, RangeFrom3To7Predicate&gt;(default);
+</code></pre>
+<p>Output:</p>
+<pre><code>3, 4, 5, 6, 7
+</code></pre>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../../styles/docfx.js"></script>
+    <script type="text/javascript" src="../../styles/main.js"></script>
+  </body>
+</html>
