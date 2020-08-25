@@ -69,6 +69,141 @@
             <article class="content wrap" id="_content" data-uid="">
 <h2 id="use-correct-order-when-iterating-through-collection">Use correct order when iterating through collection</h2>
 
+<p>The collections define how they are ordered. To improve performance during iteration, it is
+important to use the correct order that will allow to utilize the CPU cache better. Accessing the
+data sequentially helps to use the cache more efficiently, because cache memory is better utilized
+and it leads to less cache misses.</p>
+<p><a href="https://en.wikipedia.org/wiki/CPU_cache">About CPU cache</a></p>
+<p>For example the <a class="xref" href="../../api/Sztorm.Collections.Array2D-1.html"><strong>Array2D&lt;T&gt;</strong></a> uses row-major order which
+means that the array is optimized to be accessed row by row than column by column.</p>
+<p>Consider a 4x4 row-major array and a simplified cache that is able to fetch four elements.</p>
+<p>The array:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;"><strong>1</strong></th>
+<th style="text-align: center;"><strong>2</strong></th>
+<th style="text-align: center;"><strong>3</strong></th>
+<th style="text-align: center;"><strong>4</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;"><strong>5</strong></td>
+<td style="text-align: center;"><strong>6</strong></td>
+<td style="text-align: center;"><strong>7</strong></td>
+<td style="text-align: center;"><strong>8</strong></td>
+</tr>
+<tr>
+<td style="text-align: center;"><strong>9</strong></td>
+<td style="text-align: center;"><strong>10</strong></td>
+<td style="text-align: center;"><strong>11</strong></td>
+<td style="text-align: center;"><strong>12</strong></td>
+</tr>
+<tr>
+<td style="text-align: center;"><strong>13</strong></td>
+<td style="text-align: center;"><strong>14</strong></td>
+<td style="text-align: center;"><strong>15</strong></td>
+<td style="text-align: center;"><strong>16</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Let us try to iterate through the first row and see how the cache behaves:</p>
+<p>The first array row:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;"><span style="color:green"><strong>1</strong></span></th>
+<th style="text-align: center;"><span style="color:green"><strong>2</strong></span></th>
+<th style="text-align: center;"><span style="color:green"><strong>3</strong></span></th>
+<th style="text-align: center;"><span style="color:green"><strong>4</strong></span></th>
+</tr>
+</thead>
+</table>
+<p>The cache:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;"><span style="color:green"><strong><em>1</em></strong></span></th>
+<th style="text-align: center;"><span style="color:green"><strong><em>2</em></strong></span></th>
+<th style="text-align: center;"><span style="color:green"><strong><em>3</em></strong></span></th>
+<th style="text-align: center;"><span style="color:green"><strong><em>4</em></strong></span></th>
+</tr>
+</thead>
+</table>
+<p>Result: The whole row was fetched at one go, every item is ready to be used. In this case iterating
+through the whole array would require four cache fetches.</p>
+<p>Effect of iterating through the first column:</p>
+<p>The first array column:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;"><span style="color:green"><strong>1</strong></span></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;"><span style="color:green"><strong>5</strong></span></td>
+</tr>
+<tr>
+<td style="text-align: center;"><span style="color:green"><strong>9</strong></span></td>
+</tr>
+<tr>
+<td style="text-align: center;"><span style="color:green"><strong>13</strong></span></td>
+</tr>
+</tbody>
+</table>
+<p>The cache:</p>
+<p>1st fetch:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;"><span style="color:green"><strong><em>1</em></strong></span></th>
+<th style="text-align: center;"><strong>2</strong></th>
+<th style="text-align: center;"><strong>3</strong></th>
+<th style="text-align: center;"><strong>4</strong></th>
+</tr>
+</thead>
+</table>
+<p>2nd fetch:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;"><span style="color:green"><strong><em>5</em></strong></span></th>
+<th style="text-align: center;"><strong>6</strong></th>
+<th style="text-align: center;"><strong>7</strong></th>
+<th style="text-align: center;"><strong>8</strong></th>
+</tr>
+</thead>
+</table>
+<p>3rd fetch:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;"><span style="color:green"><strong><em>9</em></strong></span></th>
+<th style="text-align: center;"><strong>10</strong></th>
+<th style="text-align: center;"><strong>11</strong></th>
+<th style="text-align: center;"><strong>12</strong></th>
+</tr>
+</thead>
+</table>
+<p>4th fetch:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;"><span style="color:green"><strong><em>13</em></strong></span></th>
+<th style="text-align: center;"><strong>14</strong></th>
+<th style="text-align: center;"><strong>15</strong></th>
+<th style="text-align: center;"><strong>16</strong></th>
+</tr>
+</thead>
+</table>
+<p>As you can see the cache contain only one element needed per fetch, so iteration through the column
+only requires four cache fetches. Iteration through the whole array would require <strong>sixteen</strong> cache
+fetches which is equal to one cache miss per element. What a horrendous waste of cache memory!</p>
+<p>Of course today's processors have multiple levels of cache and definitely more cache memory, but it
+is something to consider when you need to process enormous amounts of data. Always measure the
+performance before you proceed to optimize, especially when it would hurt the readability.</p>
 </article>
           </div>
           
