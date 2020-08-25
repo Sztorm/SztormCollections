@@ -1,4 +1,6 @@
 ## List2D\<T\>
+**List2D\<T\>** is a representation of two-dimensional, row-major ordered, resizable rectangular
+collection.
 
  * [API](xref:Sztorm.Collections.List2D`1)
  * [Source code](https://github.com/Sztorm/SztormCollections/blob/master/Sztorm.Collections/Implementations/2D/List2D.cs)
