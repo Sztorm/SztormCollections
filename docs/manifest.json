@@ -657,7 +657,7 @@
       "output": {
         ".html": {
           "relative_path": "articles/designing/intro.html",
-          "hash": "rdqE04vKYV0xY0JhnCY7pw=="
+          "hash": "km11lv8QP2juyo/oo8Tg9A=="
         }
       },
       "is_incremental": true,
@@ -669,10 +669,10 @@
       "output": {
         ".html": {
           "relative_path": "articles/designing/rectangularCollection.html",
-          "hash": "PE3LDr3T9hypwFF65mNkFg=="
+          "hash": "ZeUnTI98xLpH8AjpP2RWmQ=="
         }
       },
-      "is_incremental": true,
+      "is_incremental": false,
       "version": ""
     },
     {
@@ -773,7 +773,7 @@
           "can_incremental": true,
           "incrementalPhase": "build",
           "total_file_count": 11,
-          "skipped_file_count": 11
+          "skipped_file_count": 10
         },
         "ManagedReferenceDocumentProcessor": {
           "can_incremental": true,

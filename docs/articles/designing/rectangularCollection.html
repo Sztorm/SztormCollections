@@ -69,6 +69,199 @@
             <article class="content wrap" id="_content" data-uid="">
 <h2 id="rectangularcollection">RectangularCollection</h2>
 
+<p>You can create your own rectangular collection by implementing one of the four rectangular
+collection interfaces on your type:</p>
+<ul>
+<li><a class="xref" href="../../api/Sztorm.Collections.IRectangularCollection-1.html">IRectangularCollection</a></li>
+<li><a class="xref" href="../../api/Sztorm.Collections.IReadOnlyRectangularCollection-1.html">IReadOnlyRectangularCollection</a></li>
+<li><a class="xref" href="../../api/Sztorm.Collections.IRefRectangularCollection-1.html">IRefRectangularCollection</a></li>
+<li><a class="xref" href="../../api/Sztorm.Collections.IRefReadOnlyRectangularCollection-1.html">IRefReadOnlyRectangularCollection</a></li>
+</ul>
+<p>By doing so, your type gains many usable methods automatically such as
+<a class="xref" href="../../api/Sztorm.Collections.Extensions.RectangularCollectionExtensions.html#Sztorm_Collections_Extensions_RectangularCollectionExtensions_Find_">Find</a>,
+<a class="xref" href="../../api/Sztorm.Collections.Extensions.RectangularCollectionExtensions.html#Sztorm_Collections_Extensions_RectangularCollectionExtensions_Exists_">Exist</a>,
+<a class="xref" href="../../api/Sztorm.Collections.Extensions.RectangularCollectionExtensions.html#Sztorm_Collections_Extensions_RectangularCollectionExtensions_TrueForAll_">TrueForAll</a> and so
+on. These are extension methods defined in
+<a class="xref" href="../../api/Sztorm.Collections.Extensions.html">Sztorm.Collections.Extensions</a> namespace, so remember to
+import it if you are planning to use them.</p>
+<h3 id="example">Example</h3>
+<p>Let us define a 3x3 matrix of floats.</p>
+<p>Firstly, import namespaces and classes for further use.</p>
+<pre><code class="lang-csharp">using Sztorm.Collections;
+using Sztorm.Collections.Extensions;
+using static RectangularCollectionUtils;
+</code></pre>
+<p><a class="xref" href="../../api/Sztorm.Collections.RectangularCollectionUtils.html">RectangularCollectionUtils</a> class can help to
+implement your collection internals like indexing order.</p>
+<p>Next step is to define the <strong>Matrix3x3</strong> class an choose the rectangular collection interface. The
+example uses the <a class="xref" href="../../api/Sztorm.Collections.IRectangularCollection-1.html">IRectangularCollection</a>
+interface, but feel free to experiment with other rectangular collection interfaces.</p>
+<pre><code class="lang-csharp">public class Matrix3x3 : IRectangularCollection&lt;float&gt;
+{
+
+}
+</code></pre>
+<p>Before implementing the interface, think what you already know about the <strong>Matrix3x3</strong> class:</p>
+<ul>
+<li>It has exactly 3 rows and columns.</li>
+<li>The type of elements is float, so the float array could be good choice for storing the items.</li>
+</ul>
+<p>That is how this knowledge may be implemented in code:</p>
+<pre><code class="lang-csharp">public class Matrix3x3 : IRectangularCollection&lt;float&gt;
+{
+    private readonly float[] items;
+    public const int Rows = 3;
+    public const int Columns = 3;
+}
+</code></pre>
+<p>Next step is to implement the interface.
+<a class="xref" href="../../api/Sztorm.Collections.IRectangularCollection-1.html">IRectangularCollection&lt;float&gt;</a> requires the
+following members to be implemented:</p>
+<ul>
+<li><a class="xref" href="../../api/Sztorm.Collections.IIndexable2D-1.html#Sztorm_Collections_IIndexable2D_1_IsValidIndex_Sztorm_Collections_Index2D_">IsValidIndex(Index2D)</a></li>
+<li><a class="xref" href="../../api/Sztorm.Collections.IIndexable2D-1.html#Sztorm_Collections_IIndexable2D_1_Item_Sztorm_Collections_Index2D_">this[Index2D]</a></li>
+<li><a class="xref" href="../../api/Sztorm.Collections.IHasRectangularBoundaries.html#Sztorm_Collections_IHasRectangularBoundaries_Boundaries">Boundaries</a></li>
+<li>GetEnumerator()</li>
+</ul>
+<p><em>IsValidIndex(Index2D)</em></p>
+<pre><code class="lang-csharp">public bool IsValidIndex(Index2D index)
+    =&gt; index.Row &gt;= 0 &amp;&amp; index.Row &lt; Rows &amp;&amp;
+       index.Column &gt;= 0 &amp;&amp; index.Column &lt; Columns;
+</code></pre>
+<p><em>this[Index2D]</em>; the indexing will be row-major ordered and mapped to one-dimensional array.</p>
+<pre><code class="lang-csharp">public float this[Index2D index]
+{
+   get
+   {
+       if (!IsValidIndex(index))
+       {
+           throw new IndexOutOfRangeException();
+       }
+       return items[RowMajorIndex2DToInt(index, Columns)];
+   }
+   set
+   {
+       if (!IsValidIndex(index))
+       {
+           throw new IndexOutOfRangeException();
+       }
+       items[RowMajorIndex2DToInt(index, Columns)] = value;
+   }
+}
+</code></pre>
+<p><em>Boundaries</em>; a good idea is to cache the value in static field and return it from the <em>Boundaries</em>
+property getter (copying still takes place but you save
+<a class="xref" href="../../api/Sztorm.Collections.Bounds2D.html">Bounds2D</a> constructor call which validates arguments).</p>
+<pre><code class="lang-csharp">private static readonly Bounds2D Matrix3x3Boundaries = new Bounds2D(Rows, Columns);
+
+public Bounds2D Boundaries =&gt; Matrix3x3Boundaries;
+</code></pre>
+<p><em>GetEnumerator()</em>; A simple implementation, just going through the array elements.</p>
+<pre><code class="lang-csharp">public IEnumerator&lt;float&gt; GetEnumerator()
+{
+    for (int i = 0; i &lt; Rows * Columns; i++)
+    {
+        yield return items[i];
+    }
+}
+
+IEnumerator IEnumerable.GetEnumerator() =&gt; GetEnumerator();
+</code></pre>
+<p>Interface is implemented but the matrix need proper initialization, a parameterless constructor
+should make the class ready to use.</p>
+<pre><code class="lang-csharp">public Matrix3x3() =&gt; items = new float[Rows * Columns];
+</code></pre>
+<p>Additionally implementing the indexer with <a class="xref" href="../../api/Sztorm.Collections.Index2D.html">Index2D</a> components as
+parameters will save user from constructing the <strong>Index2D</strong> everytime.</p>
+<pre><code class="lang-csharp">public float this[int row, int column]
+{
+    get =&gt; this[(row, column)];
+    set =&gt; this[(row, column)] = value;
+}
+</code></pre>
+<p>The result should look like this:</p>
+<pre><code class="lang-csharp">using Sztorm.Collections;
+using Sztorm.Collections.Extensions;
+using static RectangularCollectionUtils;
+
+public class Matrix3x3 : IRectangularCollection&lt;float&gt;
+{
+    private readonly float[] items;
+
+    private static readonly Bounds2D Matrix3x3Boundaries = new Bounds2D(Rows, Columns);
+    public const int Rows = 3;
+    public const int Columns = 3;
+
+    public float this[Index2D index]
+    {
+        get
+        {
+            if (!IsValidIndex(index))
+            {
+                throw new IndexOutOfRangeException();
+            }
+            return items[RowMajorIndex2DToInt(index, Columns)];
+        }
+        set
+        {
+            if (!IsValidIndex(index))
+            {
+                throw new IndexOutOfRangeException();
+            }
+            items[RowMajorIndex2DToInt(index, Columns)] = value;
+        }
+    }
+
+    public float this[int row, int column]
+    {
+        get =&gt; this[(row, column)];
+        set =&gt; this[(row, column)] = value;
+    }
+
+    public Bounds2D Boundaries =&gt; Matrix3x3Boundaries;
+
+    public Matrix3x3() =&gt; items = new float[Rows * Columns];
+
+    public bool IsValidIndex(Index2D index)
+        =&gt; index.Row &gt;= 0 &amp;&amp; index.Row &lt; Rows &amp;&amp;
+           index.Column &gt;= 0 &amp;&amp; index.Column &lt; Columns;
+
+    public IEnumerator&lt;float&gt; GetEnumerator()
+    {
+        for (int i = 0; i &lt; Rows * Columns; i++)
+        {
+            yield return items[i];
+        }
+    }
+
+    IEnumerator IEnumerable.GetEnumerator() =&gt; GetEnumerator();
+}
+</code></pre>
+<p><strong>Matrix3x3</strong> in action:</p>
+<pre><code class="lang-csharp">var matrix = new Matrix3x3();
+bool isEveryNumberEqualToZero = matrix.TrueForAll&lt;float, Matrix3x3&gt;(o =&gt; o == 0);
+
+Console.WriteLine(isEveryNumberEqualToZero);
+</code></pre>
+<p>Output:</p>
+<pre><code>True
+</code></pre>
+<pre><code class="lang-csharp">var matrix = new Matrix3x3();
+matrix[1, 2] = 3;
+ItemRequestResult&lt;Index2D&gt; possibleIndex = matrix.FindIndex&lt;float, Matrix3x3&gt;(o =&gt; o == 3);
+
+Console.WriteLine(possibleIndex.Item);
+</code></pre>
+<p>Output:</p>
+<pre><code>(1, 2)
+</code></pre>
+<h3 id="summary">Summary</h3>
+<p>The extension methods are generic which make methods type-safe and calls to them direct. The
+problem with them lies in possible code bloat because types of generic methods will often need to
+be specified. Also these methods are not optimized for specific datatype structure, so if they
+must be optimal, they still need to be implemented manually.</p>
+<p>A solution to code bloat problem could be defining instance methods that call the extension methods
+which would still reduce amount of code to write compared to implementing them from scratch.</p>
 </article>
           </div>
           

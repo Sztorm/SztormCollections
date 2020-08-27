@@ -1,2 +1,2 @@
 ## Designing
-Designing library compatible classes.
+Designing library compatible types.
